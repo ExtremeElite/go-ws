@@ -3,8 +3,8 @@ package db
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
-	"ws/conf"
 	"log"
+	"ws/conf"
 
 	_ "github.com/go-sql-driver/mysql"
 )
