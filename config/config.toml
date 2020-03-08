@@ -1,0 +1,12 @@
+WsPort = 20290
+HttpPort = 8000
+env = "dev"
+signKey="QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb"
+defaultDB="mysql"
+[mysqlDB]
+serverHost = "127.0.0.1"
+port = 3306
+user = "root"
+password = "plum500102"
+db="gitval"
+maxConnect=5

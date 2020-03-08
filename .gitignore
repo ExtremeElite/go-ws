@@ -1,0 +1,7 @@
+.env
+.idea
+.git
+.vscode
+*.exe
+
+go_build_ws
