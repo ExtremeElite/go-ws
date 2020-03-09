@@ -56,7 +56,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	}
 	for {
 		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
-		log.Println("id:",total)
+		log.Println("mysql id is:",total)
 		if msgType, message, err= conn.ReadMessage();err!=nil{
 			log.Println("read:", err)
 			goto  Err;
