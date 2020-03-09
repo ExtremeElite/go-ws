@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"ws/conf"
 	"ws/db"
+	"ws/impl"
 )
 type Admin struct {
 	ID int `gorm:"primary_key"`
@@ -45,23 +46,26 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		admin ResultAdmin
 		total int
 		err error
-		conn *websocket.Conn
-		msgType int
+		wsConn *websocket.Conn
+		conn *impl.Connection
 		message []byte
 	)
 
-	if conn, err = upgrader.Upgrade(w, r, nil);err != nil{
+	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
 		log.Print("upgrade:", err)
 		goto Err
 	}
 	for {
 		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
 		log.Println("mysql id is:",total)
-		if msgType, message, err= conn.ReadMessage();err!=nil{
+		if conn,err= impl.BuildConn(wsConn);err!=nil {
+			goto Err
+		}
+		if message, err=conn.ReadMsg() ;err!=nil{
 			log.Println("read:", err)
 			goto  Err;
 		}
-		if err = conn.WriteMessage(msgType, message);err!=nil{
+		if err = conn.WriteMsg(message);err!=nil{
 			log.Println("write:", err)
 			goto Err
 		}

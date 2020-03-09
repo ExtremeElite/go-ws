@@ -4,4 +4,4 @@
 .vscode
 *.exe
 
-go_build_ws
+go_build_go_ws_
