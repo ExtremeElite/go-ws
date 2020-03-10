@@ -9,6 +9,8 @@ var(
 	pongNum uint8
 	data []byte
 	err error
+	dataString string
+	currentTime int64
 )
 func (conn *Connection) IsAuth()  {
 	
@@ -23,23 +25,17 @@ func (conn *Connection) Pong() {
 				conn.WriteMsg([]byte("Pong"))
 
 			}
-			time.Sleep(30*time.Second)
+			time.Sleep(60*time.Second)
 		}
 	}()
 }
 
-func (conn *Connection) Ping()  {
-	go func() {
-		for{
-			if data,err=conn.ReadMsg();err!=nil{
-				goto Err
-			}
-			dataString:=string(data)
-			if dataString=="ping" {
-
-			}
-		}
-		Err:
-			conn.Close()
-	}()
+func (conn *Connection) Ping(data []byte)  {
+	dataString=string(data)
+	if currentTime==0 || time.Now().Unix()-currentTime<60*2 {
+		currentTime=time.Now().Unix()
+		conn.WriteMsg([]byte("Pong"))
+		return
+	}
+	conn.Close()
 }

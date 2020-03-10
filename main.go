@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 	"ws/conf"
 	"ws/db"
 	"ws/impl"
@@ -51,6 +52,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		message []byte
 	)
 
+
 	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
 		log.Print("upgrade:", err)
 		return
@@ -58,17 +60,14 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	if conn,err= impl.BuildConn(wsConn);err!=nil {
 		return
 	}
-	conn.Pong()
 	for {
+		//超时设置
+		conn.WsConn.SetReadDeadline(time.Now().Add(60*time.Second))
 		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
 		log.Println("mysql id is:",total)
 
 		if message, err=conn.ReadMsg() ;err!=nil{
 			log.Println("read:", err)
-			break
-		}
-		if err = conn.WriteMsg(message);err!=nil{
-			log.Println("write:", err)
 			break
 		}
 		log.Printf("recv: %s", message)
