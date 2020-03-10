@@ -32,7 +32,7 @@ func (conn *Connection) Pong() {
 
 func (conn *Connection) Ping(data []byte)  {
 	dataString=string(data)
-	if currentTime==0 || time.Now().Unix()-currentTime<60*2 {
+	if dataString=="Ping" {
 		currentTime=time.Now().Unix()
 		conn.WriteMsg([]byte("Pong"))
 		return

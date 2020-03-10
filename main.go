@@ -60,16 +60,22 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	if conn,err= impl.BuildConn(wsConn);err!=nil {
 		return
 	}
+	go func() {
+		for{
+			conn.WriteMsg([]byte("123"))
+			time.Sleep(5*time.Second)
+		}
+	}()
 	for {
 		//超时设置
 		conn.WsConn.SetReadDeadline(time.Now().Add(60*time.Second))
 		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
 		log.Println("mysql id is:",total)
-
 		if message, err=conn.ReadMsg() ;err!=nil{
 			log.Println("read:", err)
 			break
 		}
+		conn.Ping(message)
 		log.Printf("recv: %s", message)
 	}
 	defer conn.Close()
