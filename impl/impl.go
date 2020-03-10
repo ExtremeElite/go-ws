@@ -5,7 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"sync"
 )
-
+var once sync.Once
 type Connection struct {
 	WsConn *websocket.Conn
 	ReadChan chan []byte
@@ -47,14 +47,10 @@ func (ws *Connection) WriteMsg(data []byte) (err error)  {
 }
 
 func (ws *Connection) Close(){
-	ws.WsConn.Close()
-
-	ws.mutex.Lock()
-	if !ws.isClose {
-		ws.isClose=true
+	once.Do(func() {
+		ws.WsConn.Close()
 		close(ws.closeChan)
-	}
-	ws.mutex.Unlock()
+	})
 }
 
 func (ws *Connection) readLoop(){
