@@ -5,21 +5,20 @@ import (
 	"github.com/gorilla/websocket"
 	"sync"
 )
-var once sync.Once
 type Connection struct {
 	WsConn *websocket.Conn
-	ReadChan chan []byte
-	WriteChan chan []byte
+	readChan chan []byte
+	writeChan chan []byte
 	closeChan chan byte
-	mutex sync.Mutex
+	one sync.Once
 	isClose bool
 }
 
 func BuildConn(wsConn *websocket.Conn)(conn *Connection,err error){
 	conn=&Connection{
 		WsConn:    wsConn,
-		ReadChan:  make(chan []byte,1000),
-		WriteChan: make(chan []byte,1000),
+		readChan:  make(chan []byte,1000),
+		writeChan: make(chan []byte,1000),
 		closeChan: make(chan byte,1),
 	}
 	go conn.readLoop()
@@ -27,68 +26,71 @@ func BuildConn(wsConn *websocket.Conn)(conn *Connection,err error){
 	return
 }
 
-func (ws *Connection) ReadMsg() (data []byte,err error){
+func (conn *Connection) ReadMsg() (data []byte,err error){
 	select {
-	case data=<-ws.ReadChan:
-	case <-ws.closeChan:
-		err=errors.New("connected is closed")
+	case data=<-conn.readChan:
+	case <-conn.closeChan:
+		err=errors.New("read connected is closed")
 	}
 	return
 }
 
-func (ws *Connection) WriteMsg(data []byte) (err error)  {
+func (conn *Connection) WriteMsg(data []byte) (err error)  {
 	select {
-	case ws.WriteChan<-data:
-	case <-ws.closeChan:
-		err=errors.New("connected is closed")
+	case <-conn.closeChan:
+		err=errors.New("write connected is closed")
+	case conn.writeChan<-data:
 	}
-
 	return
 }
 
-func (ws *Connection) Close(){
-	once.Do(func() {
-		ws.WsConn.Close()
-		close(ws.closeChan)
+func (conn *Connection) Close(){
+	conn.one.Do(func() {
+		conn.WsConn.Close()
+		close(conn.closeChan)
 	})
 }
 
-func (ws *Connection) readLoop(){
+func (conn *Connection) readLoop(){
 	var (
 		data []byte
 		err error
 	)
 	for  {
-		if _,data,err=ws.WsConn.ReadMessage();err!=nil {
+		if _,data,err=conn.WsConn.ReadMessage();err!=nil {
 			goto Err
 		}
 		select {
-			case ws.ReadChan<-data:
-			case <-ws.closeChan:
+			case conn.readChan<-data:
+			case <-conn.closeChan:
 				goto Err
 			
 		}
 	}
 	Err:
-		ws.Close()
+		conn.Close()
 }
 
-func (ws *Connection) writeLoop()  {
+func (conn *Connection) writeLoop()  {
 	var(
 		data []byte
 		err error
+		isClose bool
 	)
 	for{
 		select {
-		case data=<-ws.WriteChan:
-		case <-ws.closeChan:
+		case data,isClose=<-conn.writeChan:
+			if !isClose {
+				goto Err
+			}
+		case <-conn.closeChan:
 			goto Err
 		}
 
-		if err=ws.WsConn.WriteMessage(websocket.TextMessage,data);err!=nil {
+		if err=conn.WsConn.WriteMessage(websocket.TextMessage,data);err!=nil {
 			goto Err
 		}
 	}
 	Err:
-		ws.Close()
+		conn.Close()
 }

@@ -53,24 +53,25 @@ func echo(w http.ResponseWriter, r *http.Request) {
 
 	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
 		log.Print("upgrade:", err)
-		goto Err
+		return
 	}
+	if conn,err= impl.BuildConn(wsConn);err!=nil {
+		return
+	}
+	conn.Pong()
 	for {
 		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
 		log.Println("mysql id is:",total)
-		if conn,err= impl.BuildConn(wsConn);err!=nil {
-			goto Err
-		}
+
 		if message, err=conn.ReadMsg() ;err!=nil{
 			log.Println("read:", err)
-			goto  Err;
+			break
 		}
 		if err = conn.WriteMsg(message);err!=nil{
 			log.Println("write:", err)
-			goto Err
+			break
 		}
 		log.Printf("recv: %s", message)
 	}
-	Err:
-		conn.Close()
+	defer conn.Close()
 }
