@@ -60,12 +60,6 @@ func echo(w http.ResponseWriter, r *http.Request) {
 	if conn,err= impl.BuildConn(wsConn);err!=nil {
 		return
 	}
-	go func() {
-		for{
-			conn.WriteMsg([]byte("123"))
-			time.Sleep(5*time.Second)
-		}
-	}()
 	for {
 		//超时设置
 		conn.WsConn.SetReadDeadline(time.Now().Add(60*time.Second))
@@ -75,7 +69,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			log.Println("read:", err)
 			break
 		}
-		conn.Ping(message)
+		//conn.Ping(message)
 		log.Printf("recv: %s", message)
 	}
 	defer conn.Close()
