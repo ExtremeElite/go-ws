@@ -1,7 +1,9 @@
 package impl
 
 import (
+	"encoding/json"
 	"errors"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -29,8 +31,26 @@ func WsAuth(r *http.Request) (err error)  {
 	return
 }
 //http登录
-func HttpAuth(r *http.Request)(err error){
-
+func HttpAuth(r *http.Request)(data string,err error){
+	type Login struct {
+		User string
+		Pwd string
+	}
+	var(
+		login Login
+		body []byte
+	)
+	if r.Method=="GET" {
+		data=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
+	}else {
+		body, err= ioutil.ReadAll(r.Body)
+		if err!=nil {
+			return
+		}
+		if err=json.Unmarshal(body,&login);err!=nil {
+			return
+		}
+	}
 	return
 }
 

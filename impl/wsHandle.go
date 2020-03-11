@@ -38,12 +38,18 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		admin ResultAdmin
 		total int
 		err error
+		dataJson string
 		wsConn *websocket.Conn
 		conn *Connection
 		message []byte
 	)
 	if r.Header.Get("Connection")!="Upgrade" {
-		w.Write([]byte("it is http"))
+		dataJson,err=HttpAuth(r)
+		if err!=nil {
+			w.Write([]byte(err.Error()))
+			return
+		}
+		w.Write([]byte(dataJson))
 		return
 	}
 	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
