@@ -3,5 +3,5 @@
 .git
 .vscode
 *.exe
-
+ws
 go_build_go_ws_
