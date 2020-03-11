@@ -69,7 +69,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			log.Println("read:", err)
 			break
 		}
-		//conn.Ping(message)
+		conn.Pong(message)
 		log.Printf("recv: %s", message)
 	}
 	defer conn.Close()
