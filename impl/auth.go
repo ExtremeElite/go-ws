@@ -7,6 +7,9 @@ import (
 	"net/http"
 )
 
+const (
+	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
+)
 var(
 	pongNum uint8
 	data []byte
@@ -41,7 +44,7 @@ func HttpAuth(r *http.Request)(data string,err error){
 		body []byte
 	)
 	if r.Method=="GET" {
-		data=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
+		data=HELLO
 	}else {
 		body, err= ioutil.ReadAll(r.Body)
 		if err!=nil {
