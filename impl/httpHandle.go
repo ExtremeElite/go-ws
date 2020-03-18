@@ -4,8 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 )
-var HttpChan=make(chan []byte,1)
-
+var HttpChan chan []byte
 func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 	var (
 		body []byte

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -9,6 +10,7 @@ import (
 )
 
 func main(){
+	impl.HttpChan=make(chan []byte,1)
 	var wsPort= conf.GetConfig().WsPort
 	var httpPort=conf.GetConfig().HttpPort
 	go func() {
@@ -16,6 +18,14 @@ func main(){
 		httpPush.HandleFunc("/",impl.HttpHandle)
 		if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
 			log.Fatal(err)
+		}
+	}()
+	go func() {
+		for{
+			select {
+			case data:=<-impl.HttpChan:
+				fmt.Println(string(data))
+			}
 		}
 	}()
 	wsPush:=http.NewServeMux()
