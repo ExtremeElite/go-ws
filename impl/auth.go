@@ -10,12 +10,14 @@ import (
 const (
 	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
 )
+type Login struct {
+	User string
+	Pwd string
+}
 var(
-	pongNum uint8
-	data []byte
-	err error
+	body []byte
 	dataString string
-	currentTime int64
+	login Login
 )
 //ws登录
 func WsAuth(r *http.Request) (err error)  {
@@ -35,19 +37,10 @@ func WsAuth(r *http.Request) (err error)  {
 }
 //http登录
 func HttpAuth(r *http.Request)(data string,err error){
-	type Login struct {
-		User string
-		Pwd string
-	}
-	var(
-		login Login
-		body []byte
-	)
 	if r.Method=="GET" {
 		data=HELLO
 	}else {
-		body, err= ioutil.ReadAll(r.Body)
-		if err!=nil {
+		if body,err=ioutil.ReadAll(r.Body);err!=nil{
 			return
 		}
 		if err=json.Unmarshal(body,&login);err!=nil {
