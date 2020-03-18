@@ -11,7 +11,8 @@ func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 		err error
 	)
 	if body,err=ioutil.ReadAll(r.Body);err!=nil{
-		HttpChan<-body
+		return
 	}
+	HttpChan<-body
 	w.Write(body)
 }
