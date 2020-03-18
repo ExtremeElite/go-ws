@@ -10,8 +10,17 @@ import (
 
 func main(){
 	var wsPort= conf.GetConfig().WsPort
-	http.HandleFunc("/", impl.WsHandle)
-	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), nil);err!=nil{
+	var httpPort=conf.GetConfig().HttpPort
+	go func() {
+		httpPush:=http.NewServeMux()
+		httpPush.HandleFunc("/",impl.HttpHandle)
+		if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
+			log.Fatal(err)
+		}
+	}()
+	wsPush:=http.NewServeMux()
+	wsPush.HandleFunc("/", impl.WsHandle)
+	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal(err)
 	}
 }

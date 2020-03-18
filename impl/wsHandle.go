@@ -1,33 +1,16 @@
 package impl
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"time"
-	"ws/db"
 )
 
-type Admin struct {
-	ID int `gorm:"primary_key"`
-	UserName string `gorm:"column:user_name"`
-	NickName string `gorm:"column:nick_name"`
-	Status int8 `gorm:"column:status"`
-	Password string `gorm:"column:password"`
-	Ip string `gorm:"column:ip"`
-	CreateTime int64 `gorm:"column:create_time"`
-	UpdateTime int64 `gorm:"column:update_time"`
-
-}
-type ResultAdmin struct {
-	ID uint `json:"id"`
-	UserName string `json:"user_name"`
-	NickName string `json:"nick_name"`
-	Status int8 `json:"status"`
-	HeaderImg string `json:"header_img"`
-	UpdateTime int64 `json:"update_time"`
-	Ip string `json:"ip"`
-}
+const (
+	TIME_OUT=60*time.Second
+)
 var upgrader=websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -35,14 +18,13 @@ var upgrader=websocket.Upgrader{
 }
 func WsHandle(w http.ResponseWriter, r *http.Request) {
 	var (
-		admin ResultAdmin
-		total int
 		err error
 		dataJson string
 		wsConn *websocket.Conn
 		conn *Connection
 		message []byte
 	)
+	//普通 HTTP请求
 	if r.Header.Get("Connection")!="Upgrade" {
 		dataJson,err=HttpAuth(r)
 		if err!=nil {
@@ -67,16 +49,23 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
 		goto Err
 	}
+	go func() {
+		for{
+			select {
+			case data:=<-HttpChan:
+				conn.WriteMsg(data)
+				fmt.Println("http推送",string(data))
+			}
+		}
+	}()
 	for {
 		//超时设置
-		conn.WsConn.SetReadDeadline(time.Now().Add(60*time.Second))
-		db.DB.First(&Admin{},1).Scan(&admin).Count(&total)
-		log.Println("mysql id is:",total)
+		conn.WsConn.SetReadDeadline(time.Now().Add(TIME_OUT))
 		if message, err=conn.ReadMsg() ;err!=nil{
 			log.Println("read:", err)
 			goto Err
 		}
-		conn.Pong(message)
+		conn.WriteMsg(message)
 		log.Printf("recv: %s", message)
 	}
 Err:

@@ -59,6 +59,6 @@ func HttpAuth(r *http.Request)(data string,err error){
 
 func validateToken(token string) (ok bool)  {
 
-	return
+	return true
 }
 
