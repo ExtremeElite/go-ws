@@ -11,8 +11,14 @@ func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 		err error
 	)
 	if body,err=ioutil.ReadAll(r.Body);err!=nil{
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	HttpChan<-body
-	w.Write(body)
+	select {
+	case HttpChan<-body:
+	default:
+		w.WriteHeader(http.StatusTooManyRequests)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
 }
