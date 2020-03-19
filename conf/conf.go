@@ -13,13 +13,16 @@ type Mysql struct {
 	Db string
 	MaxConnect int `toml:"maxConnect"`
 }
-
-type BaseServer struct {
+type Common struct {
 	WsPort uint16
 	HttpPort uint16
 	Env string
 	SignKey string
 	DefaultDB string
+}
+
+type BaseServer struct {
+	Common Common
 	MysqlDB Mysql
 }
 func GetConfig() BaseServer  {

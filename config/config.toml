@@ -1,3 +1,4 @@
+[common]
 WsPort = 20290
 HttpPort = 8000
 env = "dev"
