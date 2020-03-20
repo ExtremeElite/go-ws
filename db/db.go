@@ -8,7 +8,7 @@ import (
 var DB *gorm.DB
 
 func init() {
-	defaultDB:= conf.GetConfig().Common.DefaultDB
+	defaultDB:= conf.Config().Common.DefaultDB
 	switch defaultDB {
 	default:
 		DB=mysql()

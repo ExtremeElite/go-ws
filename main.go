@@ -10,8 +10,8 @@ import (
 
 func main(){
 	impl.HttpChan=make(chan []byte,1)
-	var wsPort= conf.GetConfig().Common.WsPort
-	var httpPort=conf.GetConfig().Common.HttpPort
+	var wsPort= conf.Config().Common.WsPort
+	var httpPort=conf.Config().Common.HttpPort
 	go func() {
 		httpPush:=http.NewServeMux()
 		httpPush.HandleFunc("/",impl.HttpHandle)

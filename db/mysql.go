@@ -11,7 +11,7 @@ import (
 
 func mysql() *gorm.DB {
 	var mysqlDB *gorm.DB
-	var bs= conf.GetConfig()
+	var bs= conf.Config()
 	var localBase=bs.MysqlDB
 	var err error
 	linked:=fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`,localBase.User,localBase.Password,localBase.ServerHost,localBase.Port,localBase.Db)

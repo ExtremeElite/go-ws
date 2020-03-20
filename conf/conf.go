@@ -25,7 +25,7 @@ type BaseServer struct {
 	Common Common
 	MysqlDB Mysql
 }
-func GetConfig() BaseServer  {
+func Config() BaseServer  {
 	var bs BaseServer
 	var configPath string
 	configPath=util.PathToEveryOne(`config/config.toml`)
