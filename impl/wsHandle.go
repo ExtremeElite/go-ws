@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	TIME_OUT=60*time.Second
+	TimeOut =60*time.Second
 )
 var upgrader=websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -90,7 +90,7 @@ func httpOtherRequest(conn *Connection)  {
 //数据验证通过之后的数据处理部分
 func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte
-	conn.WsConn.SetReadDeadline(time.Now().Add(TIME_OUT))
+	conn.WsConn.SetReadDeadline(time.Now().Add(TimeOut))
 	if message, err=conn.ReadMsg() ;err!=nil{
 		log.Println("read:", err)
 	}
