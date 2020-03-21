@@ -1,13 +1,22 @@
 package impl
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
+type Node struct {
+	ws *Connection
+	name string
+	id int
+}
+var NodeList map[string]Node
+var mut sync.Mutex
 const (
 	TimeOut =60*time.Second
 )
@@ -57,6 +66,7 @@ func httpRequest(w http.ResponseWriter,r *http.Request) (err error) {
 func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,err error)  {
 	var(
 		wsConn *websocket.Conn
+		name string
 	)
 	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
 		log.Print("upgrade:", err)
@@ -64,18 +74,29 @@ func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,err error
 	}
 	if conn,err= BuildConn(wsConn);err!=nil {
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		goto Err
+		return 
 	}
 	//登录判断
-	if err=WsAuth(r);err!=nil {
+	if name,err=WsAuth(r);err!=nil {
 		log.Println(err.Error())
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		goto Err
+		return
 	}
-Err:
-	conn.Close()
-
-return
+	mut.Lock()
+	//关闭原来的连接
+	if node,ok:=NodeList[name];ok{
+		node.ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经在其他地方重新连接`))
+		err=errors.New(`你的连接已经在其他地方重新连接`)
+		node.ws.Close()
+		delete(NodeList,name)
+	}
+	NodeList[name]=Node{
+		ws:   conn,
+		name: name,
+		id: len(NodeList)+1,
+	}
+	mut.Unlock()
+	return
 }
 //来自其他http服务器的数据监听
 func httpOtherRequest(conn *Connection)  {

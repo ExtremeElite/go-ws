@@ -20,7 +20,7 @@ var(
 	login Login
 )
 //ws登录
-func WsAuth(r *http.Request) (err error)  {
+func WsAuth(r *http.Request) (name string,err error)  {
 	query:=r.URL.Query()
 	if len(query)==0 {
 		err=errors.New(`{"M":"checkinok","ID":"xx1","NAME":"xx2","T":"xx3"}`)
