@@ -28,6 +28,8 @@ func WsAuth(r *http.Request) (name string,err error)  {
 	if token,ok:=query["token"];ok{
 		if !validateToken(token[0]) {
 			err=errors.New("token过期")
+		}else {
+			name=token[0]
 		}
 		return
 	}else {

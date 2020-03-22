@@ -9,34 +9,30 @@ import (
 type Node struct {
 	Ws *Connection
 	Name string
+	IsOnline bool
 }
 var NodeList map[string]Node
 var mut sync.Mutex
-
+var onec sync.Once
 func AddNode(node *Node) (err error){
 	mut.Lock()
-	if ok:=isExist(node);ok{
-		DelNode(node)
+	if ok:=isExist(node.Name);ok{
+		DelNode(node.Name)
 	}
 	NodeList[node.Name]=*node
 	mut.Unlock()
 	return
 }
-func DelNode(node *Node)(err error){
-	mut.Lock()
-	if ok:=isExist(node);ok{
-		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
+func DelNode(name string)(err error){
+	if ok:=isExist(name);ok{
+		NodeList[name].Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
 		err=errors.New(`你的连接已经断开了`)
-		node.Ws.Close()
-		delete(NodeList,node.Name)
+		delete(NodeList,name)
 	}
-	mut.Unlock()
 	return
 }
-func isExist(node *Node) (ok bool){
-	mut.Lock()
-	if _,ok=NodeList[node.Name];ok{
+func isExist(name string) (ok bool){
+	if _,ok=NodeList[name];ok{
 	}
-	mut.Unlock()
 	return
 }

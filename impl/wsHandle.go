@@ -1,6 +1,7 @@
 package impl
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -25,10 +26,11 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	if dataJson,err=httpRequest(w,r);(err!=nil ||len(dataJson)!=0) {
 		return
 	}
-	if conn,name,err=wsRequest(w,r);err!=nil {
+	if conn,name,err=wsRequest(w,r);err!=nil||len(name)==0 {
 		return
 	}
-	AddNode(&Node{conn,name})
+	AddNode(&Node{conn,name,true})
+	fmt.Println(NodeList)
 	for {
 		//超时设置
 		if err=wsRequestDone(conn);err!=nil {
@@ -36,7 +38,6 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 Err:
-	DelNode(&Node{conn,name})
 	conn.Close()
 }
 //ws地址的普通http请求 包括数据验证
