@@ -10,12 +10,15 @@ import (
 )
 
 func main(){
+	run()
+}
+
+func run(){
 	impl.HttpChan=make(chan []byte,1)
 	impl.NodeList=make(map[string]impl.Node)
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
-
 }
 func httpPush()  {
 	var httpPort=conf.Config().Common.HttpPort
@@ -33,7 +36,6 @@ func wsPush() {
 		log.Fatal(err)
 	}
 }
-
 func getDataFromHttp()  {
 	for{
 		select {
