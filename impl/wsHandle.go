@@ -19,15 +19,16 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	var (
 		err error
 		conn *Connection
-		dataJson string
+		dataJson,name string
 	)
 	//普通 HTTP请求
 	if dataJson,err=httpRequest(w,r);(err!=nil ||len(dataJson)!=0) {
 		return
 	}
-	if conn,err=wsRequest(w,r);err!=nil {
+	if conn,name,err=wsRequest(w,r);err!=nil {
 		return
 	}
+	AddNode(&Node{conn,name})
 	for {
 		//超时设置
 		if err=wsRequestDone(conn);err!=nil {
@@ -35,6 +36,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 Err:
+	DelNode(&Node{conn,name})
 	conn.Close()
 }
 //ws地址的普通http请求 包括数据验证
@@ -50,10 +52,9 @@ func httpRequest(w http.ResponseWriter,r *http.Request) (dataJson string,err err
 	return
 }
 //ws地址的ws请求 包括数据验证
-func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,err error)  {
+func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,name string,err error)  {
 	var(
 		wsConn *websocket.Conn
-		name string
 	)
 	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
 		log.Print("upgrade:", err)
@@ -69,7 +70,6 @@ func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,err error
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
 		return
 	}
-	AddNode(&Node{conn,name})
 	return
 }
 //数据验证通过之后的数据处理部分

@@ -25,8 +25,8 @@ func AddNode(node *Node) (err error){
 func DelNode(node *Node)(err error){
 	mut.Lock()
 	if ok:=isExist(node);ok{
-		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经在其他地方重新连接`))
-		err=errors.New(`你的连接已经在其他地方重新连接`)
+		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
+		err=errors.New(`你的连接已经断开了`)
 		node.Ws.Close()
 		delete(NodeList,node.Name)
 	}
