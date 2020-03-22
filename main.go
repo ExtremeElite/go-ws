@@ -33,7 +33,7 @@ func wsPush() {
 	wsPush:=http.NewServeMux()
 	wsPush.HandleFunc("/", impl.WsHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
-		log.Fatal(err)
+		log.Fatal("main:",err)
 	}
 }
 func getDataFromHttp()  {

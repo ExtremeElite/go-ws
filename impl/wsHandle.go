@@ -63,13 +63,14 @@ func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,name stri
 	}
 	if conn,err= BuildConn(wsConn);err!=nil {
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		return 
+		conn.Close()
+		return
 	}
 	//登录判断
 	if name,err=WsAuth(r);err!=nil {
 		log.Println(err.Error())
 		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		return
+		conn.Close()
 	}
 	return
 }
@@ -78,13 +79,13 @@ func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte
 	conn.WsConn.SetReadDeadline(time.Now().Add(TimeOut))
 	if message, err=conn.ReadMsg() ;err!=nil{
-		log.Println("写:", err.Error())
+		log.Println("读:", err.Error())
 		return 
 	}
 	if err=conn.WriteMsg(message);err!=nil {
-		log.Println("读:", err.Error())
+		log.Println("写:", err.Error())
 		return
 	}
-	log.Printf("recv: %s", message)
+	log.Printf("服务器收到的: %s\n", message)
 	return
 }

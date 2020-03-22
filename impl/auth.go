@@ -23,17 +23,17 @@ var(
 func WsAuth(r *http.Request) (name string,err error)  {
 	query:=r.URL.Query()
 	if len(query)==0 {
-		err=errors.New(`{"M":"checkinok","ID":"xx1","NAME":"xx2","T":"xx3"}`)
+		err=errors.New(`{"C":"Login","M":"验证失败"}`)
 	}
 	if token,ok:=query["token"];ok{
 		if !validateToken(token[0]) {
-			err=errors.New("token过期")
+			err=errors.New(`{"C":"Login","M":"token失效"}`)
 		}else {
 			name=token[0]
 		}
 		return
 	}else {
-		err=errors.New(`{"M":""}`)
+		err=errors.New(`{"C":"Login","M":"登陆失败"}`)
 	}
 	return
 }
