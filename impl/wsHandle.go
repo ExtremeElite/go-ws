@@ -78,9 +78,13 @@ func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte
 	conn.WsConn.SetReadDeadline(time.Now().Add(TimeOut))
 	if message, err=conn.ReadMsg() ;err!=nil{
-		log.Println("read:", err)
+		log.Println("写:", err.Error())
+		return 
 	}
-	conn.WriteMsg(message)
+	if err=conn.WriteMsg(message);err!=nil {
+		log.Println("读:", err.Error())
+		return
+	}
 	log.Printf("recv: %s", message)
 	return
 }

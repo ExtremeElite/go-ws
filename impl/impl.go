@@ -30,7 +30,7 @@ func (conn *Connection) ReadMsg() (data []byte,err error){
 	select {
 	case data=<-conn.readChan:
 	case <-conn.closeChan:
-		err=errors.New("read connected is closed")
+		err=errors.New("读连接关闭")
 	}
 	return
 }
@@ -38,7 +38,7 @@ func (conn *Connection) ReadMsg() (data []byte,err error){
 func (conn *Connection) WriteMsg(data []byte) (err error)  {
 	select {
 	case <-conn.closeChan:
-		err=errors.New("write connected is closed")
+		err=errors.New("写连接关闭")
 	case conn.writeChan<-data:
 	}
 	return
