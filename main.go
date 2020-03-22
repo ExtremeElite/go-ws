@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -10,18 +11,39 @@ import (
 
 func main(){
 	impl.HttpChan=make(chan []byte,1)
-	var wsPort= conf.Config().Common.WsPort
+	impl.NodeList=make(map[string]impl.Node)
+	go httpPush()
+	go getDataFromHttp()
+	wsPush()
+
+}
+func httpPush()  {
 	var httpPort=conf.Config().Common.HttpPort
-	go func() {
-		httpPush:=http.NewServeMux()
-		httpPush.HandleFunc("/",impl.HttpHandle)
-		if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
-			log.Fatal(err)
-		}
-	}()
+	httpPush:=http.NewServeMux()
+	httpPush.HandleFunc("/",impl.HttpHandle)
+	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
+		log.Fatal(err)
+	}
+}
+func wsPush() {
+	var wsPort= conf.Config().Common.WsPort
 	wsPush:=http.NewServeMux()
 	wsPush.HandleFunc("/", impl.WsHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal(err)
 	}
 }
+
+func getDataFromHttp()  {
+	for{
+		select {
+		case data:=<-impl.HttpChan:
+			for name,_:=range impl.NodeList{
+				impl.NodeList[name].Ws.WriteMsg(data)
+			}
+			fmt.Println(string(data))
+		}
+	}
+}
+
+
