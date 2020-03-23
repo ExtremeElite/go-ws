@@ -17,8 +17,8 @@ type Connection struct {
 func BuildConn(wsConn *websocket.Conn)(conn *Connection,err error){
 	conn=&Connection{
 		WsConn:    wsConn,
-		readChan:  make(chan []byte,1000),
-		writeChan: make(chan []byte,1000),
+		readChan:  make(chan []byte,100),
+		writeChan: make(chan []byte,100),
 		closeChan: make(chan byte,1),
 	}
 	go conn.readLoop()
