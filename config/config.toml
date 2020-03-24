@@ -4,6 +4,7 @@ HttpPort = 8000
 env = "dev"
 signKey="QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb"
 defaultDB="mysql"
+wsTimeOut=60
 [mysqlDB]
 serverHost = "127.0.0.1"
 port = 3306

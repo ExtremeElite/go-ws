@@ -19,6 +19,7 @@ type Common struct {
 	Env string
 	SignKey string
 	DefaultDB string
+	WsTimeOut int
 }
 
 type BaseServer struct {
