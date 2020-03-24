@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -28,7 +27,6 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	AddNode(&Node{conn,name})
-	fmt.Println(GetAllNodes())
 	for {
 		//超时设置
 		if err=wsRequestDone(conn);err!=nil {

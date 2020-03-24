@@ -1,8 +1,10 @@
 package impl
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 var HttpChan chan []byte
 func HttpHandle(w http.ResponseWriter, r *http.Request)  {
@@ -20,5 +22,6 @@ func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 		w.WriteHeader(http.StatusTooManyRequests)
 		return
 	}
+	fmt.Println(time.Now().UnixNano())
 	w.WriteHeader(http.StatusOK)
 }
