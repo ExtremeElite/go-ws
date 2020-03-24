@@ -47,6 +47,7 @@ func (conn *Connection) WriteMsg(data []byte) (err error)  {
 func (conn *Connection) Close(){
 	conn.one.Do(func() {
 		conn.WsConn.Close()
+		conn.isClose=true
 		close(conn.closeChan)
 	})
 }

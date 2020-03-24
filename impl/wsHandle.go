@@ -28,15 +28,18 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	if conn,name,err=wsRequest(w,r);err!=nil||len(name)==0 {
 		return
 	}
-	AddNode(&Node{conn,name,true})
+	AddNode(&Node{conn,name})
 	for {
 		//超时设置
 		if err=wsRequestDone(conn);err!=nil {
 			goto Err
 		}
 	}
-Err:
-	conn.Close()
+	Err:
+		if !conn.isClose {
+			DelNode(name)
+			conn.Close()
+		}
 }
 //ws地址的普通http请求 包括数据验证
 func httpRequest(w http.ResponseWriter,r *http.Request) (dataJson string,err error) {

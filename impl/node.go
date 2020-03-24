@@ -9,7 +9,6 @@ import (
 type Node struct {
 	Ws *Connection
 	Name string
-	IsOnline bool
 }
 var NodeList map[string]Node
 var mut sync.Mutex
@@ -27,12 +26,12 @@ func DelNode(name string)(err error){
 	if ok:=isExist(name);ok{
 		NodeList[name].Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
 		err=errors.New(`你的连接已经断开了`)
+		NodeList[name].Ws.Close()
 		delete(NodeList,name)
 	}
 	return
 }
 func isExist(name string) (ok bool){
-	if _,ok=NodeList[name];ok{
-	}
+	_,ok=NodeList[name]
 	return
 }
