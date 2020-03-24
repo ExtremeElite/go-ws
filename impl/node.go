@@ -10,28 +10,28 @@ type Node struct {
 	Ws *Connection
 	Name string
 }
-var NodeList map[string]Node
-var mut sync.Mutex
-var onec sync.Once
+var NodeList sync.Map
 func AddNode(node *Node) (err error){
-	mut.Lock()
-	if ok:=isExist(node.Name);ok{
+	if _,ok:=GetNode(node.Name);ok{
 		DelNode(node.Name)
 	}
-	NodeList[node.Name]=*node
-	mut.Unlock()
+	NodeList.Store(node.Name,node)
 	return
+}
+func GetNode(name string)(*Node,bool){
+	var node *Node
+	if v,ok:=NodeList.Load(name);ok {
+		node=v.(*Node)
+		return node,true
+	}
+	return node,false
 }
 func DelNode(name string)(err error){
-	if ok:=isExist(name);ok{
-		NodeList[name].Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
+	if node,ok:=GetNode(name);ok{
+		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
 		err=errors.New(`你的连接已经断开了`)
-		NodeList[name].Ws.Close()
-		delete(NodeList,name)
+		node.Ws.Close()
+		NodeList.Delete(name)
 	}
-	return
-}
-func isExist(name string) (ok bool){
-	_,ok=NodeList[name]
 	return
 }

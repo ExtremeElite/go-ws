@@ -15,7 +15,6 @@ func main(){
 
 func run(){
 	impl.HttpChan=make(chan []byte,1)
-	impl.NodeList=make(map[string]impl.Node)
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
@@ -40,9 +39,10 @@ func getDataFromHttp()  {
 	for{
 		select {
 		case data:=<-impl.HttpChan:
-			for name,_:=range impl.NodeList{
-				impl.NodeList[name].Ws.WriteMsg(data)
-			}
+			impl.NodeList.Range(func(name, node interface{}) bool {
+				node.(*impl.Node).Ws.WriteMsg(data)
+				return true
+			})
 			fmt.Println(string(data))
 		}
 	}
