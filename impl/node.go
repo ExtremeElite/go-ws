@@ -35,3 +35,14 @@ func DelNode(name string)(err error){
 	}
 	return
 }
+func GetAllNodes()([]Node,int)  {
+	var count int
+	var Nodes []Node
+	NodeList.Range(func(name,v interface{}) bool {
+		count++
+		node:=v.(*Node)
+		Nodes= append(Nodes,*node)
+		return true
+	})
+	return Nodes,count
+}
