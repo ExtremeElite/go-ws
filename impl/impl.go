@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gorilla/websocket"
 	"sync"
+	"ws/conf"
 )
 type Connection struct {
 	WsConn *websocket.Conn
@@ -15,10 +16,13 @@ type Connection struct {
 }
 
 func BuildConn(wsConn *websocket.Conn)(conn *Connection,err error){
+	var common=conf.Config().Common
+	var writeChan=common.WriteChan
+	var readChan=common.ReadChan
 	conn=&Connection{
 		WsConn:    wsConn,
-		readChan:  make(chan []byte,100),
-		writeChan: make(chan []byte,100),
+		readChan:  make(chan []byte,writeChan),
+		writeChan: make(chan []byte,readChan),
 		closeChan: make(chan byte,1),
 	}
 	go conn.readLoop()
