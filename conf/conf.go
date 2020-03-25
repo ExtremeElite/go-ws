@@ -5,6 +5,7 @@ import (
 	"log"
 	"ws/util"
 )
+
 type Mysql struct {
 	ServerHost string
 	Port uint16
@@ -36,3 +37,4 @@ func Config() BaseServer  {
 	}
 	return bs
 }
+

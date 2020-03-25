@@ -8,7 +8,6 @@ import (
 	"ws/conf"
 	"ws/impl"
 )
-
 func main(){
 	run()
 }
@@ -19,8 +18,8 @@ func run(){
 	go getDataFromHttp()
 	wsPush()
 }
-func httpPush()  {
-	var httpPort=conf.Config().Common.HttpPort
+func httpPush() {
+	var httpPort=conf.CommonSet.HttpPort
 	httpPush:=http.NewServeMux()
 	httpPush.HandleFunc("/",impl.HttpHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
@@ -28,8 +27,9 @@ func httpPush()  {
 	}
 }
 func wsPush() {
-	var wsPort= conf.Config().Common.WsPort
+	var wsPort= conf.CommonSet.WsPort
 	wsPush:=http.NewServeMux()
+
 	wsPush.HandleFunc("/", impl.WsHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal("main:",err)
