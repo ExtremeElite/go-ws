@@ -29,7 +29,6 @@ func httpPush() {
 func wsPush() {
 	var wsPort= conf.CommonSet.WsPort
 	wsPush:=http.NewServeMux()
-
 	wsPush.HandleFunc("/", impl.WsHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal("main:",err)
