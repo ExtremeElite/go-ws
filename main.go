@@ -11,7 +11,6 @@ import (
 func main(){
 	run()
 }
-
 func run(){
 	impl.HttpChan=make(chan []byte,1)
 	go httpPush()
