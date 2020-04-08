@@ -38,7 +38,7 @@ func getDataFromHttp()  {
 	for{
 		select {
 		case data:=<-core.HttpChan:
-			core.NodeList.Range(func(name, node interface{}) bool {
+			core.Nodes.Range(func(name, node interface{}) bool {
 				go func() {
 					node.(*core.Node).Ws.WriteMsg(data)
 				}()

@@ -10,17 +10,17 @@ type Node struct {
 	Ws *Connection
 	Name string
 }
-var NodeList sync.Map
+var Nodes sync.Map
 func AddNode(node *Node) (err error){
 	if _,ok:=GetNode(node.Name);ok{
 		DelNode(node.Name)
 	}
-	NodeList.Store(node.Name,node)
+	Nodes.Store(node.Name,node)
 	return
 }
 func GetNode(name string)(*Node,bool){
 	var node *Node
-	if v,ok:=NodeList.Load(name);ok {
+	if v,ok:=Nodes.Load(name);ok {
 		node=v.(*Node)
 		return node,true
 	}
@@ -31,18 +31,18 @@ func DelNode(name string)(err error){
 		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
 		err=errors.New(`你的连接已经断开了`)
 		node.Ws.Close()
-		NodeList.Delete(name)
+		Nodes.Delete(name)
 	}
 	return
 }
-func GetAllNodes()([]Node,int)  {
+func GetAllNode()([]Node,int)  {
 	var count int
-	var Nodes []Node
-	NodeList.Range(func(name,v interface{}) bool {
+	var _Node []Node
+	Nodes.Range(func(name,v interface{}) bool {
 		count++
 		node:=v.(*Node)
-		Nodes= append(Nodes,*node)
+		_Node= append(_Node,*node)
 		return true
 	})
-	return Nodes,count
+	return _Node,count
 }
