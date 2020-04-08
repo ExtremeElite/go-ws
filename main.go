@@ -6,13 +6,16 @@ import (
 	"net/http"
 	"strconv"
 	"ws/conf"
-	"ws/impl"
+	"ws/core"
 )
-func main(){
+
+func main() {
 	run()
 }
+
+
 func run(){
-	impl.HttpChan=make(chan []byte,1)
+	core.HttpChan=make(chan []byte,1)
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
@@ -20,7 +23,7 @@ func run(){
 func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
 	httpPush:=http.NewServeMux()
-	httpPush.HandleFunc("/",impl.HttpHandle)
+	httpPush.HandleFunc("/", core.HttpHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
 		log.Fatal(err)
 	}
@@ -28,7 +31,7 @@ func httpPush() {
 func wsPush() {
 	var wsPort= conf.CommonSet.WsPort
 	wsPush:=http.NewServeMux()
-	wsPush.HandleFunc("/", impl.WsHandle)
+	wsPush.HandleFunc("/", core.WsHandle)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal("main:",err)
 	}
@@ -36,12 +39,13 @@ func wsPush() {
 func getDataFromHttp()  {
 	for{
 		select {
-		case data:=<-impl.HttpChan:
-			impl.NodeList.Range(func(name, node interface{}) bool {
-				node.(*impl.Node).Ws.WriteMsg(data)
+		case data:=<-core.HttpChan:
+			core.NodeList.Range(func(name, node interface{}) bool {
+				node.(*core.Node).Ws.WriteMsg(data)
 				return true
 			})
 			fmt.Println(string(data))
 		}
 	}
 }
+

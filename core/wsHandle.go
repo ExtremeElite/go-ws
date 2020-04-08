@@ -1,6 +1,7 @@
-package impl
+package core
 
 import (
+	"fmt"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -19,8 +20,9 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		conn *Connection
 		dataJson,name string
 	)
+	fmt.Println(r.RemoteAddr)
 	//普通 HTTP请求
-	if dataJson,err=httpRequest(w,r);(err!=nil ||len(dataJson)!=0) {
+	if dataJson,err=httpRequest(w,r);(err!=nil || len(dataJson)!=0){
 		return
 	}
 	if conn,name,err=wsRequest(w,r);err!=nil||len(name)==0 {
