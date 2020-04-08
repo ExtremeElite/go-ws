@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -12,7 +11,6 @@ import (
 func main() {
 	run()
 }
-
 
 func run(){
 	core.HttpChan=make(chan []byte,1)
@@ -41,10 +39,12 @@ func getDataFromHttp()  {
 		select {
 		case data:=<-core.HttpChan:
 			core.NodeList.Range(func(name, node interface{}) bool {
-				node.(*core.Node).Ws.WriteMsg(data)
+				go func() {
+					node.(*core.Node).Ws.WriteMsg(data)
+				}()
 				return true
 			})
-			fmt.Println(string(data))
+			log.Println(`收到的http请求推送内容:`+string(data))
 		}
 	}
 }

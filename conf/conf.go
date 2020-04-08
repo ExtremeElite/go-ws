@@ -20,7 +20,7 @@ type Common struct {
 	Env string
 	SignKey string
 	DefaultDB string
-	WsTimeOut,ReadChan,WriteChan int
+	WsTimeOut,ReadChan,WriteChan,MaxBody int
 }
 
 type BaseServer struct {
