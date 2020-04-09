@@ -32,5 +32,6 @@ func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 		return
 	}
 	w.WriteHeader(http.StatusOK)
+	log.Println(r.RemoteAddr+"发来的消息:"+string(body))
 	w.Write([]byte(`{contentLength:`+strconv.Itoa((len(body)))+`b}`))
 }
