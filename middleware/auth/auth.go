@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ws/core"
+	"ws/middleware"
 )
 
 
@@ -60,4 +61,20 @@ func HttpAuth(r *http.Request)(data string,err error){
 func validateToken(token string) (ok bool)  {
 
 	return true
+}
+
+func WsAuthMiddle() middleware.Middleware {
+	return func(handlerFunc http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			
+		}
+	}
+}
+
+func HttpAuthMiddle() middleware.Middleware {
+	return func(handlerFunc http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			
+		}
+	}
 }
