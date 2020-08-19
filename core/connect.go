@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"github.com/gorilla/websocket"
+	"log"
 	"sync"
 	"ws/conf"
 )
@@ -50,7 +51,10 @@ func (conn *Connection) WriteMsg(data []byte) (err error)  {
 
 func (conn *Connection) Close(){
 	conn.one.Do(func() {
-		conn.WsConn.Close()
+		if err:=conn.WsConn.Close();err!=nil{
+			log.Println("close failed: ",err.Error())
+			return
+		}
 		conn.isClose=true
 		close(conn.closeChan)
 	})
