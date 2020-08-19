@@ -64,17 +64,17 @@ func validateToken(token string) (ok bool)  {
 }
 
 func WsAuthMiddle() middleware.Middleware {
-	return func(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			
+			fn(w, r)
 		}
 	}
 }
 
 func HttpAuthMiddle() middleware.Middleware {
-	return func(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			
+			fn(w, r)
 		}
 	}
 }

@@ -1,18 +1,12 @@
 package core
 
 import (
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"time"
 	"ws/conf"
 )
 
-var upgrader=websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 func WsHandle(w http.ResponseWriter, r *http.Request) {
 	var (
 		err error
@@ -21,12 +15,10 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	)
 	log.Println("客户端连接地址:",r.RemoteAddr)
 	//普通 HTTP请求
-	//if dataJson,err=request.HttpRequest(w,r);(err!=nil || len(dataJson)!=0){
-	//	return
-	//}
-	//if conn,name,err=request.WsRequest(w,r);err!=nil||len(name)==0 {
-	//	return
-	//}
+	if r.Header.Get("Connection")!="Upgrade" {
+		w.Write([]byte(HELLO))
+		return
+	}
 	AddNode(&Node{conn,name})
 	for {
 		//超时设置

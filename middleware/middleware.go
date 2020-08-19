@@ -24,7 +24,7 @@ func Method(m string) Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != m {
-				http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+				http.Error(w,`<h1>欢迎来到及时服务</h1>`, http.StatusBadRequest)
 				return
 			}
 			fn(w, r)
