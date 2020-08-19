@@ -11,12 +11,11 @@ type Node struct {
 	Name string
 }
 var Nodes sync.Map
-func AddNode(node *Node) (err error){
+func AddNode(node *Node){
 	if _,ok:=GetNode(node.Name);ok{
 		DelNode(node.Name)
 	}
 	Nodes.Store(node.Name,node)
-	return
 }
 func GetNode(name string)(*Node,bool){
 	var node *Node
@@ -28,7 +27,9 @@ func GetNode(name string)(*Node,bool){
 }
 func DelNode(name string)(err error){
 	if node,ok:=GetNode(name);ok{
-		node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`))
+		if err=node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`));err!=nil{
+			return
+		}
 		err=errors.New(`你的连接已经断开了`)
 		node.Ws.Close()
 		Nodes.Delete(name)

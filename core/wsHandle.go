@@ -21,7 +21,9 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	log.Println("客户端连接地址:",r.RemoteAddr)
 	//普通 HTTP请求
 	if r.Header.Get("Connection")!="Upgrade" {
-		w.Write([]byte(HELLO))
+		if _,err:=w.Write([]byte(HELLO));err!=nil{
+			log.Println("http error: ",err.Error())
+		}
 		return
 	}
 	if conn,name,err=wsRequest(w,r);err!=nil {
@@ -37,7 +39,9 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	}
 	Err:
 		if !conn.isClose {
-			DelNode(name)
+			if err:=DelNode(name);err!=nil{
+				log.Println("connect close:",err.Error())
+			}
 			conn.Close()
 		}
 }
@@ -45,7 +49,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte
 	var wsTimeOut=conf.Config().Common.WsTimeOut
-	conn.WsConn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut)*time.Second))
+	_=conn.WsConn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut)*time.Second))
 	if message, err=conn.ReadMsg() ;err!=nil{
 		log.Println("读取失败:", err.Error())
 		return 
@@ -66,8 +70,10 @@ func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,name stri
 		return
 	}
 	if conn,err= BuildConn(wsConn);err!=nil {
-		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		conn.Close()
+		if wsErr:=wsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()));wsErr!=nil{
+			log.Println("wsErr is:",wsErr.Error())
+		}
+		_=wsConn.Close()
 		return
 	}
 	return
