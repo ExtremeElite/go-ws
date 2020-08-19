@@ -22,5 +22,8 @@ func mysql() *gorm.DB {
 	mysqlDB.SingularTable(true)
 	mysqlDB.DB().SetMaxIdleConns(localBase.MaxConnect)
 	mysqlDB.DB().SetMaxOpenConns(localBase.MaxConnect*2)
+	if bs.Common.Env=="dev" {
+		mysqlDB.LogMode(true)
+	}
 	return mysqlDB
 }

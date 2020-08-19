@@ -13,12 +13,17 @@ func HttpHandle(w http.ResponseWriter, r *http.Request)  {
 		body []byte
 		err error
 	)
+	if r.Method=="GET" {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(HELLO))
+		return
+	}
 	if body,err=ioutil.ReadAll(r.Body);err!=nil{
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	bodyLen:=len(body)
-	if bodyLen>conf.CommonSet.MaxBody {
+
+	if bodyLen:=len(body);bodyLen>conf.CommonSet.MaxBody {
 		res:=`请求体大小为`+strconv.Itoa(bodyLen/1024)+`kb,大于`+strconv.Itoa(conf.CommonSet.MaxBody/1024)+`kb`
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		w.Write([]byte(res))

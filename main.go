@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"ws/conf"
 	"ws/core"
+	"ws/middleware"
 )
 
 func main() {
@@ -21,7 +22,7 @@ func run(){
 func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
 	httpPush:=http.NewServeMux()
-	httpPush.HandleFunc("/", core.HttpHandle)
+	httpPush.HandleFunc("/", middleware.Use(core.HttpHandle,middleware.Logging(),middleware.Method("GET")))
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
 		log.Fatal(err)
 	}

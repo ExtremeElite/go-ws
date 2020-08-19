@@ -17,16 +17,16 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	var (
 		err error
 		conn *Connection
-		dataJson,name string
+		name string
 	)
 	log.Println("客户端连接地址:",r.RemoteAddr)
 	//普通 HTTP请求
-	if dataJson,err=httpRequest(w,r);(err!=nil || len(dataJson)!=0){
-		return
-	}
-	if conn,name,err=wsRequest(w,r);err!=nil||len(name)==0 {
-		return
-	}
+	//if dataJson,err=request.HttpRequest(w,r);(err!=nil || len(dataJson)!=0){
+	//	return
+	//}
+	//if conn,name,err=request.WsRequest(w,r);err!=nil||len(name)==0 {
+	//	return
+	//}
 	AddNode(&Node{conn,name})
 	for {
 		//超时设置
@@ -41,39 +41,6 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		}
 }
 //ws地址的普通http请求 包括数据验证
-func httpRequest(w http.ResponseWriter,r *http.Request) (dataJson string,err error) {
-	if r.Header.Get("Connection")!="Upgrade" {
-		dataJson,err=HttpAuth(r)
-		if err!=nil {
-			w.Write([]byte(err.Error()))
-			return
-		}
-		w.Write([]byte(dataJson))
-	}
-	return
-}
-//ws地址的ws请求 包括数据验证
-func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,name string,err error)  {
-	var(
-		wsConn *websocket.Conn
-	)
-	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
-		log.Print("upgrade:", err)
-		return
-	}
-	if conn,err= BuildConn(wsConn);err!=nil {
-		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		conn.Close()
-		return
-	}
-	//登录判断
-	if name,err=WsAuth(r);err!=nil {
-		log.Println(err.Error())
-		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(err.Error()))
-		conn.Close()
-	}
-	return
-}
 //数据验证通过之后的数据处理部分
 func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte

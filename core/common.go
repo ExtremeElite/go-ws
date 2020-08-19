@@ -1,7 +1,9 @@
 package core
 
 import "time"
-
+const (
+	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
+)
 func (conn *Connection) Ping() {
 	go func() {
 		for{
@@ -18,7 +20,7 @@ func (conn *Connection) Ping() {
 }
 
 func (conn *Connection) Pong(data []byte){
-	dataString=string(data)
+	dataString:=string(data)
 	if dataString=="Ping" {
 		conn.WriteMsg([]byte("Pong"))
 	}

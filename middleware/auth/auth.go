@@ -1,15 +1,20 @@
-package core
+/**
+ * @date:2020/8/19 16:46
+ * @email:gorouting@qq.com
+ * @author:gorouting
+ * @description:认证中间件
+**/
+package auth
 
 import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"ws/core"
 )
 
-const (
-	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
-)
+
 type Login struct {
 	User string
 	Pwd string
@@ -40,7 +45,7 @@ func WsAuth(r *http.Request) (name string,err error)  {
 //http登录
 func HttpAuth(r *http.Request)(data string,err error){
 	if r.Method=="GET" {
-		data=HELLO
+		data=core.HELLO
 	}else {
 		if body,err=ioutil.ReadAll(r.Body);err!=nil{
 			return
@@ -56,4 +61,3 @@ func validateToken(token string) (ok bool)  {
 
 	return true
 }
-
