@@ -3,6 +3,7 @@
 .git
 .vscode
 *.exe
+config/config.toml
 ws
 go_build_go_ws_
 go_build_go_ws__linux
