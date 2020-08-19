@@ -7,7 +7,7 @@ import (
 	"time"
 	"ws/conf"
 )
-var upgrader=websocket.Upgrader{
+var upgrade =websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
@@ -47,11 +47,11 @@ func wsRequestDone(conn *Connection ) (err error)  {
 	var wsTimeOut=conf.Config().Common.WsTimeOut
 	conn.WsConn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut)*time.Second))
 	if message, err=conn.ReadMsg() ;err!=nil{
-		log.Println("读:", err.Error())
+		log.Println("读取失败:", err.Error())
 		return 
 	}
 	if err=conn.WriteMsg(message);err!=nil {
-		log.Println("写:", err.Error())
+		log.Println("写入失败:", err.Error())
 		return
 	}
 	log.Printf("服务器收到的: %s\n", message)
@@ -62,7 +62,7 @@ func wsRequest(w http.ResponseWriter,r *http.Request)(conn *Connection,name stri
 	var(
 		wsConn *websocket.Conn
 	)
-	if wsConn, err = upgrader.Upgrade(w, r, nil);err != nil{
+	if wsConn, err = upgrade.Upgrade(w, r, nil);err != nil{
 		return
 	}
 	if conn,err= BuildConn(wsConn);err!=nil {
