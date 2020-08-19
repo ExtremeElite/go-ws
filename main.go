@@ -47,7 +47,9 @@ func getDataFromHttp()  {
 		case data:=<-core.HttpChan:
 			core.Nodes.Range(func(name, node interface{}) bool {
 				go func() {
-					node.(*core.Node).Ws.WriteMsg(data)
+					if err:=node.(*core.Node).Ws.WriteMsg(data);err!=nil{
+						log.Println("data from http: ",err.Error())
+					}
 				}()
 				return true
 			})
