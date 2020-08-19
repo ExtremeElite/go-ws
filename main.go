@@ -24,7 +24,8 @@ func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
 	httpPush:=http.NewServeMux()
 	httpPush.HandleFunc("/", middleware.Use(
-		core.HttpHandle,middleware.Logging(),
+		core.HttpHandle,
+		middleware.Logging(),
 		middleware.Method("GET"),
 		auth.HttpAuthMiddle(),
 		))
