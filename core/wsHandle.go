@@ -13,6 +13,7 @@ var upgrade =websocket.Upgrader{
 	},
 }
 func WsHandle(w http.ResponseWriter, r *http.Request) {
+
 	var (
 		err error
 		conn *Connection
@@ -30,6 +31,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		log.Println("wsRequest:", err.Error())
 		return
 	}
+	defer conn.Close()
 	AddNode(&Node{conn,name})
 	for {
 		//超时设置
@@ -42,7 +44,6 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 			if err:=DelNode(name);err!=nil{
 				log.Println("connect close:",err.Error())
 			}
-			conn.Close()
 		}
 }
 
