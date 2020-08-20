@@ -4,7 +4,7 @@
  * @author:gorouting
  * @description:认证中间件
 **/
-package auth
+package pipeLine
 
 import (
 	"encoding/json"
@@ -12,7 +12,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"ws/core"
-	"ws/middleware"
 )
 
 
@@ -21,9 +20,9 @@ type Login struct {
 	Pwd string
 }
 var(
-	body []byte
+	body       []byte
 	dataString string
-	login Login
+	login      Login
 )
 //ws登录
 func WsAuth(r *http.Request) (name string,err error)  {
@@ -63,7 +62,7 @@ func validateToken(token string) (ok bool)  {
 	return true
 }
 
-func WsAuthMiddle() middleware.Middleware {
+func WsAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			fn(w, r)
@@ -71,7 +70,7 @@ func WsAuthMiddle() middleware.Middleware {
 	}
 }
 
-func HttpAuthMiddle() middleware.Middleware {
+func HttpAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			fn(w, r)

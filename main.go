@@ -6,8 +6,7 @@ import (
 	"strconv"
 	"ws/conf"
 	"ws/core"
-	"ws/middleware"
-	"ws/middleware/auth"
+	"ws/pipeLine"
 )
 
 func main() {
@@ -23,11 +22,11 @@ func run(){
 func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
 	httpPush:=http.NewServeMux()
-	httpPush.HandleFunc("/", middleware.Use(
+	httpPush.HandleFunc("/", pipeLine.Use(
 		core.HttpHandle,
-		middleware.Logging(),
-		middleware.Method("GET"),
-		auth.HttpAuthMiddle(),
+		pipeLine.Logging(),
+		pipeLine.Method("GET"),
+		pipeLine.HttpAuthMiddle(),
 		))
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
 		log.Fatal(err)
