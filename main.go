@@ -22,7 +22,7 @@ func run(){
 }
 func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
-
+	var httpTimeOut=conf.CommonSet.HttpTimeOut
 	httpPush:=http.NewServeMux()
 
 	httpPush.HandleFunc("/", pipeLine.Use(
@@ -31,7 +31,7 @@ func httpPush() {
 		pipeLine.Method("GET"),
 		pipeLine.HttpAuthMiddle(),
 		))
-	httpPushTimeOut:=http.TimeoutHandler(httpPush,time.Second*5,"请求超时")
+	httpPushTimeOut:=http.TimeoutHandler(httpPush,time.Duration(httpTimeOut)*time.Second,"请求超时")
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut);err!=nil{
 		log.Fatal(err)
 	}

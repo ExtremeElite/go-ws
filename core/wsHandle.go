@@ -49,7 +49,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 
 func wsRequestDone(conn *Connection ) (err error)  {
 	var message []byte
-	var wsTimeOut=conf.Config().Common.WsTimeOut
+	var wsTimeOut=conf.CommonSet.WsTimeOut
 	_=conn.WsConn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut)*time.Second))
 	if message, err=conn.ReadMsg() ;err!=nil{
 		log.Println("读取失败:", err.Error())

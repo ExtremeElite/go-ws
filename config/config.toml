@@ -5,6 +5,7 @@ env = "dev"
 signKey="QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb"
 defaultDB="mysql"
 wsTimeOut=60
+httpTimeOut=1
 readChan=1000
 writeChan=1000
 maxBody=51200
