@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 	"ws/conf"
 	"ws/core"
 	"ws/pipeLine"
@@ -21,14 +22,17 @@ func run(){
 }
 func httpPush() {
 	var httpPort=conf.CommonSet.HttpPort
+
 	httpPush:=http.NewServeMux()
+
 	httpPush.HandleFunc("/", pipeLine.Use(
 		core.HttpHandle,
 		pipeLine.Logging(),
 		pipeLine.Method("GET"),
 		pipeLine.HttpAuthMiddle(),
 		))
-	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPush);err!=nil{
+	httpPushTimeOut:=http.TimeoutHandler(httpPush,time.Second*5,"请求超时")
+	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut);err!=nil{
 		log.Fatal(err)
 	}
 }
