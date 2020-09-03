@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
 	"ws/conf"
 )
 
@@ -11,7 +11,7 @@ func init() {
 	defaultDB:= conf.CommonSet.DefaultDB
 	switch defaultDB {
 	default:
-		DB=mysql()
+		DB=localMysql()
 	}
 }
 
