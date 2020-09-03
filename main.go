@@ -7,10 +7,12 @@ import (
 	"time"
 	"ws/conf"
 	"ws/core"
+	"ws/db"
 	"ws/pipeLine"
 )
 
 func main() {
+	db.DB.Exec("select * from clue")
 	run()
 }
 
