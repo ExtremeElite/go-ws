@@ -7,11 +7,17 @@ import (
 	"time"
 	"ws/conf"
 	"ws/core"
+	"ws/db"
 	"ws/pipeLine"
 )
 
 func main() {
 	run()
+	defer func() {
+		rawDB,err:=db.DB.DB()
+		rawDB.Close()
+		log.Println(err.Error())
+	}()
 }
 
 func run(){
