@@ -5,15 +5,16 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"sync"
+	"time"
 	"ws/conf"
 )
 type Connection struct {
-	WsConn *websocket.Conn
-	readChan chan []byte
+	WsConn    *websocket.Conn
+	readChan  chan []byte
 	writeChan chan []byte
 	closeChan chan byte
-	one sync.Once
-	isClose bool
+	one       sync.Once
+	IsClose   bool
 }
 
 func BuildConn(wsConn *websocket.Conn)(conn *Connection,err error){
@@ -55,7 +56,7 @@ func (conn *Connection) Close(){
 			log.Println("close failed: ",err.Error())
 			return
 		}
-		conn.isClose=true
+		conn.IsClose =true
 		close(conn.closeChan)
 	})
 }
@@ -102,4 +103,9 @@ func (conn *Connection) writeLoop()  {
 	}
 	Err:
 		conn.Close()
+}
+
+func (conn *Connection) SetReadDeadline(t time.Time) (err error) {
+	err=conn.WsConn.SetReadDeadline(t)
+	return
 }

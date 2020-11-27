@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strconv"
 	"time"
+	"ws/broker"
 	"ws/conf"
 	"ws/core"
 	"ws/db"
@@ -21,7 +22,7 @@ func main() {
 }
 
 func run(){
-	core.HttpChan=make(chan []byte,1)
+	broker.HttpChan =make(chan broker.PushData,1)
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
@@ -32,12 +33,13 @@ func httpPush() {
 	httpPush:=http.NewServeMux()
 
 	httpPush.HandleFunc("/", pipeLine.Use(
-		core.HttpHandle,
+		broker.HttpHandle,
 		pipeLine.Logging(),
-		pipeLine.Method("GET"),
+		pipeLine.Method("POST"),
 		pipeLine.HttpAuthMiddle(),
 		))
 	httpPushTimeOut:=http.TimeoutHandler(httpPush,time.Duration(httpTimeOut)*time.Second,"请求超时")
+	log.Printf("http服务器127.0.0.1:%d",httpPort)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut);err!=nil{
 		log.Fatal(err)
 	}
@@ -45,7 +47,12 @@ func httpPush() {
 func wsPush() {
 	var wsPort= conf.CommonSet.WsPort
 	wsPush:=http.NewServeMux()
-	wsPush.HandleFunc("/", core.WsHandle)
+	wsPush.HandleFunc("/", pipeLine.Use(
+		broker.WsHandle,
+		pipeLine.Cors(),
+		pipeLine.WsAuthMiddle(),
+		))
+	log.Printf("ws服务器127.0.0.1:%d",wsPort)
 	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
 		log.Fatal("main:",err)
 	}
@@ -53,16 +60,16 @@ func wsPush() {
 func getDataFromHttp()  {
 	for{
 		select {
-		case data:=<-core.HttpChan:
+		case data:=<-broker.HttpChan:
 			core.Nodes.Range(func(name, node interface{}) bool {
 				go func() {
-					if err:=node.(*core.Node).Ws.WriteMsg(data);err!=nil{
+					if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.Data));err!=nil{
 						log.Println("data from http: ",err.Error())
 					}
 				}()
 				return true
 			})
-			log.Println(`收到的http请求推送内容:`+string(data))
+			log.Println(`收到的http请求推送内容:`+data.Data)
 		}
 	}
 }

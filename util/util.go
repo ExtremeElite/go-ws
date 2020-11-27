@@ -10,7 +10,9 @@ import (
 	"strings"
 	"time"
 )
-
+const (
+	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
+)
 //判断路径 始终是以二进制所在路径为依据
 func PathToEveryOne(path string) string {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))

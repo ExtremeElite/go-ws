@@ -1,10 +1,9 @@
 package pipeLine
 
 import (
-	"log"
 	"net/http"
 	"strings"
-	"time"
+	"ws/util"
 )
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
@@ -12,10 +11,6 @@ type Middleware func(http.HandlerFunc) http.HandlerFunc
 func Logging() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
-			defer func() {
-				log.Println(r.URL.Path, time.Since(start))
-			}()
 			fn(w, r)
 		}
 	}
@@ -25,7 +20,8 @@ func Method(m string) Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != m {
-				http.Error(w, `<h1>欢迎来到及时服务</h1>`, http.StatusBadRequest)
+				w.WriteHeader(http.StatusOK)
+				w.Write([]byte(util.HELLO))
 				return
 			}
 			fn(w, r)
@@ -33,19 +29,20 @@ func Method(m string) Middleware {
 	}
 }
 func Cors() Middleware {
-	return func(handlerFunc http.HandlerFunc) http.HandlerFunc {
+	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Access-Control-Allow-Origin", "*")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+			fn(w, r)
 		}
 	}
 }
 func Use(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
-	var middlewaresLen = len(middlewares) - 1
+	var middlewareLen = len(middlewares) - 1
 	for key, _ := range middlewares {
-		fn = middlewares[middlewaresLen-key](fn)
+		fn = middlewares[middlewareLen-key](fn)
 	}
 	return fn
 }

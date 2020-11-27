@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"time"
 	"ws/core"
+	"ws/db"
 )
 
 
@@ -27,20 +28,26 @@ var(
 )
 //ws登录
 func WsAuth(r *http.Request) (name string,err error)  {
+	name,err=GetName(r)
+	if err!=nil{
+		return
+	}
+	if !validateToken(name) {
+		err=errors.New(`{"msg":"token失效","code":401}`)
+	}
+	return
+}
+func GetName(r *http.Request) (name string,err error)  {
 	query:=r.URL.Query()
 	if len(query)==0 {
-		err=errors.New(`{"C":"Login","M":"验证失败"}`)
+		err=errors.New(`{"msg":"未获取到参数","code":401}`)
+		return
 	}
 	if token,ok:=query["token"];ok{
-		if !validateToken(token[0]) {
-			err=errors.New(`{"C":"Login","M":"token失效"}`)
-		}else {
-			name=token[0]
-		}
+		name=token[0]
 		return
-	}else {
-		err=errors.New(`{"C":"Login","M":"登陆失败"}`)
 	}
+	err=errors.New(`{"msg":"请传入正确的参数","code":401}`)
 	return
 }
 //http登录
@@ -59,13 +66,22 @@ func HttpAuth(r *http.Request)(data string,err error){
 }
 
 func validateToken(token string) (ok bool)  {
-
-	return true
+	var total int
+	db.DB.Raw(`select count(*) from hb_shebei where device_nums = ?`,token).Scan(&total)
+	if total>=1 {
+		return true
+	}
+	return false
 }
 
 func WsAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
+			_,err:=WsAuth(r)
+			if err!=nil {
+				http.Error(w,err.Error(), http.StatusUnauthorized)
+				return
+			}
 			fn(w, r)
 		}
 	}
