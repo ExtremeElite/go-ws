@@ -40,7 +40,7 @@ func httpBroker(w http.ResponseWriter, r *http.Request)(err error)  {
 		var response=Response{
 			Code: 200,
 			Msg:  "成功",
-			Data: pushData.Data,
+			Data: getOnLine(),
 		}
 		_, _ = w.Write(response.Json())
 		return

@@ -11,7 +11,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"time"
 	"ws/core"
 	"ws/db"
 )
@@ -66,6 +65,7 @@ func HttpAuth(r *http.Request)(data string,err error){
 }
 
 func validateToken(token string) (ok bool)  {
+	return true
 	var total int
 	db.DB.Raw(`select count(*) from hb_shebei where device_nums = ?`,token).Scan(&total)
 	if total>=1 {
@@ -90,7 +90,7 @@ func WsAuthMiddle() Middleware {
 func HttpAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			time.Sleep(time.Second*3)
+			//time.Sleep(time.Second*3)
 			fn(w, r)
 		}
 	}

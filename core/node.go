@@ -28,6 +28,7 @@ func GetNode(name string)(*Node,bool){
 func DelNode(name string)(err error){
 	if node,ok:=GetNode(name);ok{
 		if err=node.Ws.WsConn.WriteMessage(websocket.TextMessage,[]byte(`你的连接已经断开了`));err!=nil{
+			Nodes.Delete(name)
 			return
 		}
 		err=errors.New(`你的连接已经断开了`)
