@@ -12,6 +12,9 @@ import (
 	"ws/pipeLine"
 )
 
+func init()  {
+	broker.HttpChan =make(chan broker.PushData,1)
+}
 func main() {
 	run()
 	defer func() {
@@ -22,7 +25,6 @@ func main() {
 }
 
 func run(){
-	broker.HttpChan =make(chan broker.PushData,1)
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
