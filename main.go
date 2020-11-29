@@ -16,15 +16,11 @@ func init()  {
 	broker.HttpChan =make(chan broker.PushData,1)
 }
 func main() {
-	run()
 	defer func() {
 		rawDB,err:=db.DB.DB()
 		rawDB.Close()
 		log.Println(err.Error())
 	}()
-}
-
-func run(){
 	go httpPush()
 	go getDataFromHttp()
 	wsPush()
