@@ -52,13 +52,13 @@ func getDataFromHttp()  {
 		case data:=<-broker.HttpChan:
 			core.Nodes.Range(func(name, node interface{}) bool {
 				go func() {
-					if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.Data));err!=nil{
+					if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.ConversionJson()));err!=nil{
 						log.Println("data from http: ",err.Error())
 					}
 				}()
 				return true
 			})
-			log.Println(`收到的http请求推送内容:`+data.Data)
+			log.Println(`收到的http请求推送内容:`+data.ConversionJson())
 		}
 	}
 }

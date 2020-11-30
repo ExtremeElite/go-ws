@@ -8,6 +8,10 @@ package broker
 
 import (
 	"encoding/json"
+	"fmt"
+	"reflect"
+	"strconv"
+	"strings"
 	"ws/core"
 )
 
@@ -26,15 +30,36 @@ type Response struct {
 }
 //推送格式
 type PushData struct {
-	EventType int32
-	Device []string
-	Data string
+	EventType int32 `json:"event_type"`
+	Device []string `json:"device"`
+	Data interface{} `json:"data"`
 }
-
 func (response Response)Json() []byte{
 	data,err:=json.Marshal(response)
 	if err!=nil {
 		return []byte(`["code":404,"msg":"数据错误"]`)
 	}
 	return data
+}
+//格式转换
+func (pushData PushData) ConversionJson() string{
+	data:=pushData.Data
+	dataType:=strings.ToLower(fmt.Sprintf("%s",reflect.TypeOf(data).Kind()))
+	//字符串
+	if dataType=="string" {
+		return data.(string)
+	}
+	//数字
+	if dataType=="float64" {
+		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64),`E+00`)
+	}
+	//对象或者数组
+	if dataType=="map" || dataType=="slice" {
+		result,err:=json.Marshal(data)
+		if err!=nil {
+			println(err.Error())
+		}
+		return string(result)
+	}
+	return ""
 }
