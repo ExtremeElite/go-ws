@@ -73,7 +73,7 @@ func getOnLine() []string {
 	}
 	return result
 }
-//转发http的数据到ws
+//转发http的数据到ws todo http消息转发一般为内网所以一般不需要进行身份认证
 func HttpMessageForwarding()  {
 	for{
 		select {

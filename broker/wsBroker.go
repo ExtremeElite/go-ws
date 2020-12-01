@@ -56,7 +56,7 @@ func pong(message []byte,conn *core.Connection) (err error) {
 	}
 	return nil
 }
-
+//ws 消息转发 todo ws消息转发需要对连接权限进行认证
 func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
 	var pushData PushData
 	if err=json.Unmarshal(message,&pushData);err!=nil{
