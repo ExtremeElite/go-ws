@@ -75,8 +75,14 @@ func GetDataFromHttp()  {
 		case data:=<-HttpChan:
 			core.Nodes.Range(func(name, node interface{}) bool {
 				go func() {
-					if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.ConversionJson()));err!=nil{
-						log.Println("data from http: ",err.Error())
+					if len(data.PublishAccount)!=0 {
+						for _,device:=range data.PublishAccount{
+							if device==node.(*core.Node).Name {
+								if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.ConversionJson()));err!=nil{
+									log.Println("data from http: ",err.Error())
+								}
+							}
+						}
 					}
 				}()
 				return true

@@ -31,7 +31,7 @@ type Response struct {
 //推送格式
 type PushData struct {
 	EventType int32 `json:"event_type"`
-	Device []string `json:"device"`
+	PublishAccount []string `json:"publish_account"`
 	Data interface{} `json:"data"`
 }
 func (response Response)Json() []byte{
