@@ -64,7 +64,7 @@ func workData(w http.ResponseWriter,pushData PushData){
 	}
 
 }
-
+//获取最新在线情况
 func getOnLine() []string {
 	result :=make([]string,0)
 	nodes,_:=core.GetAllNode()
@@ -73,7 +73,7 @@ func getOnLine() []string {
 	}
 	return result
 }
-
+//转发http的数据到ws
 func GetDataFromHttp()  {
 	for{
 		select {

@@ -7,6 +7,7 @@
 package broker
 
 import (
+	"encoding/json"
 	"log"
 	"strings"
 	"ws/core"
@@ -53,4 +54,29 @@ func pong(message []byte,conn *core.Connection) (err error) {
 		}
 	}
 	return nil
+}
+
+func messageForwarding(message []byte,conn *core.Connection) (err error)  {
+	var pushData PushData
+	if err=json.Unmarshal(message,&pushData);err!=nil{
+		return
+	}
+	switch pushData.EventType {
+	case Conversation:
+		core.Nodes.Range(func(_, node interface{}) bool {
+			if len(pushData.PublishAccount)!=0 {
+				for _,publishAccount:=range pushData.PublishAccount{
+					if publishAccount==node.(*core.Node).Name {
+						go func() {
+							if err:=node.(*core.Node).Ws.WriteMsg([]byte(pushData.ConversionJson()));err!=nil{
+								log.Println("data from ws: ",publishAccount,":",err.Error())
+							}
+						}()
+					}
+				}
+			}
+			return true
+		})
+	}
+	return
 }
