@@ -58,6 +58,7 @@ func (pushData PushData) ConversionJson() string{
 		result,err:=json.Marshal(data)
 		if err!=nil {
 			println(err.Error())
+			return ""
 		}
 		return string(result)
 	}
