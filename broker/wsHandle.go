@@ -55,7 +55,6 @@ Err:
 func wsWork(conn *core.Connection) (err error)  {
 	var wsTimeOut=conf.CommonSet.WsTimeOut
 	//设置服务器读取超时
-	println(wsTimeOut)
 	if wsTimeOut>0{
 		if err=conn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut)*time.Second));err!=nil{
 			return
