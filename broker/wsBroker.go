@@ -10,6 +10,8 @@ import (
 	"encoding/json"
 	"log"
 	"strings"
+	"time"
+	"ws/conf"
 	"ws/core"
 )
 
@@ -37,7 +39,7 @@ func sendMessage(message []byte,conn *core.Connection,fns ...wsPipeLineFn) error
 	}
 	return nil
 }
-
+//客户端主动ping服务器
 func ping(message []byte,conn *core.Connection) (err error) {
 	if strings.ToLower(string(message))=="ping" {
 		if err=conn.WriteMsg([]byte(`Pong`));err!=nil {
@@ -45,9 +47,6 @@ func ping(message []byte,conn *core.Connection) (err error) {
 			return
 		}
 	}
-	return nil
-}
-func pong(message []byte,conn *core.Connection) (err error) {
 	if strings.ToLower(string(message))=="pong" {
 		if err=conn.WriteMsg([]byte(`Ping`));err!=nil {
 			log.Println("写入失败:", err.Error())
@@ -67,4 +66,26 @@ func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
 		pushData.messageForwarding()
 	}
 	return
+}
+//go程主动pong客户端
+func pong(conn *core.Connection)  {
+	var wsTimeOut=conf.CommonSet.WsTimeOut
+	if wsTimeOut>0 {
+		addTime:=time.Duration(wsTimeOut-1)*time.Second
+		timer := time.NewTimer(addTime)
+		for  {
+			select {
+			case <-timer.C:
+				if conn.IsClose{
+					timer.Stop()
+					goto Over
+				}
+				conn.WriteMsg([]byte(`Pong`))
+				log.Println(`Pong`)
+
+			}
+			timer.Reset(addTime)
+		}
+	}
+	Over:
 }

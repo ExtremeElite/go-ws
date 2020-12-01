@@ -15,7 +15,6 @@ import (
 	"strings"
 	"ws/core"
 )
-
 const (
 	Conversation  =1
 	Login         =2
