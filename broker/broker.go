@@ -24,7 +24,7 @@ const (
 )
 type wsPipeLineFn func([]byte,*core.Connection) error
 type Response struct {
-	Code uint8 `json:"code"`
+	Code int `json:"code"`
 	Msg string `json:"msg"`
 	Data interface{} `json:"data"`
 }
@@ -34,12 +34,15 @@ type PushData struct {
 	PublishAccount []string `json:"publish_account"`
 	Data interface{} `json:"data"`
 }
-func (response Response)Json() []byte{
-	data,err:=json.Marshal(response)
+func (response Response)Json(msg string,code int,data interface{}) []byte{
+	response.Msg=msg
+	response.Code=code
+	response.Data=data
+	res,err:=json.Marshal(response)
 	if err!=nil {
-		return []byte(`["code":404,"msg":"数据错误"]`)
+		return []byte(`["code":404,"msg":"数据错误","data":""]`)
 	}
-	return data
+	return res
 }
 //格式转换
 func (pushData PushData) ConversionJson() string{

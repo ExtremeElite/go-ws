@@ -17,9 +17,20 @@ import (
 )
 
 func httpBroker(w http.ResponseWriter, r *http.Request)(err error)  {
-	var (
-		body []byte
-	)
+	var body []byte
+	if body,err=validateData(w,r);err!=nil{
+		return
+	}
+	var pushData PushData
+	if err=json.Unmarshal(body,&pushData);err!=nil{
+		return
+	}
+	workData(w,pushData)
+	log.Println(r.RemoteAddr+"发来的消息:"+string(body))
+	return
+}
+//数据验证
+func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err error)  {
 	if body,err=ioutil.ReadAll(r.Body);err!=nil{
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -31,35 +42,29 @@ func httpBroker(w http.ResponseWriter, r *http.Request)(err error)  {
 		log.Println(res)
 		return
 	}
-	var pushData PushData
-	if err=json.Unmarshal(body,&pushData);err!=nil{
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	if pushData.EventType== GetOnlineInfo {
-		var response=Response{
-			Code: 200,
-			Msg:  "成功",
-			Data: getOnLine(),
-		}
-		_, _ = w.Write(response.Json())
-		return
-	}
-	select {
-	case HttpChan <-pushData:
-	default:
-		w.WriteHeader(http.StatusTooManyRequests)
-		return
-	}
-	log.Println(r.RemoteAddr+"发来的消息:"+string(body))
-	var response=Response{
-		Code: 200,
-		Msg:  "成功",
-		Data: []string{},
-	}
-	_, _ = w.Write(response.Json())
 	return
 }
+//数据处理
+func workData(w http.ResponseWriter,pushData PushData){
+	var response Response
+	w.WriteHeader(http.StatusOK)
+	switch pushData.EventType {
+	case Conversation:
+		select {
+		case HttpChan <-pushData:
+		default:
+			w.WriteHeader(http.StatusTooManyRequests)
+			return
+		}
+		_, _ = w.Write(response.Json("ok",http.StatusOK,""))
+	case GetOnlineInfo:
+		_, _ = w.Write(response.Json("ok",http.StatusOK,getOnLine()))
+	default:
+		_, _ = w.Write(response.Json("ok",http.StatusOK,pushData))
+	}
+
+}
+
 func getOnLine() []string {
 	result :=make([]string,0)
 	nodes,_:=core.GetAllNode()
