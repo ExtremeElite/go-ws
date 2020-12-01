@@ -7,7 +7,6 @@ import (
 	"time"
 	"ws/broker"
 	"ws/conf"
-	"ws/core"
 	"ws/db"
 	"ws/router"
 )
@@ -22,7 +21,7 @@ func main() {
 		log.Println(err.Error())
 	}()
 	go httpPush()
-	go getDataFromHttp()
+	go broker.GetDataFromHttp()
 	wsPush()
 }
 func httpPush() {
@@ -46,20 +45,5 @@ func wsPush() {
 		log.Fatal("main:",err)
 	}
 }
-func getDataFromHttp()  {
-	for{
-		select {
-		case data:=<-broker.HttpChan:
-			core.Nodes.Range(func(name, node interface{}) bool {
-				go func() {
-					if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.ConversionJson()));err!=nil{
-						log.Println("data from http: ",err.Error())
-					}
-				}()
-				return true
-			})
-			log.Println(`收到的http请求推送内容:`+data.ConversionJson())
-		}
-	}
-}
+
 
