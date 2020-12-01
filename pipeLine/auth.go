@@ -37,6 +37,9 @@ type Login struct {
 var(
 	body       []byte
 	login      Login
+	TokenUnauthorized = "token失效"
+	NoParam="未获取到参数"
+	InvalidParam="请传入正确的参数"
 )
 //ws登录
 func wsAuth(r *http.Request) (name string,err error)  {
@@ -46,7 +49,7 @@ func wsAuth(r *http.Request) (name string,err error)  {
 		return
 	}
 	if !validateToken(name) {
-		err=errors.New(response.Json("token失效",http.StatusUnauthorized))
+		err=errors.New(response.Json(TokenUnauthorized,http.StatusUnauthorized))
 	}
 	return
 }
@@ -70,21 +73,21 @@ func GetName(r *http.Request) (name string,err error)  {
 	response:=Response{}
 	query:=r.URL.Query()
 	if len(query)==0 {
-		err=errors.New(response.Json("未获取到参数",http.StatusUnauthorized))
+		err=errors.New(response.Json(NoParam,http.StatusUnauthorized))
 		return
 	}
 	if token,ok:=query["token"];ok{
 		name=token[0]
 		return
 	}
-	err=errors.New(response.Json("请传入正确的参数",http.StatusUnauthorized))
+	err=errors.New(response.Json(InvalidParam,http.StatusUnauthorized))
 	return
 }
 
 func validateToken(token string) (ok bool)  {
-	return true
+	var sql=`select count(*) from hb_shebei where device_nums = ?`
 	var total int
-	db.DB.Raw(`select count(*) from hb_shebei where device_nums = ?`,token).Scan(&total)
+	db.DB.Raw(sql,token).Scan(&total)
 	if total>=1 {
 		return true
 	}
