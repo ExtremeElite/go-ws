@@ -22,6 +22,7 @@ func wsBroker(conn *core.Connection) (err error){
 	//读取消息并且发送消息
 	if err=sendMessage(message,conn,
 		ping,
+		messageForwarding,
 	);err!=nil{
 		return
 	}
