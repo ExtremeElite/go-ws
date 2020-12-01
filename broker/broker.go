@@ -9,6 +9,7 @@ package broker
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"reflect"
 	"strconv"
 	"strings"
@@ -66,4 +67,16 @@ func (pushData PushData) ConversionJson() string{
 		return string(result)
 	}
 	return ""
+}
+//转发
+func (pushData PushData)messageForwarding(){
+	for _,publishAccount:=range pushData.PublishAccount{
+		if node,ok:=core.GetNode(publishAccount);ok{
+			go func() {
+				if err:=node.Ws.WriteMsg([]byte(pushData.ConversionJson()));err!=nil{
+					log.Println("data from ws: ",publishAccount,":",err.Error())
+				}
+			}()
+		}
+	}
 }

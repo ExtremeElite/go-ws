@@ -22,7 +22,7 @@ func wsBroker(conn *core.Connection) (err error){
 	//读取消息并且发送消息
 	if err=sendMessage(message,conn,
 		ping,
-		messageForwarding,
+		wsMessageForwarding,
 	);err!=nil{
 		return
 	}
@@ -57,27 +57,14 @@ func pong(message []byte,conn *core.Connection) (err error) {
 	return nil
 }
 
-func messageForwarding(message []byte,conn *core.Connection) (err error)  {
+func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
 	var pushData PushData
 	if err=json.Unmarshal(message,&pushData);err!=nil{
 		return
 	}
 	switch pushData.EventType {
 	case Conversation:
-		core.Nodes.Range(func(_, node interface{}) bool {
-			if len(pushData.PublishAccount)!=0 {
-				for _,publishAccount:=range pushData.PublishAccount{
-					if publishAccount==node.(*core.Node).Name {
-						go func() {
-							if err:=node.(*core.Node).Ws.WriteMsg([]byte(pushData.ConversionJson()));err!=nil{
-								log.Println("data from ws: ",publishAccount,":",err.Error())
-							}
-						}()
-					}
-				}
-			}
-			return true
-		})
+		pushData.messageForwarding()
 	}
 	return
 }

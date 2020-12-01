@@ -21,7 +21,7 @@ func main() {
 		log.Println(err.Error())
 	}()
 	go httpPush()
-	go broker.GetDataFromHttp()
+	go broker.HttpMessageForwarding()
 	wsPush()
 }
 func httpPush() {

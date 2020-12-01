@@ -74,25 +74,12 @@ func getOnLine() []string {
 	return result
 }
 //转发http的数据到ws
-func GetDataFromHttp()  {
+func HttpMessageForwarding()  {
 	for{
 		select {
-		case data:=<-HttpChan:
-			core.Nodes.Range(func(name, node interface{}) bool {
-				go func() {
-					if len(data.PublishAccount)!=0 {
-						for _,publishAccount:=range data.PublishAccount{
-							if publishAccount==node.(*core.Node).Name {
-								if err:=node.(*core.Node).Ws.WriteMsg([]byte(data.ConversionJson()));err!=nil{
-									log.Println("data from http: ",err.Error())
-								}
-							}
-						}
-					}
-				}()
-				return true
-			})
-			log.Println(`收到的http请求推送内容:`+data.ConversionJson())
+		case pushData:=<-HttpChan:
+			pushData.messageForwarding()
+			log.Println(`收到的http请求推送内容:`+pushData.ConversionJson())
 		}
 	}
 }
