@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 	"ws/conf"
 	"ws/core"
@@ -37,7 +38,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	core.AddNode(&core.Node{Ws: conn, Name: name})
 	for {
 
-		if err= wsWork(conn);err!=nil {
+		if err= wsWork(conn);err!=nil&&!strings.Contains(err.Error(),`wsMessageForwarding`) {
 			goto Err
 		}
 	}
@@ -78,7 +79,8 @@ func wsBuild(w http.ResponseWriter,r *http.Request)(conn *core.Connection,name s
 		return
 	}
 	name,err=pipeLine.GetName(r)
-	if err=conn.WriteMsg([]byte(`{"msg":"登录成功","code":200}`));err!=nil{
+	var response=util.Response{}
+	if err=conn.WriteMsg(response.Json("登录成功",200,""));err!=nil{
 		log.Println(name,"登录失败")
 		return nil, "", err
 	}

@@ -3,6 +3,7 @@ package util
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"log"
 	"math/rand"
 	"os"
@@ -13,6 +14,21 @@ import (
 const (
 	HELLO=`<h1>欢迎来到Gorouting即时通讯服务</h1>`
 )
+type Response struct {
+	Code int `json:"code"`
+	Msg string `json:"msg"`
+	Data interface{} `json:"data"`
+}
+func (response Response)Json(msg string,code int,data interface{}) []byte{
+	response.Msg=msg
+	response.Code=code
+	response.Data=data
+	res,err:=json.Marshal(response)
+	if err!=nil {
+		return []byte(`["code":404,"msg":"数据错误","data":""]`)
+	}
+	return res
+}
 //判断路径 始终是以二进制所在路径为依据
 func PathToEveryOne(path string) string {
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))

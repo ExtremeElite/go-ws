@@ -8,6 +8,7 @@ package broker
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"strings"
 	"time"
@@ -41,17 +42,17 @@ func sendMessage(message []byte,conn *core.Connection,fns ...wsPipeLineFn) error
 }
 //客户端主动ping服务器
 func ping(message []byte,conn *core.Connection) (err error) {
-	if strings.ToLower(string(message))=="ping" {
+	if strings.ToLower(string(message))==`ping` {
 		if err=conn.WriteMsg([]byte(`Pong`));err!=nil {
 			log.Println("写入失败:", err.Error())
-			return
 		}
+		return
 	}
-	if strings.ToLower(string(message))=="pong" {
+	if strings.ToLower(string(message))==`pong` {
 		if err=conn.WriteMsg([]byte(`Ping`));err!=nil {
 			log.Println("写入失败:", err.Error())
-			return
 		}
+		return
 	}
 	return nil
 }
@@ -59,6 +60,8 @@ func ping(message []byte,conn *core.Connection) (err error) {
 func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
 	var pushData PushData
 	if err=json.Unmarshal(message,&pushData);err!=nil{
+		log.Println("wsMessageForwarding err is:",err.Error())
+		err=errors.New(`wsMessageForwarding data error`)
 		return
 	}
 	switch pushData.EventType {

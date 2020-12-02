@@ -13,23 +13,9 @@ import (
 	"net/http"
 	"ws/core"
 	"ws/db"
+	"ws/util"
 )
 
-type Response struct {
-	Code int `json:"code"`
-	Msg string `json:"msg"`
-	Data interface{} `json:"data"`
-}
-func (response Response)Json(msg string,code int) string{
-	response.Msg=msg
-	response.Code=code
-	response.Data=""
-	data,err:=json.Marshal(response)
-	if err!=nil {
-		return `["code":404,"msg":"数据错误","data":""]`
-	}
-	return string(data)
-}
 type Login struct {
 	User string
 	Pwd string
@@ -43,13 +29,13 @@ var(
 )
 //ws登录
 func wsAuth(r *http.Request) (name string,err error)  {
-	response:=Response{}
+	response:=util.Response{}
 	name,err=GetName(r)
 	if err!=nil{
 		return
 	}
 	if !validateToken(name) {
-		err=errors.New(response.Json(TokenUnauthorized,http.StatusUnauthorized))
+		err=errors.New(string(response.Json(TokenUnauthorized,http.StatusUnauthorized,"")))
 	}
 	return
 }
@@ -70,22 +56,21 @@ func HttpAuth(r *http.Request)(data string,err error){
 }
 
 func GetName(r *http.Request) (name string,err error)  {
-	response:=Response{}
+	response:=util.Response{}
 	query:=r.URL.Query()
 	if len(query)==0 {
-		err=errors.New(response.Json(NoParam,http.StatusUnauthorized))
+		err=errors.New(string(response.Json(NoParam,http.StatusUnauthorized,"")))
 		return
 	}
 	if token,ok:=query["token"];ok{
 		name=token[0]
 		return
 	}
-	err=errors.New(response.Json(InvalidParam,http.StatusUnauthorized))
+	err=errors.New(string(response.Json(InvalidParam,http.StatusUnauthorized,"")))
 	return
 }
 
 func validateToken(token string) (ok bool)  {
-	return true
 	var sql=`select count(*) from hb_shebei where device_nums = ?`
 	var total int
 	db.DB.Raw(sql,token).Scan(&total)

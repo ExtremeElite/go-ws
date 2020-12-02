@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 	"ws/conf"
+	"ws/util"
 )
 type Connection struct {
 	WsConn    *websocket.Conn
@@ -52,7 +53,8 @@ func (conn *Connection) WriteMsg(data []byte) (err error)  {
 
 func (conn *Connection) Close(){
 	conn.one.Do(func() {
-		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(`连接已经断开`))
+		var response = util.Response{}
+		conn.WsConn.WriteMessage(websocket.TextMessage,[]byte(response.Json("连接已经断开",404,"")))
 		if err:=conn.WsConn.Close();err!=nil{
 			log.Println("close failed: ",err.Error())
 			return
