@@ -78,7 +78,7 @@ func AesDeCrypt(cypted []byte, key []byte) ([]byte, error) {
 }
 
 //加密base64
-func EnPwdCode(pwd []byte) (string, error) {
+func EncodeToken(pwd []byte) (string, error) {
 	result, err := AesEcrypt(pwd, PwdKey)
 	if err != nil {
 		return "", err
@@ -87,7 +87,7 @@ func EnPwdCode(pwd []byte) (string, error) {
 }
 
 //解密
-func DePwdCode(pwd string) ([]byte, error) {
+func DecodeToken(pwd string) ([]byte, error) {
 	//解密base64字符串
 	pwdByte, err := base64.StdEncoding.DecodeString(pwd)
 	if err != nil {
