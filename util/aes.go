@@ -8,8 +8,6 @@ import (
 	"errors"
 )
 
-//高级加密标准（Adevanced Encryption Standard ,AES）
-
 //16,24,32位字符串的话，分别对应AES-128，AES-192，AES-256 加密方法
 //key不能泄露
 var PwdKey = []byte("wQvFsHQNQTWVK2tt")
