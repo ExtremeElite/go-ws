@@ -33,6 +33,9 @@ func localMysql() *gorm.DB {
 		DontSupportRenameIndex:    false,
 		DontSupportRenameColumn:   false,
 	}), &gormConfig)
+	if err!=nil {
+		log.Panicln("mysql err is:", err.Error())
+	}
 	sqlDbRaw, err := mysqlDB.DB()
 	if err != nil {
 		log.Panicln("err:", err.Error())

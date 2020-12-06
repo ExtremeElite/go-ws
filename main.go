@@ -17,8 +17,11 @@ func init()  {
 func main() {
 	defer func() {
 		rawDB,err:=db.DB.DB()
+		if err!=nil {
+			log.Println("err is ",err)
+		}
 		rawDB.Close()
-		log.Println(err.Error())
+
 	}()
 	go httpPush()
 	go broker.HttpMessageForwarding()
