@@ -7,7 +7,6 @@ import (
 	"time"
 	"ws/broker"
 	"ws/conf"
-	"ws/db"
 	"ws/router"
 )
 
@@ -15,14 +14,6 @@ func init()  {
 	broker.HttpChan =make(chan broker.PushData,1)
 }
 func main() {
-	defer func() {
-		rawDB,err:=db.DB.DB()
-		if err!=nil {
-			log.Println("err is ",err)
-		}
-		rawDB.Close()
-
-	}()
 	go httpPush()
 	go broker.HttpMessageForwarding()
 	wsPush()
