@@ -11,6 +11,7 @@ var DB *gorm.DB
 func init() {
 	defer func() {
 		if err:=recover();err!=nil {
+			log.Fatal("sql server: ",err)
 			return
 		}
 		rawDB,err:=DB.DB()
