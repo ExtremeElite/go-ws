@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"log"
 	"ws/conf"
 
 	"gorm.io/gorm"
@@ -34,11 +33,11 @@ func localMysql() *gorm.DB {
 		DontSupportRenameColumn:   false,
 	}), &gormConfig)
 	if err!=nil {
-		log.Panicln("mysql err is:", err.Error())
+		panic(err)
 	}
 	sqlDbRaw, err := mysqlDB.DB()
 	if err != nil {
-		log.Panicln("err:", err.Error())
+		panic(err)
 	}
 	sqlDbRaw.SetMaxIdleConns(localBase.MaxConnect)
 	sqlDbRaw.SetMaxOpenConns(localBase.MaxConnect * 2)
