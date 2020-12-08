@@ -32,8 +32,8 @@ func wsBroker(conn *core.Connection) (err error){
 	log.Printf("服务器收到的: %s\n", message)
 	return
 }
-func sendMessage(message []byte,conn *core.Connection,fns ...wsPipeLineFn) error  {
-	for _,fn:=range fns {
+func sendMessage(message []byte,conn *core.Connection,callback ...wsPipeLineFn) error  {
+	for _,fn:=range callback {
 		if err:=fn(message,conn);err!=nil{
 			return err
 		}
