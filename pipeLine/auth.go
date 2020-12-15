@@ -71,7 +71,7 @@ func GetName(r *http.Request) (name string,err error)  {
 }
 
 func validateToken(token string) (ok bool)  {
-	var sql=`select count(*) from hb_shebei where device_nums = ?`
+	var sql=`select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql,token).Scan(&total)
 	if total>=1 {
