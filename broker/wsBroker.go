@@ -30,7 +30,6 @@ func wsBroker(conn *core.Connection) (err error){
 	);err!=nil{
 		log.Printf("服务器转发消息失败: %s\n",message)
 		log.Printf("错误消息引起的原因: %s\n",err.Error())
-		return
 	}
 	return
 }
