@@ -66,6 +66,10 @@ func GetName(r *http.Request) (name string,err error)  {
 		name=token[0]
 		return
 	}
+	if token,ok:=query["sn"];ok{
+		name=token[0]
+		return
+	}
 	err=errors.New(string(response.Json(InvalidParam,http.StatusUnauthorized,"")))
 	return
 }

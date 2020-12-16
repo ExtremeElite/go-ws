@@ -23,13 +23,14 @@ func wsBroker(conn *core.Connection) (err error){
 		return
 	}
 	//读取消息并且发送消息
+	log.Printf("服务器收到的: %s\n", message)
 	if err=sendMessage(message,conn,
 		ping,
 		wsMessageForwarding,
 	);err!=nil{
+		log.Printf("服务器发送消息失败: %s\n",message)
 		return
 	}
-	log.Printf("服务器收到的: %s\n", message)
 	return
 }
 func sendMessage(message []byte,conn *core.Connection,callback ...wsPipeLineFn) error  {
@@ -60,6 +61,10 @@ func ping(message []byte,conn *core.Connection) (err error) {
 func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
 	var pushData PushData
 	if err=json.Unmarshal(message,&pushData);err!=nil{
+		pingOrPong:=strings.ToLower(string(message))
+		if "ping"==pingOrPong || "pong"==pingOrPong {
+			return
+		}
 		log.Println("wsMessageForwarding err is:",err.Error())
 		err=errors.New(`wsMessageForwarding data error`)
 		return
