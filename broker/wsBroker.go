@@ -28,44 +28,49 @@ func wsBroker(conn *core.Connection) (err error){
 		ping,
 		wsMessageForwarding,
 	);err!=nil{
-		log.Printf("服务器发送消息失败: %s\n",message)
+		log.Printf("服务器转发消息失败: %s\n",message)
+		log.Printf("错误消息引起的原因: %s\n",err.Error())
 		return
 	}
 	return
 }
 func sendMessage(message []byte,conn *core.Connection,callback ...wsPipeLineFn) error  {
+	_message:=message
+	var err error
 	for _,fn:=range callback {
-		if err:=fn(message,conn);err!=nil{
-			return err
+		if _message!=nil {
+			if _message,err=fn(_message,conn);err!=nil{
+				return err
+			}
 		}
 	}
 	return nil
 }
 //客户端主动ping服务器
-func ping(message []byte,conn *core.Connection) (err error) {
+func ping(message []byte,conn *core.Connection) (data []byte,err error) {
+	data=message
 	if strings.ToLower(string(message))==`ping` {
 		if err=conn.WriteMsg([]byte(`Pong`));err!=nil {
 			log.Println("写入失败:", err.Error())
 		}
+		data=nil
 		return
 	}
 	if strings.ToLower(string(message))==`pong` {
 		if err=conn.WriteMsg([]byte(`Ping`));err!=nil {
 			log.Println("写入失败:", err.Error())
 		}
+		data=nil
 		return
 	}
-	return nil
+
+	return
 }
 //ws 消息转发 todo ws消息转发需要对连接权限进行认证
-func wsMessageForwarding(message []byte,conn *core.Connection) (err error)  {
+func wsMessageForwarding(message []byte,conn *core.Connection) (data []byte,err error)  {
 	var pushData PushData
+	data=message
 	if err=json.Unmarshal(message,&pushData);err!=nil{
-		pingOrPong:=strings.ToLower(string(message))
-		if "ping"==pingOrPong || "pong"==pingOrPong {
-			return
-		}
-		log.Println("wsMessageForwarding err is:",err.Error())
 		err=errors.New(`wsMessageForwarding data error`)
 		return
 	}

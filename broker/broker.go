@@ -22,7 +22,7 @@ const (
 	GetOnlineInfo =4
 
 )
-type wsPipeLineFn func([]byte,*core.Connection) error
+type wsPipeLineFn func([]byte,*core.Connection) ([]byte,error)
 type Response struct {
 	Code int `json:"code"`
 	Msg string `json:"msg"`
