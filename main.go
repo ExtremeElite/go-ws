@@ -12,8 +12,8 @@ import (
 	"ws/router"
 )
 
-func init()  {
-	broker.HttpChan =make(chan broker.PushData,1)
+func init() {
+	broker.HttpChan = make(chan broker.PushData, 1)
 	Logo()
 }
 func main() {
@@ -22,32 +22,31 @@ func main() {
 	wsPush()
 }
 func httpPush() {
-	var httpPort=conf.CommonSet.HttpPort
-	var httpTimeOut=conf.CommonSet.HttpTimeOut
-	httpPush:=http.NewServeMux()
+	var httpPort = conf.CommonSet.HttpPort
+	var httpTimeOut = conf.CommonSet.HttpTimeOut
+	httpPush := http.NewServeMux()
 
 	httpPush.HandleFunc("/", router.HttpRouter())
-	httpPushTimeOut:=http.TimeoutHandler(httpPush,time.Duration(httpTimeOut)*time.Second,"请求超时")
-	log.Printf("http服务器127.0.0.1:%d",httpPort)
-	if err:=http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut);err!=nil{
+	httpPushTimeOut := http.TimeoutHandler(httpPush, time.Duration(httpTimeOut)*time.Second, "请求超时")
+	log.Printf("http服务器127.0.0.1:%d", httpPort)
+	if err := http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut); err != nil {
 		log.Fatal(err)
 	}
 }
 func wsPush() {
-	var wsPort= conf.CommonSet.WsPort
-	wsPush:=http.NewServeMux()
+	var wsPort = conf.CommonSet.WsPort
+	wsPush := http.NewServeMux()
 	wsPush.HandleFunc("/", router.WsRouter())
-	log.Printf("ws服务器127.0.0.1:%d",wsPort)
-	if err:=http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush);err!=nil{
-		log.Fatal("main:",err)
+	log.Printf("ws服务器127.0.0.1:%d", wsPort)
+	if err := http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush); err != nil {
+		log.Fatal("main:", err)
 	}
 }
 
-func Logo()  {
+func Logo() {
 	ascii := figlet4go.NewAsciiRender()
 	// Adding the colors to RenderOptions
 	options := figlet4go.NewRenderOptions()
 	renderStr, _ := ascii.RenderOpts("Gorouting", options)
 	fmt.Println(renderStr)
 }
-
