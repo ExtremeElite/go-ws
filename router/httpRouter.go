@@ -12,7 +12,7 @@ import (
 	"ws/pipeLine"
 )
 
-func HttpRouter() http.HandlerFunc  {
+func HttpRouter() http.HandlerFunc {
 	return pipeLine.Use(
 		broker.HttpHandle,
 		pipeLine.Logging(),

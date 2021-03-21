@@ -15,51 +15,55 @@ import (
 	"strings"
 	"ws/core"
 )
-const (
-	Conversation  =1
-	Login         =2
-	Logout        =3
-	GetOnlineInfo =4
 
+const (
+	Conversation  = 1
+	Login         = 2
+	Logout        = 3
+	GetOnlineInfo = 4
 )
-type wsPipeLineFn func([]byte,*core.Connection) ([]byte,error)
+
+type wsPipeLineFn func([]byte, *core.Connection) ([]byte, error)
 type Response struct {
-	Code int `json:"code"`
-	Msg string `json:"msg"`
+	Code int         `json:"code"`
+	Msg  string      `json:"msg"`
 	Data interface{} `json:"data"`
 }
+
 //推送格式
 type PushData struct {
-	EventType int32 `json:"event_type"`
-	PublishAccount []string `json:"publish_account"`
-	Data interface{} `json:"data"`
+	EventType      int32       `json:"event_type"`
+	PublishAccount []string    `json:"publish_account"`
+	Data           interface{} `json:"data"`
 }
-func (response Response)Json(msg string,code int,data interface{}) []byte{
-	response.Msg=msg
-	response.Code=code
-	response.Data=data
-	res,err:=json.Marshal(response)
-	if err!=nil {
+
+func (response Response) Json(msg string, code int, data interface{}) []byte {
+	response.Msg = msg
+	response.Code = code
+	response.Data = data
+	res, err := json.Marshal(response)
+	if err != nil {
 		return []byte(`["code":404,"msg":"数据错误","data":""]`)
 	}
 	return res
 }
+
 //格式转换
-func (pushData PushData) ConversionJson() string{
-	data:=pushData.Data
-	dataType:=strings.ToLower(fmt.Sprintf("%s",reflect.TypeOf(data).Kind()))
+func (pushData PushData) ConversionJson() string {
+	data := pushData.Data
+	dataType := strings.ToLower(fmt.Sprintf("%s", reflect.TypeOf(data).Kind()))
 	//字符串
-	if dataType=="string" {
+	if dataType == "string" {
 		return data.(string)
 	}
 	//数字
-	if dataType=="float64" {
-		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64),`E+00`)
+	if dataType == "float64" {
+		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64), `E+00`)
 	}
 	//对象或者数组
-	if dataType=="map" || dataType=="slice" {
-		result,err:=json.Marshal(data)
-		if err!=nil {
+	if dataType == "map" || dataType == "slice" {
+		result, err := json.Marshal(data)
+		if err != nil {
 			println(err.Error())
 			return ""
 		}
@@ -67,13 +71,14 @@ func (pushData PushData) ConversionJson() string{
 	}
 	return ""
 }
+
 //转发
-func (pushData PushData)messageForwarding(){
-	for _,publishAccount:=range pushData.PublishAccount{
-		if node,ok:=core.GetNode(publishAccount);ok{
+func (pushData PushData) messageForwarding() {
+	for _, publishAccount := range pushData.PublishAccount {
+		if node, ok := core.GetNode(publishAccount); ok {
 			go func() {
-				if err:=node.Ws.WriteMsg([]byte(pushData.ConversionJson()));err!=nil{
-					log.Println("data from ws: ",publishAccount,":",err.Error())
+				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
+					log.Println("data from ws: ", publishAccount, ":", err.Error())
 				}
 			}()
 		}

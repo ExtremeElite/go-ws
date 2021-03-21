@@ -17,7 +17,7 @@ func localMysql() *gorm.DB {
 	var err error
 	linked := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
 	gormConfig := gorm.Config{
-		Logger:logger.Default.LogMode(logger.Silent) ,
+		Logger: logger.Default.LogMode(logger.Silent),
 	}
 	if bs.Common.Env == "dev" {
 		gormConfig = gorm.Config{
@@ -34,7 +34,7 @@ func localMysql() *gorm.DB {
 		DontSupportRenameIndex:    false,
 		DontSupportRenameColumn:   false,
 	}), &gormConfig)
-	if err!=nil {
+	if err != nil {
 		panic(err)
 	}
 	sqlDbRaw, err := mysqlDB.DB()

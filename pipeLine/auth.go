@@ -18,67 +18,69 @@ import (
 
 type Login struct {
 	User string
-	Pwd string
+	Pwd  string
 }
-var(
-	body       []byte
-	login      Login
+
+var (
+	body              []byte
+	login             Login
 	TokenUnauthorized = "token失效"
-	NoParam="未获取到参数"
-	InvalidParam="请传入正确的参数"
+	NoParam           = "未获取到参数"
+	InvalidParam      = "请传入正确的参数"
 )
+
 //ws登录
-func wsAuth(r *http.Request) (name string,err error)  {
-	response:=util.Response{}
-	name,err=GetName(r)
-	if err!=nil{
+func wsAuth(r *http.Request) (name string, err error) {
+	response := util.Response{}
+	name, err = GetName(r)
+	if err != nil {
 		return
 	}
 	if !validateToken(name) {
-		err=errors.New(string(response.Json(TokenUnauthorized,http.StatusUnauthorized,"")))
+		err = errors.New(string(response.Json(TokenUnauthorized, http.StatusUnauthorized, "")))
 	}
 	return
 }
 
 //http登录
-func HttpAuth(r *http.Request)(data string,err error){
-	if r.Method=="GET" {
-		data=core.HELLO
-	}else {
-		if body,err=ioutil.ReadAll(r.Body);err!=nil{
+func HttpAuth(r *http.Request) (data string, err error) {
+	if r.Method == "GET" {
+		data = core.HELLO
+	} else {
+		if body, err = ioutil.ReadAll(r.Body); err != nil {
 			return
 		}
-		if err=json.Unmarshal(body,&login);err!=nil {
+		if err = json.Unmarshal(body, &login); err != nil {
 			return
 		}
 	}
 	return
 }
 
-func GetName(r *http.Request) (name string,err error)  {
-	response:=util.Response{}
-	query:=r.URL.Query()
-	if len(query)==0 {
-		err=errors.New(string(response.Json(NoParam,http.StatusUnauthorized,"")))
+func GetName(r *http.Request) (name string, err error) {
+	response := util.Response{}
+	query := r.URL.Query()
+	if len(query) == 0 {
+		err = errors.New(string(response.Json(NoParam, http.StatusUnauthorized, "")))
 		return
 	}
-	if token,ok:=query["token"];ok{
-		name=token[0]
+	if token, ok := query["token"]; ok {
+		name = token[0]
 		return
 	}
-	if token,ok:=query["sn"];ok{
-		name=token[0]
+	if token, ok := query["sn"]; ok {
+		name = token[0]
 		return
 	}
-	err=errors.New(string(response.Json(InvalidParam,http.StatusUnauthorized,"")))
+	err = errors.New(string(response.Json(InvalidParam, http.StatusUnauthorized, "")))
 	return
 }
 
-func validateToken(token string) (ok bool)  {
-	var sql=`select count(*) from doorplate where sn = ?`
+func validateToken(token string) (ok bool) {
+	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
-	db.DB.Raw(sql,token).Scan(&total)
-	if total>=1 {
+	db.DB.Raw(sql, token).Scan(&total)
+	if total >= 1 {
 		return true
 	}
 	return false
@@ -87,9 +89,9 @@ func validateToken(token string) (ok bool)  {
 func WsAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			_,err:=wsAuth(r)
-			if err!=nil {
-				http.Error(w,err.Error(), http.StatusUnauthorized)
+			_, err := wsAuth(r)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusUnauthorized)
 				return
 			}
 			fn(w, r)
