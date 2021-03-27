@@ -12,14 +12,13 @@ import (
 
 func localMysql() *gorm.DB {
 	var mysqlDB *gorm.DB
-	var bs = common.Config()
-	var localBase = bs.MysqlDB
+	var localBase = common.MysqlSet
 	var err error
 	linked := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
 	gormConfig := gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	}
-	if bs.Common.Env == "dev" {
+	if common.Setting.Env == "dev" {
 		gormConfig = gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		}
