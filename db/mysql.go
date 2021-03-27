@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"ws/conf"
+	"ws/common"
 
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,7 +12,7 @@ import (
 
 func localMysql() *gorm.DB {
 	var mysqlDB *gorm.DB
-	var bs = conf.Config()
+	var bs = common.Config()
 	var localBase = bs.MysqlDB
 	var err error
 	linked := fmt.Sprintf(`%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)

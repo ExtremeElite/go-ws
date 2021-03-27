@@ -8,17 +8,20 @@ import (
 	"strconv"
 	"time"
 	"ws/broker"
-	"ws/conf"
+	"ws/common"
 	"ws/router"
 )
 
 func init() {
 	broker.HttpChan = make(chan broker.PushData, 1)
 	Logo()
+	var bs = common.Config()
+	common.Setting = bs.Common
+	common.MysqlSet = bs.MysqlDB
 }
 func httpPush() {
-	var httpPort = conf.CommonSet.HttpPort
-	var httpTimeOut = conf.CommonSet.HttpTimeOut
+	var httpPort = common.Setting.HttpPort
+	var httpTimeOut = common.Setting.HttpTimeOut
 	httpPush := http.NewServeMux()
 
 	httpPush.HandleFunc("/", router.HttpRouter())
@@ -29,7 +32,7 @@ func httpPush() {
 	}
 }
 func wsPush() {
-	var wsPort = conf.CommonSet.WsPort
+	var wsPort = common.Setting.WsPort
 	wsPush := http.NewServeMux()
 	wsPush.HandleFunc("/", router.WsRouter())
 	log.Printf("ws服务器0.0.0.0:%d", wsPort)

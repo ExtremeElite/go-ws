@@ -6,7 +6,7 @@ import (
 	"log"
 	"sync"
 	"time"
-	"ws/conf"
+	"ws/common"
 	"ws/util"
 )
 
@@ -20,9 +20,9 @@ type Connection struct {
 }
 
 func BuildConn(wsConn *websocket.Conn) (conn *Connection, err error) {
-	var common = conf.CommonSet
-	var writeChan = common.WriteChan
-	var readChan = common.ReadChan
+	var setting = common.Setting
+	var writeChan = setting.WriteChan
+	var readChan = setting.ReadChan
 	conn = &Connection{
 		WsConn:    wsConn,
 		readChan:  make(chan []byte, writeChan),

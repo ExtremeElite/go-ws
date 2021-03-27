@@ -12,7 +12,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"ws/conf"
+	"ws/common"
 	"ws/core"
 )
 
@@ -36,8 +36,8 @@ func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err erro
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	if bodyLen := len(body); bodyLen > conf.CommonSet.MaxBody {
-		res := `请求体大小为` + strconv.Itoa(bodyLen/1024) + `kb,大于` + strconv.Itoa(conf.CommonSet.MaxBody/1024) + `kb`
+	if bodyLen := len(body); bodyLen > common.Setting.MaxBody {
+		res := `请求体大小为` + strconv.Itoa(bodyLen/1024) + `kb,大于` + strconv.Itoa(common.Setting.MaxBody/1024) + `kb`
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		_, _ = w.Write([]byte(res))
 		log.Println(res)

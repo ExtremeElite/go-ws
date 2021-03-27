@@ -3,7 +3,7 @@ package db
 import (
 	"gorm.io/gorm"
 	"log"
-	"ws/conf"
+	"ws/common"
 )
 
 var DB *gorm.DB
@@ -21,7 +21,7 @@ func init() {
 			return
 		}
 	}()
-	defaultDB := conf.CommonSet.DefaultDB
+	defaultDB := common.Setting.DefaultDB
 	switch defaultDB {
 	default:
 		DB = localMysql()

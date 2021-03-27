@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"ws/conf"
+	"ws/common"
 	"ws/core"
 	"ws/pipeLine"
 	"ws/util"
@@ -56,7 +56,7 @@ Err:
 
 //业务逻辑处理
 func wsWork(conn *core.Connection) (err error) {
-	var wsTimeOut = conf.CommonSet.WsTimeOut
+	var wsTimeOut = common.Setting.WsTimeOut
 	//设置服务器读取超时
 	if wsTimeOut > 0 {
 		if err = conn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut) * time.Second)); err != nil {

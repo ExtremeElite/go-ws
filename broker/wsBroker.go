@@ -12,7 +12,7 @@ import (
 	"log"
 	"strings"
 	"time"
-	"ws/conf"
+	"ws/common"
 	"ws/core"
 )
 
@@ -84,7 +84,7 @@ func wsMessageForwarding(message []byte, conn *core.Connection) (data []byte, er
 
 //go程主动pong客户端
 func pong(conn *core.Connection) {
-	var wsTimeOut = conf.CommonSet.WsTimeOut
+	var wsTimeOut = common.Setting.WsTimeOut
 	if wsTimeOut > 0 {
 		addTime := time.Duration(wsTimeOut-1) * time.Second
 		timer := time.NewTimer(addTime)

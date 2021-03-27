@@ -1,4 +1,4 @@
-package conf
+package common
 
 import (
 	"github.com/BurntSushi/toml"
@@ -27,6 +27,11 @@ type BaseServer struct {
 	Common  Common
 	MysqlDB Mysql
 }
+
+var (
+	Setting  Common
+	MysqlSet Mysql
+)
 
 func Config() BaseServer {
 	var bs BaseServer
