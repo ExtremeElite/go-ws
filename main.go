@@ -8,16 +8,14 @@ import (
 	"strconv"
 	"time"
 	"ws/broker"
-	"ws/common"
 	"ws/router"
+
+	"ws/common"
 )
 
 func init() {
 	broker.HttpChan = make(chan broker.PushData, 1)
 	Logo()
-	var bs = common.Config()
-	common.Setting = bs.Common
-	common.MysqlSet = bs.MysqlDB
 }
 func httpPush() {
 	var httpPort = common.Setting.HttpPort

@@ -43,3 +43,8 @@ func Config() BaseServer {
 	}
 	return bs
 }
+func init() {
+	var bs = Config()
+	Setting = bs.Common
+	MysqlSet = bs.MysqlDB
+}
