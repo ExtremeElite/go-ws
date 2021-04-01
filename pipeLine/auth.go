@@ -11,7 +11,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
-	"ws/core"
+	"ws/common"
 	"ws/db"
 	"ws/util"
 )
@@ -45,7 +45,7 @@ func wsAuth(r *http.Request) (name string, err error) {
 //http登录
 func HttpAuth(r *http.Request) (data string, err error) {
 	if r.Method == "GET" {
-		data = core.HELLO
+		data = common.HelloWorld
 	} else {
 		if body, err = ioutil.ReadAll(r.Body); err != nil {
 			return

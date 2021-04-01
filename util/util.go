@@ -12,10 +12,6 @@ import (
 	"time"
 )
 
-const (
-	HELLO = `<h1>欢迎来到Gorouting即时通讯服务</h1>`
-)
-
 type Response struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`

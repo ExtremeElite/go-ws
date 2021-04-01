@@ -7,9 +7,9 @@ import (
 )
 
 type Node struct {
-	Ws   *Connection `json:"-"`
-	Name string `json:"name"`
-	RemoteAddr string `json:"remote_addr"`
+	Ws         *Connection `json:"-"`
+	Name       string      `json:"name"`
+	RemoteAddr string      `json:"remote_addr"`
 }
 
 var Nodes sync.Map

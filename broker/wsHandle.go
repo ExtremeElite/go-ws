@@ -27,7 +27,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	)
 	//普通 HTTP请求
 	if r.Header.Get("Connection") != "Upgrade" {
-		if _, err := w.Write([]byte(util.HELLO)); err != nil {
+		if _, err := w.Write([]byte(common.HelloWorld)); err != nil {
 			log.Println("http error: ", err.Error())
 		}
 		return
@@ -37,7 +37,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
-	core.AddNode(&core.Node{Ws: conn, Name: name,RemoteAddr:r.RemoteAddr})
+	core.AddNode(&core.Node{Ws: conn, Name: name, RemoteAddr: r.RemoteAddr})
 	for {
 
 		if err = wsWork(conn); err != nil && !strings.Contains(err.Error(), `wsMessageForwarding`) {

@@ -3,7 +3,7 @@ package pipeLine
 import (
 	"net/http"
 	"strings"
-	"ws/util"
+	"ws/common"
 )
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
@@ -21,7 +21,7 @@ func Method(m string) Middleware {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != m {
 				w.WriteHeader(http.StatusOK)
-				w.Write([]byte(util.HELLO))
+				_, _ = w.Write([]byte(common.HelloWorld))
 				return
 			}
 			fn(w, r)

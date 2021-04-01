@@ -8,7 +8,7 @@ import (
 	"ws/common"
 )
 
-func WsPush()  {
+func WsPush() {
 	var wsPort = common.Setting.WsPort
 	wsPush := http.NewServeMux()
 	wsPush.HandleFunc("/", WsRouter())
@@ -18,7 +18,7 @@ func WsPush()  {
 		log.Fatal("main:", err)
 	}
 }
-func HttpPush()  {
+func HttpPush() {
 	var httpPort = common.Setting.HttpPort
 	var httpTimeOut = common.Setting.HttpTimeOut
 	httpPush := http.NewServeMux()
