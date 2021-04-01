@@ -8,30 +8,27 @@ package router
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"ws/core"
 )
 
 func AllNodeRouter() http.HandlerFunc {
 	type Data struct {
-		Info []core.Node `json:"info"`
-		Total int `json:"total"`
+		Info  []core.Node `json:"info"`
+		Total int         `json:"total"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		nodes,total:=core.GetAllNode()
-		for _,node:=range nodes {
-			fmt.Printf("name:%s,remote_addr:%s\n",node.Name,node.RemoteAddr)
-		}
-
-		var data =Data{
-			Info: nodes,
+		w.Header().Set("Content-Type", "application/json")
+		nodes, total := core.GetAllNode()
+		var data = Data{
+			Info:  nodes,
 			Total: total,
 		}
 		result, err := json.Marshal(data)
 		if err != nil {
 			println(err.Error())
+			result = []byte(err.Error())
 		}
-		w.Write(result)
+		_, _ = w.Write(result)
 	}
 }
