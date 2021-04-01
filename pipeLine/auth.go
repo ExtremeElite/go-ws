@@ -26,7 +26,6 @@ var (
 	body              []byte
 	login             Login
 	TokenUnauthorized = "token失效"
-	NoParam           = "未获取到参数"
 	InvalidParam      = "请传入正确的参数"
 	AuthToken         = []string{"token", "sn"}
 )
@@ -61,7 +60,7 @@ func HttpAuth(r *http.Request) (data string, err error) {
 
 func GetName(r *http.Request) (name string, err error) {
 	response := util.Response{}
-	_err := string(response.Json(NoParam, http.StatusUnauthorized, ""))
+	_err := string(response.Json(InvalidParam, http.StatusUnauthorized, ""))
 	query := r.URL.Query()
 	if len(query) == 0 {
 		err = errors.New(_err)
@@ -77,7 +76,6 @@ func GetName(r *http.Request) (name string, err error) {
 }
 
 func validateToken(token string) (ok bool) {
-	return true
 	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
