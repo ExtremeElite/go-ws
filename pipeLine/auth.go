@@ -44,7 +44,7 @@ func wsAuth(r *http.Request) (name string, err error) {
 
 //http登录
 func HttpAuth(r *http.Request) (data string, err error) {
-	if r.Method == "GET" {
+	if r.Method == http.MethodGet {
 		data = common.HelloWorld
 	} else {
 		if body, err = ioutil.ReadAll(r.Body); err != nil {

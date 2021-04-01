@@ -38,7 +38,7 @@ func (conn *Connection) ReadMsg() (data []byte, err error) {
 	select {
 	case data = <-conn.readChan:
 	case <-conn.closeChan:
-		err = errors.New("读连接关闭")
+		err = errors.New(common.ReadConnectClosed)
 	}
 	return
 }
@@ -46,7 +46,7 @@ func (conn *Connection) ReadMsg() (data []byte, err error) {
 func (conn *Connection) WriteMsg(data []byte) (err error) {
 	select {
 	case <-conn.closeChan:
-		err = errors.New("写连接关闭")
+		err = errors.New(common.WriteConnectClosed)
 	case conn.writeChan <- data:
 	}
 	return
@@ -55,7 +55,7 @@ func (conn *Connection) WriteMsg(data []byte) (err error) {
 func (conn *Connection) Close() {
 	conn.one.Do(func() {
 		var response = util.Response{}
-		conn.WsConn.WriteMessage(websocket.TextMessage, []byte(response.Json("连接已经断开", 404, "")))
+		conn.WsConn.WriteMessage(websocket.TextMessage, []byte(response.Json(common.ConnectClosed, 404, "")))
 		if err := conn.WsConn.Close(); err != nil {
 			log.Println("close failed: ", err.Error())
 			return
