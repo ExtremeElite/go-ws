@@ -27,7 +27,7 @@ func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 	workData(w, pushData)
-	log.Println(r.RemoteAddr + "发来的消息:" + string(body))
+	log.Println("服务端收到:"+r.RemoteAddr + "发来的消息:" + string(body))
 	return
 }
 
@@ -51,6 +51,7 @@ func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err erro
 func workData(w http.ResponseWriter, pushData PushData) {
 	var response Response
 	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
 	switch pushData.EventType {
 	case Conversation:
 		select {
