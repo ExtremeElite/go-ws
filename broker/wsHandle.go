@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 	"ws/common"
-	"ws/core"
+	"ws/kernel"
 	"ws/pipeLine"
 	"ws/util"
 )
@@ -22,7 +22,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 
 	var (
 		err  error
-		conn *core.Connection
+		conn *kernel.Connection
 		name string
 	)
 	//普通 HTTP请求
@@ -37,7 +37,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
-	core.AddNode(&core.Node{Ws: conn, Name: name, RemoteAddr: r.RemoteAddr})
+	kernel.AddNode(&kernel.Node{Ws: conn, Name: name, RemoteAddr: r.RemoteAddr})
 	for {
 
 		if err = wsWork(conn); err != nil && !strings.Contains(err.Error(), `wsMessageForwarding`) {
@@ -46,7 +46,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	}
 Err:
 	if conn.IsClose {
-		if err := core.DelNode(name); err != nil {
+		if err := kernel.DelNode(name); err != nil {
 			log.Println("connect close:", err.Error())
 		}
 	}
@@ -55,7 +55,7 @@ Err:
 }
 
 //业务逻辑处理
-func wsWork(conn *core.Connection) (err error) {
+func wsWork(conn *kernel.Connection) (err error) {
 	var wsTimeOut = common.Setting.WsTimeOut
 	//设置服务器读取超时
 	if wsTimeOut > 0 {
@@ -67,14 +67,14 @@ func wsWork(conn *core.Connection) (err error) {
 }
 
 //创建连接
-func wsBuild(w http.ResponseWriter, r *http.Request) (conn *core.Connection, name string, err error) {
+func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, name string, err error) {
 	var (
 		wsConn *websocket.Conn
 	)
 	if wsConn, err = upgrade.Upgrade(w, r, nil); err != nil {
 		return
 	}
-	if conn, err = core.BuildConn(wsConn); err != nil {
+	if conn, err = kernel.BuildConn(wsConn); err != nil {
 		if wsErr := wsConn.WriteMessage(websocket.TextMessage, []byte(err.Error())); wsErr != nil {
 			log.Println("wsErr is:", wsErr.Error())
 		}

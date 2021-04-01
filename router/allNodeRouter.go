@@ -10,17 +10,17 @@ import (
 	"encoding/json"
 	"net/http"
 	"ws/common"
-	"ws/core"
+	"ws/kernel"
 )
 
 func AllNodeRouter() http.HandlerFunc {
 	type Data struct {
-		Info  []core.Node `json:"info"`
-		Total int         `json:"total"`
+		Info  []kernel.Node `json:"info"`
+		Total int           `json:"total"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set(common.ContentType, common.AppJson)
-		nodes, total := core.GetAllNode()
+		nodes, total := kernel.GetAllNode()
 		var data = Data{
 			Info:  nodes,
 			Total: total,

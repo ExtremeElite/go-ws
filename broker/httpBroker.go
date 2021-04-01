@@ -14,7 +14,7 @@ import (
 	"strconv"
 
 	"ws/common"
-	"ws/core"
+	"ws/kernel"
 )
 
 func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
@@ -72,7 +72,7 @@ func workData(w http.ResponseWriter, pushData PushData) {
 //获取最新在线情况
 func getOnLine() []string {
 	result := make([]string, 0)
-	nodes, _ := core.GetAllNode()
+	nodes, _ := kernel.GetAllNode()
 	for _, node := range nodes {
 		result = append(result, node.Name)
 	}

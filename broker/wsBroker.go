@@ -13,10 +13,10 @@ import (
 	"strings"
 	"time"
 	"ws/common"
-	"ws/core"
+	"ws/kernel"
 )
 
-func wsBroker(conn *core.Connection) (err error) {
+func wsBroker(conn *kernel.Connection) (err error) {
 	var message []byte
 	if message, err = conn.ReadMsg(); err != nil {
 		log.Println("读取失败:", err.Error())
@@ -33,7 +33,7 @@ func wsBroker(conn *core.Connection) (err error) {
 	}
 	return
 }
-func sendMessage(message []byte, conn *core.Connection, callback ...wsPipeLineFn) error {
+func sendMessage(message []byte, conn *kernel.Connection, callback ...wsPipeLineFn) error {
 	_message := message
 	var err error
 	for _, fn := range callback {
@@ -47,7 +47,7 @@ func sendMessage(message []byte, conn *core.Connection, callback ...wsPipeLineFn
 }
 
 //客户端主动ping服务器
-func ping(message []byte, conn *core.Connection) (data []byte, err error) {
+func ping(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	data = message
 	if strings.ToLower(string(message)) == `ping` {
 		if err = conn.WriteMsg([]byte(`Pong`)); err != nil {
@@ -68,7 +68,7 @@ func ping(message []byte, conn *core.Connection) (data []byte, err error) {
 }
 
 //ws 消息转发 todo ws消息转发需要对连接权限进行认证
-func wsMessageForwarding(message []byte, conn *core.Connection) (data []byte, err error) {
+func wsMessageForwarding(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	var pushData PushData
 	data = message
 	if err = json.Unmarshal(message, &pushData); err != nil {
@@ -83,7 +83,7 @@ func wsMessageForwarding(message []byte, conn *core.Connection) (data []byte, er
 }
 
 //go程主动pong客户端
-func pong(conn *core.Connection) {
+func pong(conn *kernel.Connection) {
 	var wsTimeOut = common.Setting.WsTimeOut
 	if wsTimeOut > 0 {
 		addTime := time.Duration(wsTimeOut-1) * time.Second

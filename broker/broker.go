@@ -13,7 +13,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"ws/core"
+	"ws/kernel"
 )
 
 const (
@@ -23,7 +23,7 @@ const (
 	GetOnlineInfo = 4
 )
 
-type wsPipeLineFn func([]byte, *core.Connection) ([]byte, error)
+type wsPipeLineFn func([]byte, *kernel.Connection) ([]byte, error)
 type Response struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
@@ -75,7 +75,7 @@ func (pushData PushData) ConversionJson() string {
 //转发
 func (pushData PushData) messageForwarding() {
 	for _, publishAccount := range pushData.PublishAccount {
-		if node, ok := core.GetNode(publishAccount); ok {
+		if node, ok := kernel.GetNode(publishAccount); ok {
 			go func() {
 				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
 					log.Println("data from ws: ", publishAccount, ":", err.Error())
