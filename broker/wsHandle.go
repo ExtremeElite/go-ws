@@ -37,7 +37,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer conn.Close()
-	core.AddNode(&core.Node{Ws: conn, Name: name})
+	core.AddNode(&core.Node{Ws: conn, Name: name,RemoteAddr:r.RemoteAddr})
 	for {
 
 		if err = wsWork(conn); err != nil && !strings.Contains(err.Error(), `wsMessageForwarding`) {

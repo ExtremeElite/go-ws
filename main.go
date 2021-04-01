@@ -23,6 +23,7 @@ func httpPush() {
 	httpPush := http.NewServeMux()
 
 	httpPush.HandleFunc("/", router.HttpRouter())
+	httpPush.HandleFunc("/all", router.AllNodeRouter())
 	httpPushTimeOut := http.TimeoutHandler(httpPush, time.Duration(httpTimeOut)*time.Second, "请求超时")
 	log.Printf("http服务器0.0.0.0:%d", httpPort)
 	if err := http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut); err != nil {

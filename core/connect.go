@@ -11,12 +11,12 @@ import (
 )
 
 type Connection struct {
-	WsConn    *websocket.Conn
+	WsConn    *websocket.Conn `json:"_"`
 	readChan  chan []byte
 	writeChan chan []byte
 	closeChan chan byte
 	one       sync.Once
-	IsClose   bool
+	IsClose   bool `json:"is_close"`
 }
 
 func BuildConn(wsConn *websocket.Conn) (conn *Connection, err error) {
