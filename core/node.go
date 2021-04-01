@@ -7,7 +7,7 @@ import (
 )
 
 type Node struct {
-	Ws   *Connection `json:"ws"`
+	Ws   *Connection `json:"-"`
 	Name string `json:"name"`
 	RemoteAddr string `json:"remote_addr"`
 }

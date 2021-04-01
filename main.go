@@ -23,7 +23,6 @@ func httpPush() {
 	httpPush := http.NewServeMux()
 
 	httpPush.HandleFunc("/", router.HttpRouter())
-	httpPush.HandleFunc("/all", router.AllNodeRouter())
 	httpPushTimeOut := http.TimeoutHandler(httpPush, time.Duration(httpTimeOut)*time.Second, "请求超时")
 	log.Printf("http服务器0.0.0.0:%d", httpPort)
 	if err := http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut); err != nil {
@@ -34,6 +33,7 @@ func wsPush() {
 	var wsPort = common.Setting.WsPort
 	wsPush := http.NewServeMux()
 	wsPush.HandleFunc("/", router.WsRouter())
+	wsPush.HandleFunc("/all", router.AllNodeRouter())
 	log.Printf("ws服务器0.0.0.0:%d", wsPort)
 	if err := http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush); err != nil {
 		log.Fatal("main:", err)

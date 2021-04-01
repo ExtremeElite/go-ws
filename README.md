@@ -11,6 +11,7 @@ ws基础 win10 64位系统 内存不释放，32位正常释放 Linux 没测试
 ###### port = 10090 web程序监听的端口
 
 ###### env = "dev" dev||prod dev打印日志 prod不打印
+###### ws route /all 获取在线连接数
 
 ###### [mysqlDB]
 
