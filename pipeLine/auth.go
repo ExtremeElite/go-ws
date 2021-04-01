@@ -11,6 +11,7 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"ws/common"
 	"ws/db"
 	"ws/util"
@@ -27,6 +28,7 @@ var (
 	TokenUnauthorized = "token失效"
 	NoParam           = "未获取到参数"
 	InvalidParam      = "请传入正确的参数"
+	AuthToken         = []string{"token", "sn"}
 )
 
 //ws登录
@@ -59,20 +61,18 @@ func HttpAuth(r *http.Request) (data string, err error) {
 
 func GetName(r *http.Request) (name string, err error) {
 	response := util.Response{}
+	_err := string(response.Json(NoParam, http.StatusUnauthorized, ""))
 	query := r.URL.Query()
 	if len(query) == 0 {
-		err = errors.New(string(response.Json(NoParam, http.StatusUnauthorized, "")))
+		err = errors.New(_err)
 		return
 	}
-	if token, ok := query["token"]; ok {
-		name = token[0]
-		return
+	if name,ok:=hasToken(query);ok {
+		return name, err
 	}
-	if token, ok := query["sn"]; ok {
-		name = token[0]
-		return
+	if len(name) == 0 {
+		err = errors.New(_err)
 	}
-	err = errors.New(string(response.Json(InvalidParam, http.StatusUnauthorized, "")))
 	return
 }
 
@@ -107,4 +107,14 @@ func HttpAuthMiddle() Middleware {
 			fn(w, r)
 		}
 	}
+}
+
+func hasToken(query url.Values) (token string,ok bool) {
+	for _,_token:=range AuthToken {
+		token=query.Get(_token)
+		if len(token)>0 {
+			return token,true
+		}
+	}
+	return "",false
 }
