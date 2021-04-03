@@ -16,6 +16,9 @@ func localMysql() *gorm.DB {
 	var localBase = common.MysqlSet
 	var err error
 	defer func() {
+		if common.Debug {
+			return
+		}
 		if err := recover(); err != nil {
 			log.Println("sql server: ", err)
 			rawDB, err := mysqlDB.DB()

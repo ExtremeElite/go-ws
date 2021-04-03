@@ -67,7 +67,7 @@ func GetName(r *http.Request) (name string, err error) {
 		err = errors.New(_err)
 		return
 	}
-	if name,ok:=hasToken(query);ok {
+	if name, ok := hasToken(query); ok {
 		return name, err
 	}
 	if len(name) == 0 {
@@ -78,6 +78,9 @@ func GetName(r *http.Request) (name string, err error) {
 
 func validateToken(token string) (ok bool) {
 	defer func() {
+		if common.Debug {
+			return
+		}
 		if err := recover(); err != nil {
 			log.Println("validate token sql query: ", err)
 		}
@@ -113,12 +116,12 @@ func HttpAuthMiddle() Middleware {
 	}
 }
 
-func hasToken(query url.Values) (token string,ok bool) {
-	for _,_token:=range AuthToken {
-		token=query.Get(_token)
-		if len(token)>0 {
-			return token,true
+func hasToken(query url.Values) (token string, ok bool) {
+	for _, _token := range AuthToken {
+		token = query.Get(_token)
+		if len(token) > 0 {
+			return token, true
 		}
 	}
-	return "",false
+	return "", false
 }

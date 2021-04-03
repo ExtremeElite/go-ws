@@ -31,6 +31,7 @@ type BaseServer struct {
 var (
 	Setting  Common
 	MysqlSet Mysql
+	Debug    bool
 )
 
 func Config() BaseServer {
@@ -47,4 +48,5 @@ func init() {
 	var bs = Config()
 	Setting = bs.Common
 	MysqlSet = bs.MysqlDB
+	Debug = bs.Common.Env == "dev"
 }
