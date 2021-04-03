@@ -34,6 +34,12 @@ var (
 	Debug    bool
 )
 
+func init() {
+	var bs = Config()
+	Setting = bs.Common
+	MysqlSet = bs.MysqlDB
+	Debug = bs.Common.Env == "dev"
+}
 func Config() BaseServer {
 	var bs BaseServer
 	var configPath string
@@ -44,9 +50,7 @@ func Config() BaseServer {
 	}
 	return bs
 }
-func init() {
-	var bs = Config()
-	Setting = bs.Common
-	MysqlSet = bs.MysqlDB
-	Debug = bs.Common.Env == "dev"
+func CheckPort(port int) error {
+
+	return nil
 }
