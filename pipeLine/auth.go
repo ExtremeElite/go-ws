@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"ws/common"
@@ -76,6 +77,11 @@ func GetName(r *http.Request) (name string, err error) {
 }
 
 func validateToken(token string) (ok bool) {
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("validate token sql query: ", err)
+		}
+	}()
 	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)

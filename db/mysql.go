@@ -14,8 +14,19 @@ import (
 func localMysql() *gorm.DB {
 	var mysqlDB *gorm.DB
 	var localBase = common.MysqlSet
-	log.Println(localBase.ServerHost)
 	var err error
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("sql server: ", err)
+			rawDB, err := mysqlDB.DB()
+			if err != nil {
+				log.Println("err is ", err)
+				return
+			}
+			_ = rawDB.Close()
+			return
+		}
+	}()
 	linked := fmt.Sprintf(common.MysqlTcpConnect, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
 	gormConfig := gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
