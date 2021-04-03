@@ -7,7 +7,11 @@ import (
 )
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
+var MiddlewareRequest map[string]string
 
+func init() {
+	MiddlewareRequest=make(map[string]string)
+}
 func Logging() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {

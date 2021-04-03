@@ -89,6 +89,7 @@ func validateToken(token string) (ok bool) {
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
 	if total >= 1 {
+		MiddlewareRequest["token"]=token
 		return true
 	}
 	return false

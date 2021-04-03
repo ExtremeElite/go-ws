@@ -81,9 +81,9 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 		_ = wsConn.Close()
 		return
 	}
-	name, err = pipeLine.GetName(r)
+	name = pipeLine.MiddlewareRequest["token"]
 	var response = util.Response{}
-	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil {
+	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil && len(name)>0 {
 		log.Println(name, "登录失败")
 		return nil, "", err
 	}
