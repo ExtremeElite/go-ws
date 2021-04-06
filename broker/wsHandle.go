@@ -1,6 +1,7 @@
 package broker
 
 import (
+	"errors"
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
@@ -32,6 +33,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
+	println("handle")
 	if conn, name, err = wsBuild(w, r); err != nil {
 		log.Println("wsRequest:", err.Error())
 		return
@@ -82,9 +84,12 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 		return
 	}
 	name = pipeLine.MiddlewareRequest["token"]
+	if len(name)==0 {
+		err=errors.New("获取到的name为空")
+		return nil, "", err
+	}
 	var response = util.Response{}
-	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil || len(name)==0 {
-		log.Println("获取到的登录名为:",name, "登录失败")
+	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil {
 		return nil, "", err
 	}
 	log.Println("connect open:", r.RemoteAddr, name)

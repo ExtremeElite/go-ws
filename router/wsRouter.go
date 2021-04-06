@@ -17,6 +17,8 @@ func WsRouter() http.HandlerFunc {
 	return pipeLine.Use(
 		broker.WsHandle,
 		pipeLine.Cors(),
+		pipeLine.HasName("token"),
 		pipeLine.WsAuthMiddle(),
+
 	)
 }

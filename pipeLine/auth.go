@@ -32,12 +32,9 @@ var (
 )
 
 //ws登录
-func wsAuth(r *http.Request) (name string, err error) {
+func wsAuth() (name string, err error) {
 	response := util.Response{}
-	name, err = GetName(r)
-	if err != nil {
-		return
-	}
+	name= MiddlewareRequest["token"]
 	if !validateToken(name) {
 		err = errors.New(string(response.Json(TokenUnauthorized, http.StatusUnauthorized, "")))
 	}
@@ -73,6 +70,7 @@ func GetName(r *http.Request) (name string, err error) {
 	if len(name) == 0 {
 		err = errors.New(_err)
 	}
+	MiddlewareRequest["token"]=name
 	return
 }
 
@@ -85,6 +83,8 @@ func validateToken(token string) (ok bool) {
 			log.Println("validate token sql query: ", err)
 		}
 	}()
+	MiddlewareRequest["token"]=token
+	return true
 	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
@@ -98,11 +98,14 @@ func validateToken(token string) (ok bool) {
 func WsAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			_, err := wsAuth(r)
+			_, err := wsAuth()
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusUnauthorized)
+				w.WriteHeader(http.StatusUnauthorized)
+				_, _ = w.Write([]byte(TokenUnauthorized))
+				log.Println("认证失败")
 				return
 			}
+			println("ws")
 			fn(w, r)
 		}
 	}

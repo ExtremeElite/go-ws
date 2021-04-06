@@ -1,6 +1,7 @@
 package pipeLine
 
 import (
+	"log"
 	"net/http"
 	"strings"
 	"ws/common"
@@ -39,6 +40,23 @@ func Cors() Middleware {
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
 			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+			println("cors")
+			fn(w, r)
+		}
+	}
+}
+func HasName(name string) Middleware {
+	return func(fn http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			_name,err:=GetName(r)
+			MiddlewareRequest["token1"]=_name
+			if len(CheckMiddleRequest(name))==0 ||err !=nil {
+				w.WriteHeader(http.StatusUnauthorized)
+				_, _ = w.Write([]byte(InvalidParam))
+				log.Println(InvalidParam)
+				return
+			}
+			println("has_name")
 			fn(w, r)
 		}
 	}
@@ -49,4 +67,10 @@ func Use(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 		fn = middlewares[middlewareLen-key](fn)
 	}
 	return fn
+}
+func CheckMiddleRequest(key string) string {
+	if name,ok:=MiddlewareRequest[key];ok {
+		return name
+	}
+	return ""
 }
