@@ -84,7 +84,6 @@ func validateToken(token string) (ok bool) {
 		}
 	}()
 	MiddlewareRequest["token"]=token
-	return true
 	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
