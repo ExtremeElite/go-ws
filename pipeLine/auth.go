@@ -113,7 +113,6 @@ func WsAuthMiddle() Middleware {
 func HttpAuthMiddle() Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
-			//time.Sleep(time.Second*3)
 			fn(w, r)
 		}
 	}

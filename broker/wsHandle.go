@@ -28,12 +28,11 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	)
 	//普通 HTTP请求
 	if r.Header.Get("Connection") != "Upgrade" {
-		if _, err := w.Write([]byte(common.HelloWorld)); err != nil {
+		if _, err := w.Write([]byte(common.HelloWorld)); err != nil && common.Debug {
 			log.Println("http error: ", err.Error())
 		}
 		return
 	}
-	println("handle")
 	if conn, name, err = wsBuild(w, r); err != nil {
 		log.Println("wsRequest:", err.Error())
 		return
@@ -48,7 +47,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	}
 Err:
 	if conn.IsClose {
-		if err := kernel.DelNode(name); err != nil {
+		if err := kernel.DelNode(name); err != nil && common.Debug {
 			log.Println("connect close:", err.Error())
 		}
 	}
@@ -77,7 +76,7 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 		return
 	}
 	if conn, err = kernel.BuildConn(wsConn); err != nil {
-		if wsErr := wsConn.WriteMessage(websocket.TextMessage, []byte(err.Error())); wsErr != nil {
+		if wsErr := wsConn.WriteMessage(websocket.TextMessage, []byte(err.Error())); wsErr != nil && common.Debug {
 			log.Println("wsErr is:", wsErr.Error())
 		}
 		_ = wsConn.Close()
