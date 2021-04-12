@@ -60,8 +60,8 @@ func (pushData PushData) ConversionJson() string {
 	if dataType == "float64" {
 		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64), `E+00`)
 	}
-	//对象或者数组
-	if dataType == "map" || dataType == "slice" {
+	//标准的json对象或者数组
+	if (dataType == "map" || dataType == "slice") && json.Valid(data.([]byte)) {
 		result, err := json.Marshal(data)
 		if err != nil {
 			println(err.Error())
