@@ -50,6 +50,7 @@ func HasName(name string) Middleware {
 			_name,err:=GetName(r)
 			MiddlewareRequest["token1"]=_name
 			if len(CheckMiddleRequest(name))==0 ||err !=nil {
+				w.Header().Set("Connection","close")
 				w.WriteHeader(http.StatusUnauthorized)
 				_, _ = w.Write([]byte(InvalidParam))
 				log.Println(InvalidParam)
