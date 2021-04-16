@@ -31,13 +31,13 @@ func localMysql() *gorm.DB {
 		}
 	}()
 	linked := fmt.Sprintf(common.MysqlTcpConnect, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
-	gormConfig := gorm.Config{
-		Logger: logger.Default.LogMode(logger.Silent),
-	}
+
+	var loggerDefaultMode = logger.Silent
 	if common.Debug {
-		gormConfig = gorm.Config{
-			Logger: logger.Default.LogMode(logger.Info),
-		}
+		loggerDefaultMode=logger.Info
+	}
+	gormConfig := gorm.Config{
+		Logger: logger.Default.LogMode(loggerDefaultMode),
 	}
 	mysqlDB, err = gorm.Open(mysql.New(mysql.Config{
 		DriverName:                "",
