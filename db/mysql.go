@@ -34,7 +34,7 @@ func localMysql() *gorm.DB {
 	gormConfig := gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
 	}
-	if common.Setting.Env == "dev" {
+	if common.Debug {
 		gormConfig = gorm.Config{
 			Logger: logger.Default.LogMode(logger.Info),
 		}
