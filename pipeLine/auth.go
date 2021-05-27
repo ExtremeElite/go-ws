@@ -34,7 +34,7 @@ var (
 //ws登录
 func wsAuth() (name string, err error) {
 	response := util.Response{}
-	name= MiddlewareRequest["token"]
+	name = MiddlewareRequest["token"]
 	if !validateToken(name) {
 		err = errors.New(string(response.Json(TokenUnauthorized, http.StatusUnauthorized, "")))
 	}
@@ -70,7 +70,7 @@ func GetName(r *http.Request) (name string, err error) {
 	if len(name) == 0 {
 		err = errors.New(_err)
 	}
-	MiddlewareRequest["token"]=name
+	MiddlewareRequest["token"] = name
 	return
 }
 
@@ -83,12 +83,12 @@ func validateToken(token string) (ok bool) {
 			log.Println("validate token sql query: ", err)
 		}
 	}()
-	MiddlewareRequest["token"]=token
+	MiddlewareRequest["token"] = token
 	var sql = `select count(*) from doorplate where sn = ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
 	if total >= 1 {
-		MiddlewareRequest["token"]=token
+		MiddlewareRequest["token"] = token
 		return true
 	}
 	return false
