@@ -5,6 +5,7 @@ import (
 	"github.com/mbndr/figlet4go"
 	"github.com/sevlyar/go-daemon"
 	"log"
+	"runtime"
 	"ws/broker"
 	"ws/router"
 )
@@ -21,26 +22,28 @@ func Logo() {
 	fmt.Println(renderStr)
 }
 func main() {
-	cntxt := &daemon.Context{
-		PidFileName: "go_ws.pid",
-		PidFilePerm: 0644,
-		LogFileName: "go_ws.log",
-		LogFilePerm: 0640,
-		WorkDir:     "./",
-		Umask:       027,
-		Args:        []string{"[go-daemon go_ws]"},
-	}
+	if runtime.GOOS=="linux" {
+		cntxt := &daemon.Context{
+			PidFileName: "go_ws.pid",
+			PidFilePerm: 0644,
+			LogFileName: "go_ws.log",
+			LogFilePerm: 0640,
+			WorkDir:     "./",
+			Umask:       027,
+			Args:        []string{"[go-daemon go_ws]"},
+		}
 
-	d, err := cntxt.Reborn()
-	if err != nil {
-		log.Fatal("Unable to run: ", err)
+		d, err := cntxt.Reborn()
+		if err != nil {
+			log.Fatal("Unable to run: ", err)
+		}
+		if d != nil {
+			return
+		}
+		log.Print("- - - - - - - - - - - - - - -")
+		log.Print("go_ws started")
+		defer cntxt.Release()
 	}
-	if d != nil {
-		return
-	}
-	log.Print("- - - - - - - - - - - - - - -")
-	log.Print("go_ws started")
-	defer cntxt.Release()
 	go router.HttpPush()
 	go broker.HttpMessageForwarding()
 	router.WsPush()
