@@ -20,7 +20,7 @@ func Logo() {
 	renderStr, _ := ascii.RenderOpts("Gorouting", options)
 	fmt.Println(renderStr)
 }
-func daemonLinux()  {
+func main() {
 	cntxt := &daemon.Context{
 		PidFileName: "go_ws.pid",
 		PidFilePerm: 0644,
@@ -39,11 +39,8 @@ func daemonLinux()  {
 		return
 	}
 	log.Print("- - - - - - - - - - - - - - -")
-	log.Print("daemon started")
+	log.Print("go_ws started")
 	defer cntxt.Release()
-}
-func main() {
-	go daemonLinux()
 	go router.HttpPush()
 	go broker.HttpMessageForwarding()
 	router.WsPush()
