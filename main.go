@@ -43,7 +43,7 @@ func daemonLinux()  {
 	defer cntxt.Release()
 }
 func main() {
-	daemonLinux()
+	go daemonLinux()
 	go router.HttpPush()
 	go broker.HttpMessageForwarding()
 	router.WsPush()
