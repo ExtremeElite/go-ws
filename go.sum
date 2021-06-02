@@ -9,8 +9,14 @@ github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkr
 github.com/jinzhu/now v1.1.1/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
 github.com/jinzhu/now v1.1.2 h1:eVKgfIdy9b6zbWBMgFpfDPoAMifwSZagU9HmEU6zgiI=
 github.com/jinzhu/now v1.1.2/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
+github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 h1:iQTw/8FWTuc7uiaSepXwyf3o52HaUYcV+Tu66S3F5GA=
+github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0/go.mod h1:1NbS8ALrpOvjt0rHPNLyCIeMtbizbir8U//inJ+zuB8=
 github.com/mbndr/figlet4go v0.0.0-20190224160619-d6cef5b186ea h1:mQncVDBpKkAecPcH2IMGpKUQYhwowlafQbfkz2QFqkc=
 github.com/mbndr/figlet4go v0.0.0-20190224160619-d6cef5b186ea/go.mod h1:QzTGLGoOqLHUBK8/EZ0v4Fa4CdyXmdyRwCHcl0YbeO4=
+github.com/sevlyar/go-daemon v0.1.5 h1:Zy/6jLbM8CfqJ4x4RPr7MJlSKt90f00kNM1D401C+Qk=
+github.com/sevlyar/go-daemon v0.1.5/go.mod h1:6dJpPatBT9eUwM5VCw9Bt6CdX9Tk6UWvhW3MebLDRKE=
+golang.org/x/sys v0.0.0-20210601080250-7ecdf8ef093b h1:qh4f65QIVFjq9eBURLEYWqaEXmOyqdUyiBSgaXWccWk=
+golang.org/x/sys v0.0.0-20210601080250-7ecdf8ef093b/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 gorm.io/driver/mysql v1.0.4 h1:TATTzt+kR+IV0+h3iUB3dHUe8omCvQ0rOkmfCsUBohk=
 gorm.io/driver/mysql v1.0.4/go.mod h1:MEgp8tk2n60cSBCq5iTcPDw3ns8Gs+zOva9EUhkknTs=
 gorm.io/gorm v1.20.12/go.mod h1:0HFTzE/SqkGTzK6TlDPPQbAYCluiVvhzoA1+aVyzenw=
