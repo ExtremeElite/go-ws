@@ -26,7 +26,7 @@ func main() {
 		PidFilePerm: 0644,
 		LogFileName: "go_ws.log",
 		LogFilePerm: 0640,
-		WorkDir:     "./",
+		WorkDir:     "./runtime",
 		Umask:       027,
 		Args:        []string{"[go-daemon go_ws]"},
 	}
