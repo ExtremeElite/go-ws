@@ -25,11 +25,11 @@ func main() {
 	if runtime.GOOS=="linux" {
 		cntxt := &daemon.Context{
 			PidFileName: "go_ws.pid",
-			PidFilePerm: 0644,
+			PidFilePerm: 0777,
 			LogFileName: "go_ws.log",
-			LogFilePerm: 0640,
+			LogFilePerm: 0777,
 			WorkDir:     "./",
-			Umask:       027,
+			Umask:       022,
 			Args:        []string{"[go-daemon go_ws]"},
 		}
 
