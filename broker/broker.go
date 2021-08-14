@@ -8,9 +8,8 @@ package broker
 
 import (
 	"encoding/json"
-	"fmt"
+	"go/types"
 	"log"
-	"reflect"
 	"strconv"
 	"strings"
 	"ws/kernel"
@@ -51,25 +50,22 @@ func (response Response) Json(msg string, code int, data interface{}) []byte {
 //格式转换
 func (pushData PushData) ConversionJson() string {
 	data := pushData.Data
-	dataType := strings.ToLower(fmt.Sprintf("%s", reflect.TypeOf(data).Kind()))
-	//字符串
-	if dataType == "string" {
+	switch data.(type) {
+	case string:
 		return data.(string)
-	}
-	//数字
-	if dataType == "float64" {
+	case float64:
 		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64), `E+00`)
-	}
-	//标准的json对象或者数组
-	if dataType == "map" || dataType == "slice" {
+	case types.Slice,types.Map:
 		result, err := json.Marshal(data)
 		if err != nil {
 			println(err.Error())
 			return ""
 		}
 		return string(result)
+
+	default:
+		return ""
 	}
-	return ""
 }
 
 //转发
