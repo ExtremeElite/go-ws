@@ -50,12 +50,12 @@ func (response Response) Json(msg string, code int, data interface{}) []byte {
 //格式转换
 func (pushData PushData) ConversionJson() string {
 	data := pushData.Data
-	switch data.(type) {
+	switch v := data.(type) {
 	case string:
-		return data.(string)
+		return v
 	case float64:
-		return strings.TrimRight(strconv.FormatFloat(data.(float64), 'E', -1, 64), `E+00`)
-	case types.Slice,types.Map:
+		return strings.TrimRight(strconv.FormatFloat(v, 'E', -1, 64), `E+00`)
+	case types.Slice, types.Map:
 		result, err := json.Marshal(data)
 		if err != nil {
 			println(err.Error())
