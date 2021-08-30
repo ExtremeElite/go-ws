@@ -3,6 +3,7 @@ package common
 import (
 	"github.com/BurntSushi/toml"
 	"log"
+	"runtime"
 	"ws/util"
 )
 
@@ -29,9 +30,9 @@ type BaseServer struct {
 }
 
 var (
-	Setting  Common
-	MysqlSet Mysql
-	Debug    bool
+	Setting         Common
+	MysqlSet        Mysql
+	Debug           bool
 )
 
 func init() {
@@ -53,4 +54,16 @@ func Config() BaseServer {
 func CheckPort(port int) error {
 
 	return nil
+}
+func LogDebug(s string) {
+	if Debug {
+		_, file, line, ok := runtime.Caller(1)
+		if ok {
+			log.Printf("[debug] %s line=%d error is \n%s", file, line, s)
+			return
+		}
+		log.Println(s)
+	}
+
+
 }
