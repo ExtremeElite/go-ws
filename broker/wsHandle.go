@@ -83,8 +83,8 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 		return
 	}
 	name = pipeLine.MiddlewareRequest["token"]
-	if len(name)==0 {
-		err=errors.New("获取到的name为空")
+	if len(name) == 0 {
+		err = errors.New("获取到的name为空")
 		return nil, "", err
 	}
 	var response = util.Response{}

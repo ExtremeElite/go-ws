@@ -13,7 +13,7 @@ func init() {
 		if common.Debug {
 			return
 		}
-		if err := recover(); err != nil{
+		if err := recover(); err != nil {
 			log.Println("sql server: ", err)
 			rawDB, err := DB.DB()
 			if err != nil {

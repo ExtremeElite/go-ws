@@ -22,7 +22,7 @@ func Logo() {
 	fmt.Println(renderStr)
 }
 func main() {
-	if runtime.GOOS=="linux" {
+	if runtime.GOOS == "linux" {
 		cntxt := &daemon.Context{
 			PidFileName: "go_ws.pid",
 			PidFilePerm: 0777,
