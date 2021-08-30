@@ -57,13 +57,17 @@ func CheckPort(port int) error {
 }
 func LogDebug(s string) {
 	if Debug {
-		_, file, line, ok := runtime.Caller(1)
-		if ok {
-			log.Printf("[debug] %s line=%d error is \n%s", file, line, s)
-			return
-		}
-		log.Println(s)
+		logUtil(s,"debug")
 	}
-
-
+}
+func LogInfo(s string)  {
+	logUtil(s,"info")
+}
+func logUtil(s ,t string)  {
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		log.Printf("[%s] %s line=%d error is \n%s",t, file, line, s)
+		return
+	}
+	log.Println(s)
 }

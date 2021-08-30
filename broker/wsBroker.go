@@ -9,7 +9,6 @@ package broker
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"strings"
 	"time"
 	"ws/common"
@@ -19,17 +18,16 @@ import (
 func wsBroker(conn *kernel.Connection) (err error) {
 	var message []byte
 	if message, err = conn.ReadMsg(); err != nil {
-		log.Println("读取失败:", err.Error())
+		common.LogDebug("读取失败:"+err.Error())
 		return
 	}
 	//读取消息并且发送消息
-	log.Printf("服务器收到的: %s\n", message)
+	common.LogInfo("服务器收到的:\n"+string(message))
 	if err = sendMessage(message, conn,
 		ping,
 		wsMessageForwarding,
 	); err != nil {
-		log.Printf("服务器转发消息失败: %s\n", message)
-		log.Printf("错误消息引起的原因: %s\n", err.Error())
+		common.LogDebug("服务器转发消息失败:\n"+string(message)+"错误消息引起的原因:\n"+err.Error())
 	}
 	return
 }
@@ -51,14 +49,14 @@ func ping(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	data = message
 	if strings.ToLower(string(message)) == `ping` {
 		if err = conn.WriteMsg([]byte(`Pong`)); err != nil {
-			log.Println("写入失败:", err.Error())
+			common.LogDebug("写入失败:"+err.Error())
 		}
 		data = nil
 		return
 	}
 	if strings.ToLower(string(message)) == `pong` {
 		if err = conn.WriteMsg([]byte(`Ping`)); err != nil {
-			log.Println("写入失败:", err.Error())
+			common.LogDebug("写入失败:"+err.Error())
 		}
 		data = nil
 		return
@@ -96,7 +94,7 @@ func pong(conn *kernel.Connection) {
 					goto Over
 				}
 				conn.WriteMsg([]byte(`Pong`))
-				log.Println(`Pong`)
+				common.LogDebug("Pong")
 
 			}
 			timer.Reset(addTime)

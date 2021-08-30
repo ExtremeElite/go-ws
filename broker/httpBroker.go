@@ -9,7 +9,6 @@ package broker
 import (
 	"encoding/json"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -27,7 +26,7 @@ func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 	workData(w, pushData)
-	log.Println("服务端收到:" + r.RemoteAddr + "发来的消息:" + string(body))
+	common.LogInfo("服务端收到:" + r.RemoteAddr + "发来的消息:" + string(body))
 	return
 }
 
@@ -41,7 +40,7 @@ func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err erro
 		res := `请求体大小为` + strconv.Itoa(bodyLen/1024) + `kb,大于` + strconv.Itoa(common.Setting.MaxBody/1024) + `kb`
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		_, _ = w.Write([]byte(res))
-		log.Println(res)
+		common.LogInfo(res)
 		return
 	}
 	return
@@ -85,7 +84,7 @@ func HttpMessageForwarding() {
 		select {
 		case pushData := <-HttpChan:
 			pushData.messageForwarding()
-			log.Println(`收到的http请求推送内容:` + pushData.ConversionJson())
+			common.LogInfo(`收到的http请求推送内容:` + pushData.ConversionJson())
 		}
 	}
 }

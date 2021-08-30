@@ -9,9 +9,9 @@ package broker
 import (
 	"encoding/json"
 	"go/types"
-	"log"
 	"strconv"
 	"strings"
+	"ws/common"
 	"ws/kernel"
 )
 
@@ -74,7 +74,7 @@ func (pushData PushData) messageForwarding() {
 		if node, ok := kernel.GetNode(publishAccount); ok {
 			go func() {
 				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
-					log.Println("data from ws: ", publishAccount, ":", err.Error())
+					common.LogDebug("data from ws: "+publishAccount+err.Error())
 				}
 			}()
 		}
