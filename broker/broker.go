@@ -1,9 +1,9 @@
-/**
- * @date:2020\11\27 0027 22:02
- * @email:gorouting@qq.com
- * @author:gorouting
- * @description:
-**/
+/*
+date:2020\11\27 0027 22:02
+email:gorouting@qq.com
+author:gorouting
+description:
+*/
 package broker
 
 import (

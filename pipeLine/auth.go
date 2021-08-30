@@ -1,9 +1,9 @@
-/**
- * @date:2020/8/19 16:46
- * @email:gorouting@qq.com
- * @author:gorouting
- * @description:认证中间件
-**/
+/*
+date:2020/8/19 16:46
+email:gorouting@qq.com
+author:gorouting
+description:认证中间件
+*/
 package pipeLine
 
 import (
