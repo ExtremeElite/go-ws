@@ -7,16 +7,16 @@ import (
 )
 
 type Mysql struct {
-	ServerHost string
-	Port       uint16
-	User       string
-	Password   string
-	Db         string
-	MaxConnect int `toml:"maxConnect"`
+	ServerHost string `validate:"required,ip" label:"数据服务器地址"`
+	Port       uint16 `validate:"required,min=0,max=65535" label:"数据服务器地址"`
+	User       string `validate:"required" label:"账户"`
+	Password   string `validate:"required" label:"密码"`
+	Db         string `validate:"required" label:"数据库名称"`
+	MaxConnect int    `toml:"maxConnect" validate:"required,max=1000,min=5" label:"最大连接数"`
 }
 type Common struct {
-	WsPort      uint16 `validate:"required,max=65535,min=0" label:"websocket端口"`
-	HttpPort    uint16 `validate:"required,max=65535,min=0,nefield=WsPort" label:"Http端口"`
+	WsPort      uint16 `validate:"required,min=0,max=65535" label:"websocket端口"`
+	HttpPort    uint16 `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
 	Env         string `validate:"required" label:"环境变量"`
 	SignKey     string
 	DefaultDB   string `validate:"required"`
@@ -53,6 +53,7 @@ func Config() BaseServer {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
 	util.ValidateStruct(bs.Common)
+	util.ValidateStruct(bs.MysqlDB)
 	return bs
 }
 func CheckPort(port int) error {
