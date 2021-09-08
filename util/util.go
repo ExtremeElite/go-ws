@@ -37,7 +37,7 @@ func (response Response) Json(msg string, code int, data interface{}) []byte {
 }
 
 var (
-	Validate *validator.Validate
+	validate *validator.Validate
 	trans    ut.Translator
 )
 
@@ -46,15 +46,15 @@ func init() {
 	uni := ut.New(zh, zh)
 	trans, _ = uni.GetTranslator("zh")
 
-	Validate = validator.New()
-	Validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+	validate = validator.New()
+	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
 		label := field.Tag.Get("label")
 		if label == "" {
 			return field.Name
 		}
 		return label
 	})
-	err := zh_translations.RegisterDefaultTranslations(Validate, trans)
+	err := zh_translations.RegisterDefaultTranslations(validate, trans)
 	if err != nil {
 		log.Fatal("zh_translations register failed")
 	}
@@ -118,7 +118,7 @@ func LogUtil(s, t string) {
 	log.Println(s)
 }
 
-func Translate(errs error) string {
+func translate(errs error) string {
 	var errList []string
 	for _, err := range errs.(validator.ValidationErrors) {
 		errList = append(errList, err.Translate(trans))
@@ -126,8 +126,8 @@ func Translate(errs error) string {
 	return strings.Join(errList, ";")
 }
 func ValidateStruct(s interface{})  {
-	errors:=Validate.Struct(s)
+	errors:=validate.Struct(s)
 	if errors!=nil {
-		log.Fatal(Translate(errors))
+		log.Fatal(translate(errors))
 	}
 }
