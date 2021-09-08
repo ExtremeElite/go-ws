@@ -50,11 +50,11 @@ func localMysql() *gorm.DB {
 		DontSupportRenameColumn:   false,
 	}), &gormConfig)
 	if err != nil {
-		panic(err)
+		log.Fatal("mysql init failed:",err.Error())
 	}
 	sqlDbRaw, err := mysqlDB.DB()
 	if err != nil {
-		panic(err)
+		log.Fatal("mysql build gorm failed:",err.Error())
 	}
 	sqlDbRaw.SetMaxIdleConns(localBase.MaxConnect)
 	sqlDbRaw.SetMaxOpenConns(localBase.MaxConnect * 2)
