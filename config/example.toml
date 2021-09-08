@@ -2,7 +2,7 @@
 [common]
 WsPort = 20290 #websocket端口
 HttpPort = 8000 #http端口 一般用于内网对websocket发送消息
-env = "dev" #开发环境 有dev|prod可选
+env = "dev" #开发环境 dev|prod可选
 signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥
 defaultDB = "mysql" #数据库驱动 mysql|
 wsTimeOut = 60 #websocket连接超时最大时间 超时服务器将断开
