@@ -17,7 +17,7 @@ type Mysql struct {
 type Common struct {
 	WsPort      uint16 `validate:"required,min=0,max=65535" label:"websocket端口"`
 	HttpPort    uint16 `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
-	Env         string `validate:"required" label:"环境变量"`
+	Env         string `validate:"required,oneof=dev prod" label:"环境变量"`
 	SignKey     string
 	DefaultDB   string `validate:"required"`
 	WsTimeOut   int    `validate:"required,min=5,max=300" label:"websocket连接超时"`
