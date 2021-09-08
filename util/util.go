@@ -1,13 +1,20 @@
+//纯的工具类 永远用于被引入
 package util
 
 import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
+	zhongwen "github.com/go-playground/locales/zh"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
+	"reflect"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -27,6 +34,30 @@ func (response Response) Json(msg string, code int, data interface{}) []byte {
 		return []byte(`["code":404,"msg":"数据错误","data":""]`)
 	}
 	return res
+}
+
+var (
+	Validate *validator.Validate
+	trans    ut.Translator
+)
+
+func init() {
+	zh := zhongwen.New()
+	uni := ut.New(zh, zh)
+	trans, _ = uni.GetTranslator("zh")
+
+	Validate = validator.New()
+	Validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+		label := field.Tag.Get("label")
+		if label == "" {
+			return field.Name
+		}
+		return label
+	})
+	err := zh_translations.RegisterDefaultTranslations(Validate, trans)
+	if err != nil {
+		log.Fatal("zh_translations register failed")
+	}
 }
 
 //判断路径 始终是以二进制所在路径为依据
@@ -77,4 +108,26 @@ func MD5(data string) string {
 	data = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" + data
 	h.Write([]byte(data))
 	return hex.EncodeToString(h.Sum(nil))
+}
+func LogUtil(s, t string) {
+	_, file, line, ok := runtime.Caller(1)
+	if ok {
+		log.Printf("[%s] %s line=%d error is \n%s", t, file, line, s)
+		return
+	}
+	log.Println(s)
+}
+
+func Translate(errs error) string {
+	var errList []string
+	for _, err := range errs.(validator.ValidationErrors) {
+		errList = append(errList, err.Translate(trans))
+	}
+	return strings.Join(errList, ";")
+}
+func ValidateStruct(s interface{})  {
+	errors:=Validate.Struct(s)
+	if errors!=nil {
+		log.Fatal(Translate(errors))
+	}
 }

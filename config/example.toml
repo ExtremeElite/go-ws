@@ -1,18 +1,19 @@
+#配置文件 需要复制一份取名为config.toml 放在config/config.toml
 [common]
-WsPort = 20290
-HttpPort = 8000
-env = "dev"
-signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb"
-defaultDB = "mysql"
-wsTimeOut = 60
-httpTimeOut = 5
-readChan = 1000
-writeChan = 1000
-maxBody = 51200
+WsPort = 20290 #websocket端口
+HttpPort = 8000 #http端口 一般用于内网对websocket发送消息
+env = "dev" #开发环境 有dev|prod可选
+signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥
+defaultDB = "mysql" #数据库驱动 mysql|
+wsTimeOut = 60 #websocket连接超时最大时间 超时服务器将断开
+httpTimeOut = 5 #http请求超时用于http推送时候的超时设置
+readChan = 1000 #写协程管道长度
+writeChan = 1000 #读协程管道长度
+maxBody = 51200 #http推送时候可以接受的最大长度单位为字节
 [mysqlDB]
-serverHost = "127.0.0.1"
-port = 3306
-user = "root"
-password = "root"
-db = "dbname"
-maxConnect = 5
+serverHost = "127.0.0.1" #数据库host
+port = 3306 #数据库端口
+user = "root" #用户名
+password = "root" #密码
+db = "dbname" #数据库名称
+maxConnect = 5 #数据库连接池数量

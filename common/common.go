@@ -3,7 +3,6 @@ package common
 import (
 	"github.com/BurntSushi/toml"
 	"log"
-	"runtime"
 	"ws/util"
 )
 
@@ -16,12 +15,16 @@ type Mysql struct {
 	MaxConnect int `toml:"maxConnect"`
 }
 type Common struct {
-	WsPort                                               uint16
-	HttpPort                                             uint16
-	Env                                                  string
-	SignKey                                              string
-	DefaultDB                                            string
-	WsTimeOut, ReadChan, WriteChan, MaxBody, HttpTimeOut int
+	WsPort      uint16 `validate:"required,max=65535,min=0" label:"websocket端口"`
+	HttpPort    uint16 `validate:"required,max=65535,min=0,nefield=WsPort" label:"Http端口"`
+	Env         string `validate:"required" label:"环境变量"`
+	SignKey     string
+	DefaultDB   string `validate:"required"`
+	WsTimeOut   int    `validate:"required,min=5,max=300" label:"websocket连接超时"`
+	ReadChan    int    `validate:"required,min=2,max=10000" label:"读协程"`
+	WriteChan   int    `validate:"required,min=2,max=10000" label:"写协程"`
+	MaxBody     int    `validate:"required,min=5,max=100000" label:"请求体"`
+	HttpTimeOut int    `validate:"required,min=5,max=30" label:"http请求超时时间"`
 }
 
 type BaseServer struct {
@@ -30,9 +33,9 @@ type BaseServer struct {
 }
 
 var (
-	Setting         Common
-	MysqlSet        Mysql
-	Debug           bool
+	Setting  Common
+	MysqlSet Mysql
+	Debug    bool
 )
 
 func init() {
@@ -47,8 +50,9 @@ func Config() BaseServer {
 	configPath = util.PathToEveryOne(`config/config.toml`)
 	_, err := toml.DecodeFile(configPath, &bs)
 	if err != nil {
-		log.Fatal("please check config/config.toml")
+		log.Fatal("please check config/config.toml", err.Error())
 	}
+	util.ValidateStruct(bs.Common)
 	return bs
 }
 func CheckPort(port int) error {
@@ -57,17 +61,9 @@ func CheckPort(port int) error {
 }
 func LogDebug(s string) {
 	if Debug {
-		logUtil(s,"debug")
+		util.LogUtil(s, "debug")
 	}
 }
-func LogInfo(s string)  {
-	logUtil(s,"info")
-}
-func logUtil(s ,t string)  {
-	_, file, line, ok := runtime.Caller(1)
-	if ok {
-		log.Printf("[%s] %s line=%d error is \n%s",t, file, line, s)
-		return
-	}
-	log.Println(s)
+func LogInfo(s string) {
+	util.LogUtil(s, "info")
 }
