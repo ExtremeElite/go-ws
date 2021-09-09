@@ -110,11 +110,11 @@ func MD5(data string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 func LogUtil(s, t string) {
-	_, file, line, ok := runtime.Caller(1)
+	_, file, line, ok := runtime.Caller(2)
 	if ok {
 		_currentPath:=PathToEveryOne("/")
-		_resoultPath,_:=filepath.Abs(_currentPath)
-		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(file,_resoultPath), line, s)
+		_file,_:=filepath.Abs(file)
+		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file,_currentPath), line, s)
 		return
 	}
 	log.Println(s)
