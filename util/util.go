@@ -66,7 +66,7 @@ func PathToEveryOne(path string) string {
 	if err != nil {
 		log.Fatal("路径错误")
 	}
-	baseDir := strings.Replace(dir, "\\", "/", -1)
+	baseDir := strings.Replace(dir, `\\`, "/", -1)
 	p, _ := filepath.Abs(baseDir + "/" + path)
 	return p
 }
@@ -112,7 +112,9 @@ func MD5(data string) string {
 func LogUtil(s, t string) {
 	_, file, line, ok := runtime.Caller(1)
 	if ok {
-		log.Printf("[%s] %s line=%d error is \n%s", t, file, line, s)
+		_currentPath:=PathToEveryOne("/")
+		_resoultPath,_:=filepath.Abs(_currentPath)
+		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(file,_resoultPath), line, s)
 		return
 	}
 	log.Println(s)
