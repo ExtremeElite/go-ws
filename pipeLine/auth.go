@@ -84,7 +84,7 @@ func validateToken(token string) (ok bool) {
 		}
 	}()
 	MiddlewareRequest["token"] = token
-	var sql = `select count(*) from hb_shebei where device_nums= ?`
+	var sql = `select count(*) from admin where id= ?`
 	var total int
 	db.DB.Raw(sql, token).Scan(&total)
 	if total >= 1 {
@@ -104,7 +104,6 @@ func WsAuthMiddle() Middleware {
 				log.Println("认证失败")
 				return
 			}
-			println("ws")
 			fn(w, r)
 		}
 	}

@@ -109,16 +109,7 @@ func MD5(data string) string {
 	h.Write([]byte(data))
 	return hex.EncodeToString(h.Sum(nil))
 }
-func LogUtil(s, t string) {
-	_, file, line, ok := runtime.Caller(2)
-	if ok {
-		_currentPath:=PathToEveryOne("/")
-		_file,_:=filepath.Abs(file)
-		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file,_currentPath), line, s)
-		return
-	}
-	log.Println(s)
-}
+
 
 func translate(errs error) string {
 	var errList []string
@@ -132,4 +123,17 @@ func ValidateStruct(s interface{})  {
 	if errors!=nil {
 		log.Fatal(translate(errors))
 	}
+}
+func LogUtil(s, t string,debug bool) {
+	if !debug {
+		log.Println(s)
+		return
+	}
+	_, file, line, ok := runtime.Caller(2)
+	if ok {
+		_currentPath:=PathToEveryOne("/")
+		_file,_:=filepath.Abs(file)
+		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file,_currentPath), line, s)
+	}
+
 }
