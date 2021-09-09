@@ -49,7 +49,7 @@ func HasName(name string) Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			_name, err := GetName(r)
-			MiddlewareRequest["token1"] = _name
+			MiddlewareRequest["token"] = _name
 			if len(CheckMiddleRequest(name)) == 0 || err != nil {
 				w.Header().Set("Connection", "close")
 				w.WriteHeader(http.StatusUnauthorized)
