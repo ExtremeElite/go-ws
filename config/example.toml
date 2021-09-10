@@ -1,5 +1,8 @@
 #配置文件 需要复制一份取名为config.toml 放在config/config.toml
 [common]
+Name="gorouting" #名称
+PidMod=777 #pid文件权限 777|755
+LogMod=777 #日志文件权限 777|755
 WsPort = 20290 #websocket端口
 HttpPort = 8000 #http端口 一般用于内网对websocket发送消息
 env = "dev" #开发环境 dev|prod可选
