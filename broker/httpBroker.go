@@ -8,6 +8,7 @@ package broker
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -23,6 +24,7 @@ func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	var pushData PushData
 	if err = json.Unmarshal(body, &pushData); err != nil {
+		common.LogInfo(fmt.Sprintf("pushData Unmarshal faild:%v\n",err.Error()))
 		return
 	}
 	workData(w, pushData)

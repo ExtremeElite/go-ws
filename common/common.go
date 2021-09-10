@@ -98,6 +98,8 @@ func DaemonRun() {
 		}
 		log.Print("- - - - - - - - - - - - - - -")
 		log.Print(fmt.Sprintf("%v started", Setting.Name))
-		defer cntxt.Release()
+		defer func(cntxt *daemon.Context) {
+			_ = cntxt.Release()
+		}(cntxt)
 	}
 }
