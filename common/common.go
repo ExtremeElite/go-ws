@@ -2,7 +2,9 @@ package common
 
 import (
 	"github.com/BurntSushi/toml"
+	"github.com/sevlyar/go-daemon"
 	"log"
+	"runtime"
 	"ws/util"
 )
 
@@ -15,6 +17,7 @@ type Mysql struct {
 	MaxConnect int    `toml:"maxConnect" validate:"required,max=1000,min=5" label:"最大连接数"`
 }
 type Common struct {
+	Name        string `validate:"required,min=0,max=32" label:"名称"`
 	WsPort      uint16 `validate:"required,min=0,max=65535" label:"websocket端口"`
 	HttpPort    uint16 `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
 	Env         string `validate:"required,oneof=dev prod" label:"环境变量"`
@@ -62,9 +65,35 @@ func CheckPort(port int) error {
 }
 func LogDebug(s string) {
 	if Debug {
-		util.LogUtil(s, "debug",true)
+		util.LogUtil(s, "debug", true)
 	}
 }
 func LogInfo(s string) {
-	util.LogUtil(s, "info",false)
+	util.LogUtil(s, "info", false)
+}
+
+//后台进程守护
+func DaemonRun() {
+	if runtime.GOOS == "linux" {
+		cntxt := &daemon.Context{
+			PidFileName: "go_ws.pid",
+			PidFilePerm: 0777,
+			LogFileName: "go_ws.log",
+			LogFilePerm: 0777,
+			WorkDir:     "./",
+			Umask:       022,
+			Args:        []string{"[go-daemon go_ws]"},
+		}
+
+		d, err := cntxt.Reborn()
+		if err != nil {
+			log.Fatal("Unable to run: ", err)
+		}
+		if d != nil {
+			return
+		}
+		log.Print("- - - - - - - - - - - - - - -")
+		log.Print("go_ws started")
+		defer cntxt.Release()
+	}
 }

@@ -3,10 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/mbndr/figlet4go"
-	"github.com/sevlyar/go-daemon"
-	"log"
-	"runtime"
 	"ws/broker"
+	"ws/common"
 	"ws/router"
 )
 
@@ -22,28 +20,8 @@ func Logo() {
 	fmt.Println(renderStr)
 }
 func main() {
-	if runtime.GOOS == "linux" {
-		cntxt := &daemon.Context{
-			PidFileName: "go_ws.pid",
-			PidFilePerm: 0777,
-			LogFileName: "go_ws.log",
-			LogFilePerm: 0777,
-			WorkDir:     "./",
-			Umask:       022,
-			Args:        []string{"[go-daemon go_ws]"},
-		}
-
-		d, err := cntxt.Reborn()
-		if err != nil {
-			log.Fatal("Unable to run: ", err)
-		}
-		if d != nil {
-			return
-		}
-		log.Print("- - - - - - - - - - - - - - -")
-		log.Print("go_ws started")
-		defer cntxt.Release()
-	}
+	//后台进程守护
+	common.DaemonRun()
 	go router.HttpPush()
 	go broker.HttpMessageForwarding()
 	router.WsPush()
