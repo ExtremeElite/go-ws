@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"github.com/BurntSushi/toml"
 	"github.com/sevlyar/go-daemon"
 	"log"
@@ -76,13 +77,13 @@ func LogInfo(s string) {
 func DaemonRun() {
 	if runtime.GOOS == "linux" {
 		cntxt := &daemon.Context{
-			PidFileName: "go_ws.pid",
+			PidFileName: fmt.Sprintf("%v.pid", Setting.Name),
 			PidFilePerm: 0777,
-			LogFileName: "go_ws.log",
+			LogFileName: fmt.Sprintf("%v.log", Setting.Name),
 			LogFilePerm: 0777,
 			WorkDir:     "./",
 			Umask:       022,
-			Args:        []string{"[go-daemon go_ws]"},
+			Args:        []string{fmt.Sprintf("[go-daemon %v]", Setting.Name)},
 		}
 
 		d, err := cntxt.Reborn()
@@ -93,7 +94,7 @@ func DaemonRun() {
 			return
 		}
 		log.Print("- - - - - - - - - - - - - - -")
-		log.Print("go_ws started")
+		log.Print(fmt.Sprintf("%v started", Setting.Name))
 		defer cntxt.Release()
 	}
 }

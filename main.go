@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/mbndr/figlet4go"
+	"strings"
 	"ws/broker"
 	"ws/common"
 	"ws/router"
@@ -16,7 +17,7 @@ func Logo() {
 	ascii := figlet4go.NewAsciiRender()
 	// Adding the colors to RenderOptions
 	options := figlet4go.NewRenderOptions()
-	renderStr, _ := ascii.RenderOpts("Gorouting", options)
+	renderStr, _ := ascii.RenderOpts(strings.ToUpper(fmt.Sprintf(common.Setting.Name)), options)
 	fmt.Println(renderStr)
 }
 func main() {
