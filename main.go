@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/mbndr/figlet4go"
+	"github.com/sevlyar/go-daemon"
+	"log"
+	"runtime"
 	"strings"
 	"ws/broker"
 	"ws/common"
@@ -22,7 +25,33 @@ func Logo() {
 }
 func main() {
 	//后台进程守护
-	common.DaemonRun()
+	if runtime.GOOS == "linux" {
+		ctxt := &daemon.Context{
+			PidFileName: fmt.Sprintf("%v.pid", common.Setting.Name),
+			PidFilePerm: common.Setting.PidMod,
+			LogFileName: fmt.Sprintf("%v.log", common.Setting.Name),
+			LogFilePerm: common.Setting.LogMod,
+			WorkDir:     "./",
+			Umask:       022,
+			Args:        []string{fmt.Sprintf("[go-daemon %v]", common.Setting.Name)},
+		}
+		d,err:= ctxt.Search()
+		if err==nil && d.Pid>0 {
+			log.Fatal(fmt.Sprintf("%v is running,pid is %v",common.Setting.Name,d.Pid))
+		}
+		children, err := ctxt.Reborn()
+		if err != nil {
+			log.Fatal("Unable to run: ", err)
+		}
+		if children != nil {
+			return
+		}
+		log.Print("- - - - - - - - - - - - - - -")
+		log.Print(fmt.Sprintf("%v started", common.Setting.Name))
+		defer func(cntxt *daemon.Context) {
+			_ = ctxt.Release()
+		}(ctxt)
+	}
 	go router.HttpPush()
 	go broker.HttpMessageForwarding()
 	router.WsPush()

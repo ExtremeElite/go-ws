@@ -1,12 +1,9 @@
 package common
 
 import (
-	"fmt"
 	"github.com/BurntSushi/toml"
-	"github.com/sevlyar/go-daemon"
 	"log"
 	"os"
-	"runtime"
 	"ws/util"
 )
 
@@ -74,35 +71,4 @@ func LogDebug(s string) {
 }
 func LogInfo(s string) {
 	util.LogUtil(s, "info", false)
-}
-
-//后台进程守护
-func DaemonRun() {
-	if runtime.GOOS == "linux" {
-		cntxt := &daemon.Context{
-			PidFileName: fmt.Sprintf("%v.pid", Setting.Name),
-			PidFilePerm: Setting.PidMod,
-			LogFileName: fmt.Sprintf("%v.log", Setting.Name),
-			LogFilePerm: Setting.LogMod,
-			WorkDir:     "./",
-			Umask:       022,
-			Args:        []string{fmt.Sprintf("[go-daemon %v]", Setting.Name)},
-		}
-		d,err:=cntxt.Search()
-		if d.Pid>0 {
-			log.Fatal(fmt.Sprintf("%v is running,pid is %v",Setting.Name,d.Pid))
-		}
-		children, err := cntxt.Reborn()
-		if err != nil {
-			log.Fatal("Unable to run: ", err)
-		}
-		if children != nil {
-			return
-		}
-		log.Print("- - - - - - - - - - - - - - -")
-		log.Print(fmt.Sprintf("%v started", Setting.Name))
-		defer func(cntxt *daemon.Context) {
-			_ = cntxt.Release()
-		}(cntxt)
-	}
 }
