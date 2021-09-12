@@ -88,12 +88,15 @@ func DaemonRun() {
 			Umask:       022,
 			Args:        []string{fmt.Sprintf("[go-daemon %v]", Setting.Name)},
 		}
-
-		d, err := cntxt.Reborn()
+		d,err:=cntxt.Search()
+		if d.Pid>0 {
+			log.Fatal(fmt.Sprintf("%v is running,pid is %v",Setting.Name,d.Pid))
+		}
+		children, err := cntxt.Reborn()
 		if err != nil {
 			log.Fatal("Unable to run: ", err)
 		}
-		if d != nil {
+		if children != nil {
 			return
 		}
 		log.Print("- - - - - - - - - - - - - - -")
