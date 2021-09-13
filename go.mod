@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0
+	github.com/golang/glog v1.0.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/mbndr/figlet4go v0.0.0-20190224160619-d6cef5b186ea
 	github.com/sevlyar/go-daemon v0.1.5
