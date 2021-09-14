@@ -21,13 +21,12 @@ func AddNode(node *Node) {
 	}
 	Nodes.Store(node.Name, node)
 }
-func GetNode(name string) (*Node, bool) {
+func GetNode(name string) (v *Node, ok bool) {
 	var node *Node
 	if v, ok := Nodes.Load(name); ok {
-		node = v.(*Node)
-		return node, true
+		return v.(*Node),ok
 	}
-	return node, false
+	return node, ok
 }
 func DelNode(name string) (err error) {
 	if node, ok := GetNode(name); ok {

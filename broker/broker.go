@@ -13,6 +13,7 @@ import (
 	"strings"
 	"ws/common"
 	"ws/kernel"
+	"ws/util"
 )
 
 const (
@@ -71,12 +72,14 @@ func (pushData PushData) ConversionJson() string {
 //转发
 func (pushData PushData) messageForwarding() {
 	for _, publishAccount := range pushData.PublishAccount {
-		if node, ok := kernel.GetNode(publishAccount); ok {
-			go func() {
+		node, ok := kernel.GetNode(publishAccount)
+		if ok {
+			util.Go(func() {
 				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
 					common.LogDebug("data from ws: "+publishAccount+err.Error())
 				}
-			}()
+			})
 		}
+
 	}
 }
