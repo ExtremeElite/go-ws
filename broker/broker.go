@@ -8,6 +8,7 @@ package broker
 
 import (
 	"encoding/json"
+	"fmt"
 	"go/types"
 	"strconv"
 	"strings"
@@ -76,7 +77,7 @@ func (pushData PushData) messageForwarding() {
 		if ok {
 			util.Go(func() {
 				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
-					common.LogDebug("data from ws: "+publishAccount+err.Error())
+					common.LogDebug(fmt.Sprintf("node is %s,remote_ip:%s,%s data from ws failed:%s ", node.Name, node.RemoteAddr, publishAccount, err.Error()))
 				}
 			})
 		}
