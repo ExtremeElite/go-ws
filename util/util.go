@@ -137,3 +137,12 @@ func LogUtil(s, t string,debug bool) {
 	}
 
 }
+//防止野生goroutine
+func Go(x func())  {
+	defer func() {
+		if err:=recover();err!=nil {
+			log.Println("Go run failed gorouting:",err)
+		}
+	}()
+	x()
+}
