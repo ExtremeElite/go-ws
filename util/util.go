@@ -137,7 +137,7 @@ func LogUtil(s, t string,debug bool) {
 	}
 
 }
-//防止野生goroutine
+//防止野生goroutine panic 导致的整个程序退出
 func Go(x func())  {
 	defer func() {
 		if err:=recover();err!=nil {
