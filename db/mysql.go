@@ -2,13 +2,11 @@ package db
 
 import (
 	"fmt"
-	"log"
-	"ws/common"
-
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-
-	"gorm.io/driver/mysql"
+	"log"
+	"ws/common"
 )
 
 func localMysql() *gorm.DB {
@@ -50,14 +48,14 @@ func localMysql() *gorm.DB {
 		DontSupportRenameColumn:   false,
 	}), &gormConfig)
 	if err != nil {
-		log.Println("mysql init failed:",err.Error())
+		log.Println("mysql init failed:", err.Error())
 	}
-	sqlDbRaw, err := mysqlDB.DB()
-	if err != nil {
-		log.Println("mysql build gorm failed:",err.Error())
+	if sqlDB, err := mysqlDB.DB(); err == nil {
+		sqlDB.SetMaxIdleConns(localBase.MaxConnect)
+		sqlDB.SetMaxOpenConns(localBase.MaxConnect * 2)
+		sqlDB.SetConnMaxLifetime(-1)
+	} else {
+		log.Println("mysql build gorm failed:", err.Error())
 	}
-	sqlDbRaw.SetMaxIdleConns(localBase.MaxConnect)
-	sqlDbRaw.SetMaxOpenConns(localBase.MaxConnect * 2)
-	sqlDbRaw.SetConnMaxLifetime(-1)
 	return mysqlDB
 }
