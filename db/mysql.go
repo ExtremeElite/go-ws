@@ -9,25 +9,9 @@ import (
 	"ws/common"
 )
 
-func localMysql() *gorm.DB {
-	var mysqlDB *gorm.DB
+func localMysql() (gormDB *gorm.DB) {
 	var localBase = common.MysqlSet
 	var err error
-	defer func() {
-		if common.Debug {
-			return
-		}
-		if err := recover(); err != nil {
-			log.Println("sql server: ", err)
-			rawDB, err := mysqlDB.DB()
-			if err != nil {
-				log.Println("err is ", err)
-				return
-			}
-			_ = rawDB.Close()
-			return
-		}
-	}()
 	linked := fmt.Sprintf(common.MysqlTcpConnect, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
 
 	var loggerDefaultMode = logger.Silent
@@ -37,7 +21,7 @@ func localMysql() *gorm.DB {
 	gormConfig := gorm.Config{
 		Logger: logger.Default.LogMode(loggerDefaultMode),
 	}
-	mysqlDB, err = gorm.Open(mysql.New(mysql.Config{
+	gormDB, err = gorm.Open(mysql.New(mysql.Config{
 		DriverName:                "",
 		DSN:                       linked,
 		Conn:                      nil,
@@ -50,12 +34,12 @@ func localMysql() *gorm.DB {
 	if err != nil {
 		log.Println("mysql init failed:", err.Error())
 	}
-	if sqlDB, err := mysqlDB.DB(); err == nil {
+	if sqlDB, err := gormDB.DB(); err == nil {
 		sqlDB.SetMaxIdleConns(localBase.MaxConnect)
 		sqlDB.SetMaxOpenConns(localBase.MaxConnect * 2)
 		sqlDB.SetConnMaxLifetime(-1)
 	} else {
 		log.Println("mysql build gorm failed:", err.Error())
 	}
-	return mysqlDB
+	return
 }
