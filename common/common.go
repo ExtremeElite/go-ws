@@ -9,8 +9,8 @@ import (
 
 type Mysql struct {
 	ServerHost string `validate:"required,ip" label:"数据服务器地址"`
-	Port       uint16 `validate:"required,min=0,max=65535" label:"数据服务器地址"`
-	User       string `validate:"required" label:"账户"`
+	Port       uint16 `validate:"required,min=0,max=65535" label:"数据服务器地址" `
+	User       string `validate:"required" label:"账户" `
 	Password   string `validate:"required" label:"密码"`
 	Db         string `validate:"required" label:"数据库名称"`
 	MaxConnect int    `toml:"maxConnect" validate:"required,max=1000,min=5" label:"最大连接数"`

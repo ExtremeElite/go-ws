@@ -93,7 +93,7 @@ func pong(conn *kernel.Connection) {
 					timer.Stop()
 					goto Over
 				}
-				conn.WriteMsg([]byte(`Pong`))
+				_ = conn.WriteMsg([]byte(`Pong`))
 				common.LogDebug("Pong")
 
 			}
