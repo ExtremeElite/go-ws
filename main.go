@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/mbndr/figlet4go"
-	"github.com/sevlyar/go-daemon"
 	"log"
 	"runtime"
 	"strings"
 	"ws/broker"
 	"ws/common"
 	"ws/router"
+
+	"github.com/mbndr/figlet4go"
+	"github.com/sevlyar/go-daemon"
 )
 
 func init() {
@@ -35,9 +36,9 @@ func main() {
 			Umask:       022,
 			Args:        []string{fmt.Sprintf("[go-daemon %v]", common.Setting.Name)},
 		}
-		d,err:= ctxt.Search()
-		if err==nil && d.Pid>0 {
-			log.Fatal(fmt.Sprintf("%v is running,pid is %v",common.Setting.Name,d.Pid))
+		d, err := ctxt.Search()
+		if err == nil && d.Pid > 0 {
+			log.Fatalf("%v is running,pid is %v", common.Setting.Name, d.Pid)
 		}
 		children, err := ctxt.Reborn()
 		if err != nil {
@@ -47,7 +48,7 @@ func main() {
 			return
 		}
 		log.Print("- - - - - - - - - - - - - - -")
-		log.Print(fmt.Sprintf("%v started", common.Setting.Name))
+		log.Printf("%v started", common.Setting.Name)
 		defer func(cntxt *daemon.Context) {
 			_ = ctxt.Release()
 		}(ctxt)
