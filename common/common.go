@@ -22,15 +22,15 @@ type Common struct {
 	LogMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
 	WsPort        uint16      `validate:"required,min=0,max=65535" label:"websocket端口"`
 	HttpPort      uint16      `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
-	MultiplexPort bool        `validate:"required,oneof=true false" label:"端口复用"`
+	MultiplexPort bool        `validate:"required" label:"端口复用"`
 	Env           string      `validate:"required,oneof=dev prod" label:"环境变量"`
-	SignKey       string
-	DefaultDB     string `validate:"required"`
-	WsTimeOut     int    `validate:"required,min=5,max=300" label:"websocket连接超时"`
-	ReadChan      int    `validate:"required,min=2,max=10000" label:"读协程"`
-	WriteChan     int    `validate:"required,min=2,max=10000" label:"写协程"`
-	MaxBody       int    `validate:"required,min=5,max=100000" label:"请求体"`
-	HttpTimeOut   int    `validate:"required,min=5,max=30" label:"http请求超时时间"`
+	SignKey       string      `validate:"" label:"环境变量"`
+	DefaultDB     string      `validate:"required"`
+	WsTimeOut     int         `validate:"required,min=5,max=300" label:"websocket连接超时"`
+	ReadChan      int         `validate:"required,min=2,max=10000" label:"读协程"`
+	WriteChan     int         `validate:"required,min=2,max=10000" label:"写协程"`
+	MaxBody       int         `validate:"required,min=5,max=100000" label:"请求体"`
+	HttpTimeOut   int         `validate:"required,min=5,max=30" label:"http请求超时时间"`
 }
 
 type BaseServer struct {
@@ -52,8 +52,7 @@ func init() {
 }
 func Config() BaseServer {
 	var bs BaseServer
-	var configPath string
-	configPath = util.PathToEveryOne(`config/config.toml`)
+	var configPath = util.PathToEveryOne(`config/config.toml`)
 	_, err := toml.DecodeFile(configPath, &bs)
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
