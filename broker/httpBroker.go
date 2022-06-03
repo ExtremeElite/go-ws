@@ -17,6 +17,8 @@ import (
 	"ws/kernel"
 )
 
+var HttpChan chan PushData
+
 func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 	var body []byte
 	if body, err = validateData(w, r); err != nil {
@@ -24,7 +26,7 @@ func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	var pushData PushData
 	if err = json.Unmarshal(body, &pushData); err != nil {
-		common.LogInfo(fmt.Sprintf("pushData Unmarshal faild:%v\n",err.Error()))
+		common.LogInfo(fmt.Sprintf("pushData Unmarshal faild:%v\n", err.Error()))
 		return
 	}
 	workData(w, pushData)
