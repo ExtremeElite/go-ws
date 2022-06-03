@@ -18,6 +18,7 @@ func init() {
 	Logo()
 }
 func Logo() {
+
 	ascii := figlet4go.NewAsciiRender()
 	// Adding the colors to RenderOptions
 	options := figlet4go.NewRenderOptions()
@@ -53,7 +54,9 @@ func main() {
 			_ = ctxt.Release()
 		}(ctxt)
 	}
-	go router.HttpPush()
+	if !common.Setting.MultiplexPort {
+		go router.HttpPush()
+	}
 	go broker.HttpMessageForwarding()
 	router.WsPush()
 
