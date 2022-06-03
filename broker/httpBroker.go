@@ -84,11 +84,8 @@ func getOnLine() []string {
 
 //转发http的数据到ws todo http消息转发一般为内网所以一般不需要进行身份认证
 func HttpMessageForwarding() {
-	for {
-		select {
-		case pushData := <-HttpChan:
-			pushData.messageForwarding()
-			common.LogInfo(`收到的http请求推送内容:` + pushData.ConversionJson())
-		}
+	for pushData := range HttpChan {
+		pushData.messageForwarding()
+		common.LogInfo(`收到的http请求推送内容:` + pushData.ConversionJson())
 	}
 }
