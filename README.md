@@ -39,3 +39,5 @@ publish_account:字符串数组代表推送的连接代表比如连接代表为[
 data:被推送方需要收到的值可以是string、int 、object
 
 ```
+## config
+- MultiplexPort 是否统一ws和http端口，如果统一那么，统一用ws端口对外暴露，对外暴露之后，ws端口发送请求必须通过认证
