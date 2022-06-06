@@ -18,7 +18,7 @@ import (
 )
 
 const (
-	Conversation  = 1
+	Conversation  = 1 //信息转发
 	Login         = 2
 	Logout        = 3
 	GetOnlineInfo = 4
