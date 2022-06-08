@@ -58,7 +58,7 @@ func (pushData PushData) ConversionJson() string {
 	case string:
 		return v
 	case float64:
-		return strings.TrimRight(strconv.FormatFloat(v, 'E', -1, 64), `E+00`)
+		return strings.TrimRight(strconv.FormatFloat(v, 'E', -1, 64), `E+0`)
 	case types.Slice, types.Map:
 		result, err := json.Marshal(data)
 		if err != nil {
