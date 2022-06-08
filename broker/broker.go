@@ -38,13 +38,15 @@ type PushData struct {
 	Data           interface{} `json:"data"`
 }
 
+const NotFound = `["code":404,"msg":"数据错误","data":""]`
+
 func (response Response) Json(msg string, code int, data interface{}) []byte {
 	response.Msg = msg
 	response.Code = code
 	response.Data = data
 	res, err := json.Marshal(response)
 	if err != nil {
-		return []byte(`["code":404,"msg":"数据错误","data":""]`)
+		return []byte(NotFound)
 	}
 	return res
 }
