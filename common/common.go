@@ -23,6 +23,7 @@ type Common struct {
 	WsPort        uint16      `validate:"required,min=0,max=65535" label:"websocket端口"`
 	HttpPort      uint16      `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
 	MultiplexPort bool        `validate:"required" label:"端口复用"`
+	Pong          bool        `validate:"required" label:"心跳"`
 	Env           string      `validate:"required,oneof=dev prod" label:"环境变量"`
 	SignKey       string      `validate:"" label:"环境变量"`
 	DefaultDB     string      `validate:"required"`

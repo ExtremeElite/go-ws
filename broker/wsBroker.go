@@ -9,8 +9,6 @@ package broker
 import (
 	"encoding/json"
 	"errors"
-	"strings"
-	"time"
 	"ws/common"
 	"ws/kernel"
 )
@@ -24,7 +22,7 @@ func wsBroker(conn *kernel.Connection) (err error) {
 	//读取消息并且发送消息
 	common.LogInfo("服务器收到的:\n" + string(message))
 	if err = sendMessage(message, conn,
-		ping,
+		conn.Ping,
 		wsMessageForwarding,
 	); err != nil {
 		common.LogDebug("服务器转发消息失败:\n" + string(message) + "错误消息引起的原因:\n" + err.Error())
@@ -44,27 +42,6 @@ func sendMessage(message []byte, conn *kernel.Connection, callback ...wsPipeLine
 	return nil
 }
 
-//客户端主动ping服务器
-func ping(message []byte, conn *kernel.Connection) (data []byte, err error) {
-	data = message
-	if strings.ToLower(string(message)) == `ping` {
-		if err = conn.WriteMsg([]byte(`Pong`)); err != nil {
-			common.LogDebug("写入失败:" + err.Error())
-		}
-		data = nil
-		return
-	}
-	if strings.ToLower(string(message)) == `pong` {
-		if err = conn.WriteMsg([]byte(`Ping`)); err != nil {
-			common.LogDebug("写入失败:" + err.Error())
-		}
-		data = nil
-		return
-	}
-
-	return
-}
-
 //ws 消息转发 todo ws消息转发需要对连接权限进行认证
 func wsMessageForwarding(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	var pushData PushData
@@ -78,23 +55,4 @@ func wsMessageForwarding(message []byte, conn *kernel.Connection) (data []byte, 
 		pushData.messageForwarding()
 	}
 	return
-}
-
-//go程主动pong客户端
-func pong(conn *kernel.Connection) {
-	var wsTimeOut = common.Setting.WsTimeOut
-	if wsTimeOut > 0 {
-		addTime := time.Duration(wsTimeOut-1) * time.Second
-		timer := time.NewTimer(addTime)
-		for range timer.C {
-			if conn.IsClose {
-				timer.Stop()
-				goto Over
-			}
-			_ = conn.WriteMsg([]byte(`Pong`))
-			common.LogDebug("Pong")
-			timer.Reset(addTime)
-		}
-	}
-Over:
 }
