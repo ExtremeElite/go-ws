@@ -18,16 +18,16 @@ import (
 func wsBroker(conn *kernel.Connection) (err error) {
 	var message []byte
 	if message, err = conn.ReadMsg(); err != nil {
-		common.LogDebug("读取失败:"+err.Error())
+		common.LogDebug("读取失败:" + err.Error())
 		return
 	}
 	//读取消息并且发送消息
-	common.LogInfo("服务器收到的:\n"+string(message))
+	common.LogInfo("服务器收到的:\n" + string(message))
 	if err = sendMessage(message, conn,
 		ping,
 		wsMessageForwarding,
 	); err != nil {
-		common.LogDebug("服务器转发消息失败:\n"+string(message)+"错误消息引起的原因:\n"+err.Error())
+		common.LogDebug("服务器转发消息失败:\n" + string(message) + "错误消息引起的原因:\n" + err.Error())
 	}
 	return
 }
@@ -49,14 +49,14 @@ func ping(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	data = message
 	if strings.ToLower(string(message)) == `ping` {
 		if err = conn.WriteMsg([]byte(`Pong`)); err != nil {
-			common.LogDebug("写入失败:"+err.Error())
+			common.LogDebug("写入失败:" + err.Error())
 		}
 		data = nil
 		return
 	}
 	if strings.ToLower(string(message)) == `pong` {
 		if err = conn.WriteMsg([]byte(`Ping`)); err != nil {
-			common.LogDebug("写入失败:"+err.Error())
+			common.LogDebug("写入失败:" + err.Error())
 		}
 		data = nil
 		return
@@ -86,17 +86,13 @@ func pong(conn *kernel.Connection) {
 	if wsTimeOut > 0 {
 		addTime := time.Duration(wsTimeOut-1) * time.Second
 		timer := time.NewTimer(addTime)
-		for {
-			select {
-			case <-timer.C:
-				if conn.IsClose {
-					timer.Stop()
-					goto Over
-				}
-				_ = conn.WriteMsg([]byte(`Pong`))
-				common.LogDebug("Pong")
-
+		for range timer.C {
+			if conn.IsClose {
+				timer.Stop()
+				goto Over
 			}
+			_ = conn.WriteMsg([]byte(`Pong`))
+			common.LogDebug("Pong")
 			timer.Reset(addTime)
 		}
 	}
