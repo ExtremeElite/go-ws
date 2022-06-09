@@ -2,7 +2,6 @@ package broker
 
 import (
 	"errors"
-	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
 	"strings"
@@ -11,6 +10,8 @@ import (
 	"ws/kernel"
 	"ws/pipeLine"
 	"ws/util"
+
+	"github.com/gorilla/websocket"
 )
 
 var upgrade = websocket.Upgrader{
