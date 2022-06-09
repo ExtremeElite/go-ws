@@ -38,6 +38,11 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		log.Println("wsRequest:", err.Error())
 		return
 	}
+	//如果允许服务器主动pong
+	if common.Setting.Pong {
+		go util.Go(conn.Pong)
+	}
+
 	defer conn.Close()
 	kernel.AddNode(&kernel.Node{Ws: conn, Name: name, RemoteAddr: r.RemoteAddr})
 	for {

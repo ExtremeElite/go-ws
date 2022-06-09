@@ -2,12 +2,13 @@ package kernel
 
 import (
 	"errors"
-	"github.com/gorilla/websocket"
 	"log"
 	"sync"
 	"time"
 	"ws/common"
 	"ws/util"
+
+	"github.com/gorilla/websocket"
 )
 
 type Connection struct {
@@ -29,8 +30,8 @@ func BuildConn(wsConn *websocket.Conn) (conn *Connection, err error) {
 		writeChan: make(chan []byte, readChan),
 		closeChan: make(chan byte, 1),
 	}
-	go conn.readLoop()
-	go conn.writeLoop()
+	go util.Go(conn.readLoop)
+	go util.Go(conn.writeLoop)
 	return
 }
 
