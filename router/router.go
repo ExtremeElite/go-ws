@@ -17,7 +17,7 @@ func WsPush() {
 	wsPush := http.NewServeMux()
 	wsPush.HandleFunc("/", WsRouter())
 	wsPush.HandleFunc("/all", AllNodeRouter())
-	common.LogInfoSuccess(fmt.Sprintf("创建WebSocket服务,端口:%d", wsPort))
+	common.LogInfoSuccess(fmt.Sprintf("创建WebSocket服务端口:%d", wsPort))
 	if err := http.ListenAndServe(":"+strconv.Itoa(int(wsPort)), wsPush); err != nil {
 		log.Fatal("main:", err)
 	}

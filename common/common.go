@@ -27,8 +27,8 @@ type Common struct {
 	LogMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
 	WsPort        uint16      `validate:"required,min=0,max=65535" label:"websocket端口"`
 	HttpPort      uint16      `validate:"required,min=0,max=65535,nefield=WsPort" label:"Http端口"`
-	MultiplexPort bool        `validate:"required" label:"端口复用"`
-	Pong          bool        `validate:"required" label:"心跳"`
+	MultiplexPort bool        `validate:"-" label:"端口复用"`
+	Pong          bool        `validate:"-" label:"pong"`
 	Env           string      `validate:"required,oneof=dev prod" label:"环境变量"`
 	SignKey       string      `validate:"" label:"环境变量"`
 	DefaultDB     string      `validate:"required"`
