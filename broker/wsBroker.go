@@ -16,7 +16,7 @@ import (
 func wsBroker(conn *kernel.Connection) (err error) {
 	var message []byte
 	if message, err = conn.ReadMsg(); err != nil {
-		common.LogDebug("读取失败:" + err.Error())
+		common.LogInfoFailed("读取失败:" + err.Error())
 		return
 	}
 	//读取消息并且发送消息

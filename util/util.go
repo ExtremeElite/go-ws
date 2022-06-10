@@ -133,7 +133,7 @@ func LogUtil(s, t string, debug bool) {
 	if ok {
 		_currentPath := PathToEveryOne("/")
 		_file, _ := filepath.Abs(file)
-		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file, _currentPath), line, s)
+		log.Printf("[%s] %s line=%d error is %s", t, strings.TrimLeft(_file, _currentPath), line, s)
 	}
 
 }
