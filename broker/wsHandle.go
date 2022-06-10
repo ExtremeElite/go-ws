@@ -2,7 +2,6 @@ package broker
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -30,12 +29,12 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	//普通 HTTP请求
 	if r.Header.Get("Connection") != "Upgrade" {
 		if _, err := w.Write([]byte(common.HelloWorld)); err != nil && common.Debug {
-			log.Println("http error: ", err.Error())
+			common.LogInfo(MessageHeaderFailed + "http error: " + err.Error())
 		}
 		return
 	}
 	if conn, name, err = wsBuild(w, r); err != nil {
-		log.Println("wsRequest:", err.Error())
+		common.LogInfo(MessageHeaderFailed + "wsRequest:" + err.Error())
 		return
 	}
 	//如果允许服务器主动pong
@@ -54,11 +53,11 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 Err:
 	if conn.IsClose {
 		if err := kernel.DelNode(name); err != nil && common.Debug {
-			log.Println("connect close:", err.Error())
+			common.LogInfo(MessageHeaderFailed + "connect close:" + err.Error())
 		}
 	}
 
-	log.Println("connect close:", name)
+	common.LogInfo(MessageHeaderSuccess + "connect close:" + name)
 }
 
 //业务逻辑处理
@@ -83,7 +82,7 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 	}
 	if conn, err = kernel.BuildConn(wsConn); err != nil {
 		if wsErr := wsConn.WriteMessage(websocket.TextMessage, []byte(err.Error())); wsErr != nil && common.Debug {
-			log.Println("wsErr is:", wsErr.Error())
+			common.LogInfo(MessageHeaderFailed + "wsErr is:" + wsErr.Error())
 		}
 		_ = wsConn.Close()
 		return
@@ -97,6 +96,6 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil {
 		return nil, "", err
 	}
-	log.Println("connect open:", r.RemoteAddr, name)
+	common.LogInfo(MessageHeaderSuccess + "connect open:" + r.RemoteAddr + name)
 	return
 }

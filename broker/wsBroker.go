@@ -16,11 +16,11 @@ import (
 func wsBroker(conn *kernel.Connection) (err error) {
 	var message []byte
 	if message, err = conn.ReadMsg(); err != nil {
-		common.LogDebug("读取失败:" + err.Error())
+		common.LogDebug(MessageHeaderFailed + "读取失败:" + err.Error())
 		return
 	}
 	//读取消息并且发送消息
-	common.LogInfo("服务器收到的:\n" + string(message))
+	common.LogInfo(MessageHeaderSuccess + "服务器收到的消息:" + string(message))
 	if err = sendMessage(message, conn,
 		conn.Ping,
 		wsMessageForwarding,
@@ -30,7 +30,7 @@ func wsBroker(conn *kernel.Connection) (err error) {
 		var byteReturnClientMsg []byte = returnClientMsg.Json(err.Error(), 404, string(message))
 		conn.WriteMsg(byteReturnClientMsg)
 		//服务器埋点
-		common.LogDebug("服务器转发消息失败:" + string(byteReturnClientMsg))
+		common.LogInfo(MessageHeaderFailed + "服务器转发消息:" + string(byteReturnClientMsg))
 	}
 	return
 }
