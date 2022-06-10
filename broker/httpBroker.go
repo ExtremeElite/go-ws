@@ -26,11 +26,11 @@ func httpBroker(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 	var pushData PushData
 	if err = json.Unmarshal(body, &pushData); err != nil {
-		common.LogInfo(fmt.Sprintf("%vpushData Unmarshal faild:%v\n", MessageHeaderFailed, err.Error()))
+		common.LogInfoFailed(fmt.Sprintf("pushData Unmarshal faild:%v\n", err.Error()))
 		return
 	}
 	workData(w, pushData)
-	common.LogInfo(MessageHeaderSuccess + "服务端收到:" + r.RemoteAddr + "发来的消息:" + string(body))
+	common.LogInfoSuccess("服务端收到:" + r.RemoteAddr + "发来的消息:" + string(body))
 	return
 }
 
@@ -44,7 +44,7 @@ func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err erro
 		res := `请求体大小为` + strconv.Itoa(bodyLen/1024) + `kb,大于` + strconv.Itoa(common.Setting.MaxBody/1024) + `kb`
 		w.WriteHeader(http.StatusRequestEntityTooLarge)
 		_, _ = w.Write([]byte(res))
-		common.LogInfo(MessageHeaderSuccess + res)
+		common.LogInfoSuccess(res)
 		return
 	}
 	return
@@ -86,6 +86,6 @@ func getOnLine() []string {
 func HttpMessageForwarding() {
 	for pushData := range HttpChan {
 		pushData.messageForwarding()
-		common.LogInfo(MessageHeaderSuccess + `收到的http请求推送内容:` + pushData.ConversionJson())
+		common.LogInfoSuccess(`收到的http请求推送内容:` + pushData.ConversionJson())
 	}
 }

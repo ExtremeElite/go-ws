@@ -8,6 +8,11 @@ import (
 	"github.com/BurntSushi/toml"
 )
 
+const (
+	MessageHeaderSuccess = `[success]`
+	MessageHeaderFailed  = `[failed]`
+)
+
 type Mysql struct {
 	ServerHost string `validate:"required,ip" label:"数据服务器地址"`
 	Port       uint16 `validate:"required,min=0,max=65535" label:"数据服务器地址" `
@@ -73,4 +78,10 @@ func LogDebug(s string) {
 }
 func LogInfo(s string) {
 	util.LogUtil(s, "info", false)
+}
+func LogInfoSuccess(s string) {
+	LogInfo(MessageHeaderSuccess + s)
+}
+func LogInfoFailed(s string) {
+	LogInfo(MessageHeaderFailed + s)
 }

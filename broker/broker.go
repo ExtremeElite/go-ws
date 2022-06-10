@@ -18,12 +18,10 @@ import (
 )
 
 const (
-	Conversation         = 1 //信息转发
-	Login                = 2
-	Logout               = 3
-	GetOnlineInfo        = 4
-	MessageHeaderSuccess = `[success]`
-	MessageHeaderFailed  = `[failed]`
+	Conversation  = 1 //信息转发
+	Login         = 2
+	Logout        = 3
+	GetOnlineInfo = 4
 )
 
 type wsPipeLineFn func([]byte, *kernel.Connection) ([]byte, error)

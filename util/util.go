@@ -5,10 +5,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"encoding/json"
-	zhongwen "github.com/go-playground/locales/zh"
-	ut "github.com/go-playground/universal-translator"
-	"github.com/go-playground/validator/v10"
-	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 	"log"
 	"math/rand"
 	"os"
@@ -17,6 +13,11 @@ import (
 	"runtime"
 	"strings"
 	"time"
+
+	zhongwen "github.com/go-playground/locales/zh"
+	ut "github.com/go-playground/universal-translator"
+	"github.com/go-playground/validator/v10"
+	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 )
 
 type Response struct {
@@ -110,7 +111,6 @@ func MD5(data string) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-
 func translate(errs error) string {
 	var errList []string
 	for _, err := range errs.(validator.ValidationErrors) {
@@ -118,30 +118,31 @@ func translate(errs error) string {
 	}
 	return strings.Join(errList, ";")
 }
-func ValidateStruct(s interface{})  {
-	errors:=validate.Struct(s)
-	if errors!=nil {
+func ValidateStruct(s interface{}) {
+	errors := validate.Struct(s)
+	if errors != nil {
 		log.Fatal(translate(errors))
 	}
 }
-func LogUtil(s, t string,debug bool) {
+func LogUtil(s, t string, debug bool) {
 	if !debug {
 		log.Println(s)
 		return
 	}
 	_, file, line, ok := runtime.Caller(2)
 	if ok {
-		_currentPath:=PathToEveryOne("/")
-		_file,_:=filepath.Abs(file)
-		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file,_currentPath), line, s)
+		_currentPath := PathToEveryOne("/")
+		_file, _ := filepath.Abs(file)
+		log.Printf("[%s] %s line=%d error is \n%s", t, strings.TrimLeft(_file, _currentPath), line, s)
 	}
 
 }
+
 //防止野生goroutine panic 导致的整个程序退出
-func Go(x func())  {
+func Go(x func()) {
 	defer func() {
-		if err:=recover();err!=nil {
-			log.Println("Go run failed gorouting:",err)
+		if err := recover(); err != nil {
+			log.Println("Go run failed gorouting:", err)
 		}
 	}()
 	x()
