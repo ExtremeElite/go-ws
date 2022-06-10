@@ -25,7 +25,12 @@ func wsBroker(conn *kernel.Connection) (err error) {
 		conn.Ping,
 		wsMessageForwarding,
 	); err != nil {
-		common.LogDebug("服务器转发消息失败:\n" + string(message) + "错误消息引起的原因:\n" + err.Error())
+		//将错误发送给客户端
+		var returnClientMsg = Response{}
+		var byteReturnClientMsg []byte = returnClientMsg.Json(err.Error(), 404, string(message))
+		conn.WriteMsg(byteReturnClientMsg)
+		//服务器埋点
+		common.LogDebug("服务器转发消息失败:" + string(byteReturnClientMsg))
 	}
 	return
 }

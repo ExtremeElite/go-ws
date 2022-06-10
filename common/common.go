@@ -68,7 +68,7 @@ func CheckPort(port int) error {
 }
 func LogDebug(s string) {
 	if Debug {
-		util.LogUtil(s, "debug", true)
+		util.LogUtil(s, "debug", Debug)
 	}
 }
 func LogInfo(s string) {
