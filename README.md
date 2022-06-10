@@ -41,3 +41,10 @@ data:被推送方需要收到的值可以是string、int 、object
 ```
 ## config
 - MultiplexPort 是否统一ws和http端口，如果统一那么，统一用ws端口对外暴露，对外暴露之后，ws端口发送请求必须通过认证,ws认证和http认证同样会被统一一个端口，一般通过数据库查询来验证token的合法性
+  
+## 鉴权与认证
+ + 通过验证jwt来对流模式进行鉴权，token的获取通过http post请求来获取。
+   
+    - http服务产生token，token会在长连接认证成功之后丢弃。
+    - http请求是无状态的，可以对token的获取进行控制，可以获取多个token生产多个长链接。
+    - 为了权限设计上的安全，token的使用为一次性的,鉴权成功之后，token会被丢弃,长连接不管什么原因导致的断开，如果需要再连接都需要重新通过http服务获取token。
