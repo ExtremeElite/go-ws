@@ -96,6 +96,6 @@ func wsBuild(w http.ResponseWriter, r *http.Request) (conn *kernel.Connection, n
 	if err = conn.WriteMsg(response.Json("登录成功", 200, "")); err != nil {
 		return nil, "", err
 	}
-	common.LogInfoSuccess("connect open:" + r.RemoteAddr + name)
+	common.LogInfoSuccess("connect open:" + r.RemoteAddr + " name:" + name)
 	return
 }

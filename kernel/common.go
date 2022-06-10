@@ -38,7 +38,7 @@ func (conn *Connection) Pong() {
 				goto Over
 			}
 			_ = conn.WriteMsg([]byte(`Pong`))
-			common.LogDebug("Pong")
+			common.LogInfoFailed("客户端没有ping服务器,自动发送pong")
 			timer.Reset(addTime)
 		}
 	}
