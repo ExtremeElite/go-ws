@@ -63,7 +63,7 @@ func HasName(name string) Middleware {
 }
 func Use(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	var middlewareLen = len(middlewares) - 1
-	for key, _ := range middlewares {
+	for key := range middlewares {
 		fn = middlewares[middlewareLen-key](fn)
 	}
 	return fn
