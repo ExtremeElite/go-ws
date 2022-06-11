@@ -1,8 +1,9 @@
 package db
 
 import (
-	"gorm.io/gorm"
 	"ws/common"
+
+	"gorm.io/gorm"
 )
 
 var GormDB *gorm.DB

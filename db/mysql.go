@@ -2,11 +2,12 @@ package db
 
 import (
 	"fmt"
+	"log"
+	"ws/common"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"log"
-	"ws/common"
 )
 
 func localMysql() (gormDB *gorm.DB) {

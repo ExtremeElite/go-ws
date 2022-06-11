@@ -2,9 +2,10 @@ package kernel
 
 import (
 	"errors"
-	"github.com/gorilla/websocket"
 	"sync"
 	"ws/common"
+
+	"github.com/gorilla/websocket"
 )
 
 type Node struct {
@@ -24,7 +25,7 @@ func AddNode(node *Node) {
 func GetNode(name string) (v *Node, ok bool) {
 	var node *Node
 	if v, ok := Nodes.Load(name); ok {
-		return v.(*Node),ok
+		return v.(*Node), ok
 	}
 	return node, ok
 }
