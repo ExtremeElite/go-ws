@@ -26,7 +26,7 @@ func wsBroker(conn *kernel.Connection) (err error) {
 		wsMessageForwarding,
 	); err != nil {
 		//将错误发送给客户端
-		var returnClientMsg = Response{}
+		var returnClientMsg = common.Response{}
 		var byteReturnClientMsg []byte = returnClientMsg.Json(err.Error(), 404, string(message))
 		conn.WriteMsg(byteReturnClientMsg)
 		//服务器埋点
