@@ -3,7 +3,7 @@ package kernel
 import (
 	"errors"
 	"sync"
-	"ws/common"
+	"ws/util"
 
 	"github.com/gorilla/websocket"
 )
@@ -31,11 +31,11 @@ func GetNode(name string) (v *Node, ok bool) {
 }
 func DelNode(name string) (err error) {
 	if node, ok := GetNode(name); ok {
-		if err = node.Ws.WsConn.WriteMessage(websocket.TextMessage, []byte(common.ConnectClosed)); err != nil {
+		if err = node.Ws.WsConn.WriteMessage(websocket.TextMessage, []byte(util.ConnectClosed)); err != nil {
 			Nodes.Delete(name)
 			return
 		}
-		err = errors.New(common.ConnectClosed)
+		err = errors.New(util.ConnectClosed)
 		node.Ws.Close()
 		Nodes.Delete(name)
 	}

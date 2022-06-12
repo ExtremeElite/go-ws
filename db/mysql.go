@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"ws/common"
+	"ws/util"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -13,7 +14,7 @@ import (
 func localMysql() (gormDB *gorm.DB) {
 	var localBase = common.MysqlSet
 	var err error
-	linked := fmt.Sprintf(common.MysqlTcpConnect, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
+	linked := fmt.Sprintf(util.MysqlTcpConnect, localBase.User, localBase.Password, localBase.ServerHost, localBase.Port, localBase.Db)
 
 	var loggerDefaultMode = logger.Silent
 	if common.Debug {

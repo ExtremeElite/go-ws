@@ -11,6 +11,7 @@ import (
 	"errors"
 	"ws/common"
 	"ws/kernel"
+	"ws/util"
 )
 
 func wsBroker(conn *kernel.Connection) (err error) {
@@ -26,7 +27,7 @@ func wsBroker(conn *kernel.Connection) (err error) {
 		wsMessageForwarding,
 	); err != nil {
 		//将错误发送给客户端
-		var returnClientMsg = common.Response{}
+		var returnClientMsg = util.Response{}
 		var byteReturnClientMsg []byte = returnClientMsg.Json(err.Error(), 404, string(message))
 		conn.WriteMsg(byteReturnClientMsg)
 		//服务器埋点

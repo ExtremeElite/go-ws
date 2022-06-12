@@ -15,6 +15,7 @@ import (
 
 	"ws/common"
 	"ws/kernel"
+	"ws/util"
 )
 
 var HttpChan chan PushData
@@ -52,9 +53,9 @@ func validateData(w http.ResponseWriter, r *http.Request) (body []byte, err erro
 
 //数据处理
 func workData(w http.ResponseWriter, pushData PushData) {
-	var response common.Response
+	var response util.Response
 	w.WriteHeader(http.StatusOK)
-	w.Header().Set(common.ContentType, common.AppJson)
+	w.Header().Set(util.ContentType, util.AppJson)
 	switch pushData.EventType {
 	case Conversation:
 		select {

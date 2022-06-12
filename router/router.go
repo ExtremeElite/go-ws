@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 	"ws/common"
+	"ws/util"
 )
 
 func WsPush() {
@@ -30,7 +31,7 @@ func HttpPush() {
 	var httpTimeOut = common.Setting.HttpTimeOut
 	httpPush := http.NewServeMux()
 	httpPush.HandleFunc("/", HttpRouter())
-	httpPushTimeOut := http.TimeoutHandler(httpPush, time.Duration(httpTimeOut)*time.Second, common.TimeOut)
+	httpPushTimeOut := http.TimeoutHandler(httpPush, time.Duration(httpTimeOut)*time.Second, util.TimeOut)
 	common.LogInfoSuccess(fmt.Sprintf("创建HTTP服务端口:%d", httpPort))
 	if err := http.ListenAndServe(":"+strconv.Itoa(int(httpPort)), httpPushTimeOut); err != nil {
 		log.Fatal(err)

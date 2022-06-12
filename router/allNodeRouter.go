@@ -9,8 +9,8 @@ package router
 import (
 	"encoding/json"
 	"net/http"
-	"ws/common"
 	"ws/kernel"
+	"ws/util"
 )
 
 func AllNodeRouter() http.HandlerFunc {
@@ -19,7 +19,7 @@ func AllNodeRouter() http.HandlerFunc {
 		Total int           `json:"total"`
 	}
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set(common.ContentType, common.AppJson)
+		w.Header().Set(util.ContentType, util.AppJson)
 		nodes, total := kernel.GetAllNode()
 		var data = Data{
 			Info:  nodes,

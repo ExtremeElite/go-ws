@@ -4,7 +4,6 @@ package util
 import (
 	"crypto/md5"
 	"encoding/hex"
-	"encoding/json"
 	"log"
 	"math/rand"
 	"os"
@@ -19,23 +18,6 @@ import (
 	"github.com/go-playground/validator/v10"
 	zh_translations "github.com/go-playground/validator/v10/translations/zh"
 )
-
-type Response struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
-}
-
-func (response Response) Json(msg string, code int, data interface{}) []byte {
-	response.Msg = msg
-	response.Code = code
-	response.Data = data
-	res, err := json.Marshal(response)
-	if err != nil {
-		return []byte(`["code":404,"msg":"数据错误","data":""]`)
-	}
-	return res
-}
 
 var (
 	validate *validator.Validate

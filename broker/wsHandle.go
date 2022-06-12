@@ -28,7 +28,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 	)
 	//普通 HTTP请求
 	if r.Header.Get("Connection") != "Upgrade" {
-		if _, err := w.Write([]byte(common.HelloWorld)); err != nil && common.Debug {
+		if _, err := w.Write([]byte(util.HelloWorld)); err != nil && common.Debug {
 			common.LogInfoFailed("http error: " + err.Error())
 		}
 		return

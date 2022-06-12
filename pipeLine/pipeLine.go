@@ -4,7 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
-	"ws/common"
+	"ws/util"
 )
 
 type Middleware func(http.HandlerFunc) http.HandlerFunc
@@ -27,7 +27,7 @@ func Method(m string) Middleware {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != m {
 				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(common.HelloWorld))
+				_, _ = w.Write([]byte(util.HelloWorld))
 				return
 			}
 			fn(w, r)

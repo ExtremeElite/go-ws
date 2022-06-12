@@ -75,8 +75,8 @@ func LogInfo(s string) {
 	util.LogUtil(s, "info", false)
 }
 func LogInfoSuccess(s string) {
-	LogInfo(MessageHeaderSuccess + s)
+	LogInfo(util.MessageHeaderSuccess + s)
 }
 func LogInfoFailed(s string) {
-	LogInfo(MessageHeaderFailed + s)
+	LogInfo(util.MessageHeaderFailed + s)
 }
