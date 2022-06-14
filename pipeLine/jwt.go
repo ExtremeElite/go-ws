@@ -36,6 +36,8 @@ func CreateToken(id, connectType int) string {
 	}
 	return tokenString
 }
+
+//解析token
 func ParseToken(tokenString string) (*CustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
