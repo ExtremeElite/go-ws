@@ -1,6 +1,7 @@
 package pipeLine
 
 import (
+	"fmt"
 	"strconv"
 	"time"
 	"ws/common"
@@ -34,4 +35,17 @@ func CreateToken(id, connectType int) string {
 		common.LogInfoFailed(err.Error())
 	}
 	return tokenString
+}
+func ParseToken(tokenString string) (*CustomClaims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CustomClaims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return SignKey, nil
+	})
+	if claims, ok := token.Claims.(*CustomClaims); ok && token.Valid {
+		return claims, nil
+	} else {
+		return nil, err
+	}
 }
