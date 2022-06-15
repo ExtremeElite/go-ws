@@ -13,8 +13,9 @@ const (
 	MysqlTcpConnect      = `%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local`
 	MessageHeaderSuccess = `[success]`
 	MessageHeaderFailed  = `[failed]`
-	NotFound             = `["code":404,"msg":"数据错误","data":""]`
-	MethodNotAllowed     = `["code":405,"msg":"请求方式错误","data":""]`
+	NotFound             = `{"code":404,"msg":"数据错误","data":""}`
+	MethodNotAllowed     = `{"code":405,"msg":"请求方式错误","data":""}`
+	HostNotAllowed       = `{"code":406,"msg":"请求域名错误","data":""}`
 )
 
 type Response struct {

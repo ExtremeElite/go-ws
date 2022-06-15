@@ -80,9 +80,9 @@ func LocalRequest(hosts []string) Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
 			for host := range hosts {
-				if r.Host == hosts[host] {
+				if r.Host != hosts[host] {
 					w.WriteHeader(http.StatusOK)
-					_, _ = w.Write([]byte(util.NotFound))
+					_, _ = w.Write([]byte(util.HostNotAllowed))
 					return
 				}
 			}
