@@ -14,6 +14,7 @@ const (
 	MessageHeaderSuccess = `[success]`
 	MessageHeaderFailed  = `[failed]`
 	NotFound             = `["code":404,"msg":"数据错误","data":""]`
+	MethodNotAllowed     = `["code":405,"msg":"请求方式错误","data":""]`
 )
 
 type Response struct {

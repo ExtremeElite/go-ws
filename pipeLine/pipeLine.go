@@ -27,7 +27,7 @@ func Method(m string) Middleware {
 		return func(w http.ResponseWriter, r *http.Request) {
 			if r.Method != m {
 				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write([]byte(util.HelloWorld))
+				_, _ = w.Write([]byte(util.MethodNotAllowed))
 				return
 			}
 			fn(w, r)
@@ -73,4 +73,20 @@ func CheckMiddleRequest(key string) string {
 		return name
 	}
 	return ""
+}
+
+//是否为指定域名请求
+func LocalRequest(hosts []string) Middleware {
+	return func(fn http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			for host := range hosts {
+				if r.Host == hosts[host] {
+					w.WriteHeader(http.StatusOK)
+					_, _ = w.Write([]byte(util.NotFound))
+					return
+				}
+			}
+			fn(w, r)
+		}
+	}
 }
