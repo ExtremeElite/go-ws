@@ -12,15 +12,17 @@ env = "dev" #开发环境 dev|prod可选
 httpTimeOut = 5 #http请求超时用于http推送时候的超时设置
 maxBody = 51200 #http推送时候可以接受的最大长度单位为字节
 readChan = 1000 #写协程管道长度
-signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥；用于jwt等加密
+signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥；用于jwt等加密 
 writeChan = 1000 #读协程管道长度
 wsTimeOut = 60 #websocket连接超时最大时间 超时服务器将断开
-[mysqlDB]
+[common.validateMethod]
+mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;  
+name = "token" #name验证的的字符串名称   
+[db]
+[db.mysql]
 db = "dbname" #数据库名称
 maxConnect = 5 #数据库连接池数量
 password = "root" #密码
 port = 3306 #数据库端口
 serverHost = "127.0.0.1" #数据库host
 user = "root" #用户名
-[validateMethod]
-mold = 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证
