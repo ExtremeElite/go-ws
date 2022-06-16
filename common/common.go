@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"ws/util"
@@ -39,13 +40,17 @@ type common struct {
 	LogMod         os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
 	MultiplexPort  bool        `validate:"-" label:"端口复用"`
 	Env            string      `validate:"required,oneof=dev prod" label:"环境变量"`
-	ValidateMethod ValidateMethod
+	ValidateMethod validateMethod
 	WebSocket      websocket
 	Http           http
 }
-type ValidateMethod struct {
-	Mold int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
-	Name string `validate:"required,min=0,max=32" label:"验证名称"`
+type validateHttp struct{}
+type validateWebsocket struct{}
+type validateMethod struct {
+	Mold         int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
+	Name         string `validate:"required,min=0,max=32" label:"验证名称"`
+	ValidateHttp validateHttp
+	ValidateWs   validateWebsocket
 }
 
 type BaseServer struct {
@@ -76,6 +81,7 @@ func Config() BaseServer {
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
+	fmt.Printf("%+v\n", bs)
 	util.ValidateStruct(bs.Common.Http)
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)

@@ -2,14 +2,14 @@
 [common]
 env = "dev" #开发环境 dev|prod可选
 logMod = 777 #日志文件权限 777|755
+maxBody = 51200 #推送时候可以接受的最大长度单位为字节
 multiplexPort = false #是否监听同一个端口
-name = "Gorou" #名称暂不支持中文
+name = "Go-WS" #名称暂不支持中文
 pidMod = 777 #pid文件权限 777|755
 signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥：用于
 [common.http]
 httpPort = 8000 #http端口 一般用于内网对websocket发送消息
 httpTimeOut = 5 #http请求超时用于http推送时候的超时设置
-maxBody = 51200 #http推送时候可以接受的最大长度单位为字节
 [common.websocket]
 pong = false #服务器是否主动pong
 readChan = 1000 #写协程管道长度
