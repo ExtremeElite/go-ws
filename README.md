@@ -5,8 +5,16 @@
 ws基础
 
 #### 软件架构
+- golang写的业务层的websocket
+  - 网络节点数据结构可配置:hashmap、trie
+  - 数据库可配置：mysql、redis、
+  - 鉴权认证可配置：jwt|数据库|任意验证
+  - 消息体可配置:支持自定义消息体发生
+  - 单机应用
+  - 协议兼容：兼容tcp|udp|websocket|mqtt|http协议之间的消息传递
+  - 并发安全：多线程+加锁的并发安全
 
-ws基础 win10 64位系统 内存不释放，32位正常释放 Linux 没测试;goland运行 并发未认证的情况会出现io wait 错误导致程序崩溃
+- ws基础 win10 64位系统 内存不释放，32位正常释放 Linux 没测试;goland运行 并发未认证的情况会出现io wait 错误导致程序崩溃
 
 ###### port = 10090 web程序监听的端口
 
