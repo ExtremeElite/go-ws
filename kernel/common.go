@@ -28,7 +28,7 @@ func (conn *Connection) Ping(message []byte, _ *Connection) (data []byte, err er
 }
 
 func (conn *Connection) Pong() {
-	var wsTimeOut = common.Setting.WsTimeOut
+	var wsTimeOut = common.Ws.WsTimeOut
 	if wsTimeOut > 0 {
 		addTime := time.Duration(wsTimeOut-1) * time.Second
 		timer := time.NewTimer(addTime)

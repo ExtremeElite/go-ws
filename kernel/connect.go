@@ -21,9 +21,8 @@ type Connection struct {
 }
 
 func BuildConn(wsConn *websocket.Conn) (conn *Connection, err error) {
-	var setting = common.Setting
-	var writeChan = setting.WriteChan
-	var readChan = setting.ReadChan
+	var writeChan = common.Ws.WriteChan
+	var readChan = common.Ws.ReadChan
 	conn = &Connection{
 		WsConn:    wsConn,
 		readChan:  make(chan []byte, writeChan),

@@ -9,7 +9,7 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-var SignKey = []byte(common.Setting.SignKey)
+var SignKey = []byte(common.Common.SignKey)
 
 type CustomClaims struct {
 	userId      int
@@ -24,7 +24,7 @@ func CreateToken(id, connectType int) string {
 		connectType: connectType,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Duration(maxAge) * time.Second).Unix(),
-			Issuer:    common.Setting.Name,
+			Issuer:    common.Common.Name,
 			Id:        strconv.Itoa(id),
 		},
 	}

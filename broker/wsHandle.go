@@ -38,7 +38,7 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	//如果允许服务器主动pong
-	if common.Setting.Pong {
+	if common.Ws.Pong {
 		go util.Go(conn.Pong)
 	}
 
@@ -62,7 +62,7 @@ Err:
 
 //业务逻辑处理
 func wsWork(conn *kernel.Connection) (err error) {
-	var wsTimeOut = common.Setting.WsTimeOut
+	var wsTimeOut = common.Common.WebSocket.WsTimeOut
 	//设置服务器读取超时
 	if wsTimeOut > 0 {
 		if err = conn.SetReadDeadline(time.Now().Add(time.Duration(wsTimeOut) * time.Second)); err != nil {

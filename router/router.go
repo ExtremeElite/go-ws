@@ -11,7 +11,7 @@ import (
 )
 
 func WsPush() {
-	var wsPort = common.Setting.WsPort
+	var wsPort = common.Ws.WsPort
 	if err := common.CheckPort(int(wsPort)); err != nil {
 		log.Fatal(err.Error())
 	}
@@ -24,11 +24,11 @@ func WsPush() {
 	}
 }
 func HttpPush() {
-	var httpPort = common.Setting.HttpPort
+	var httpPort = common.Http.HttpPort
 	if err := common.CheckPort(int(httpPort)); err != nil {
 		log.Fatal(err.Error())
 	}
-	var httpTimeOut = common.Setting.HttpTimeOut
+	var httpTimeOut = common.Http.HttpTimeOut
 	httpPush := http.NewServeMux()
 	httpPush.HandleFunc("/", HttpRouter())
 	httpPush.HandleFunc("/token", HttpGetToken())

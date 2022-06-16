@@ -9,8 +9,10 @@ import (
 var GormDB *gorm.DB
 
 func init() {
-	defaultDB := common.Setting.DefaultDB
+	defaultDB := common.DB.Defalut
 	switch defaultDB {
+	case "mysql":
+		GormDB = localMysql()
 	default:
 		GormDB = localMysql()
 	}
