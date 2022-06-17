@@ -5,11 +5,11 @@
 ws基础
 
 #### 软件架构
-- `Golang`写的业务层的`Websocket`单体服务
+- `Golang`实现的`Websocket`单体服务
   - 网络节点数据结构可配置:`Hashmap`|`Trie`
   - 数据库可配置：`Mysql`|`PostgreSQL`|`SQLite`|`Redis`
   - 鉴权认证可配置：`jwt验证`|`数据库验证`|`任意验证`
-  - 消息体可配置:支持自定义消息体发生
+  - 消息体可配置:支持自定义消息体发送
   - 协议兼容：一统`Tcp`|`Udp`|`Websocket`|`Mqtt`|`Http`协议之间的消息传递
   - 并发安全：多线程+加锁的并发安全
 
