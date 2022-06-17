@@ -1,7 +1,6 @@
 package common
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"ws/util"
@@ -81,7 +80,6 @@ func Config() BaseServer {
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
-	fmt.Printf("%+v\n", bs)
 	util.ValidateStruct(bs.Common.Http)
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)
