@@ -16,9 +16,6 @@ readChan = 1000 #写协程管道长度
 writeChan = 1000 #读协程管道长度
 wsPort = 20290 #websocket端口
 wsTimeOut = 60 #websocket连接超时最大时间 超时服务器将断开
-[common.validateMethod]
-mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;  
-name = "token" #name验证的的字符串名称   
 [db]
 defalut = "mysql"
 [db.mysql]
@@ -28,3 +25,7 @@ password = "root" #密码
 port = 3306 #数据库端口
 serverHost = "127.0.0.1" #数据库host
 user = "root" #用户名
+[validateMethod]
+mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;  
+name = "token" #name验证的的字符串名称
+[validateMethod.http]
