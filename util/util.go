@@ -106,7 +106,7 @@ func ValidateStruct(s interface{}) {
 		log.Fatal(translate(errors))
 	}
 }
-func LogUtil(s, t string, debug bool) {
+func LogUtil(s interface{}, t string, debug bool) {
 	if !debug {
 		log.Println(s)
 		return
@@ -115,7 +115,9 @@ func LogUtil(s, t string, debug bool) {
 	if ok {
 		_currentPath := PathToEveryOne("/")
 		_file, _ := filepath.Abs(file)
-		log.Printf("[%s] %s line=%d error is %s", t, strings.TrimLeft(_file, _currentPath), line, s)
+		log.Printf("[%s] %s line=%d error is %+v", t, strings.TrimLeft(_file, _currentPath), line, s)
+	} else {
+		log.Printf("%+v", s)
 	}
 
 }

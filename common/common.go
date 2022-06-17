@@ -63,6 +63,7 @@ var (
 	Debug  bool
 	Http   http
 	Ws     websocket
+	bs     BaseServer
 )
 
 func init() {
@@ -74,12 +75,12 @@ func init() {
 	Debug = bs.Common.Env == "dev"
 }
 func Config() BaseServer {
-	var bs BaseServer
 	var configPath = util.PathToEveryOne(`config/config.toml`)
 	_, err := toml.DecodeFile(configPath, &bs)
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
+	LogDebug(bs)
 	util.ValidateStruct(bs.Common.Http)
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)
@@ -89,7 +90,8 @@ func CheckPort(port int) error {
 
 	return nil
 }
-func LogDebug(s string) {
+func LogDebug(s interface{}) {
+	var Debug = bs.Common.Env == "dev"
 	if Debug {
 		util.LogUtil(s, "debug", Debug)
 	}
