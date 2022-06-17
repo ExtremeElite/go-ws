@@ -5,12 +5,12 @@
 ws基础
 
 #### 软件架构
-- `Golang`写的业务层的`Websocket`单机服务
-  - 网络节点数据结构可配置:`hashmap`|`trie`
-  - 数据库可配置：`mysql`|`redis`
+- `Golang`写的业务层的`Websocket`单体服务
+  - 网络节点数据结构可配置:`Hashmap`|`Trie`
+  - 数据库可配置：`Mysql`|`PostgreSQL`|`SQLite`|`Redis`
   - 鉴权认证可配置：`jwt验证`|`数据库验证`|`任意验证`
   - 消息体可配置:支持自定义消息体发生
-  - 协议兼容：一统`tcp`|`udp`|`websocket`|`mqtt`|`http`协议之间的消息传递
+  - 协议兼容：一统`Tcp`|`Udp`|`Websocket`|`Mqtt`|`Http`协议之间的消息传递
   - 并发安全：多线程+加锁的并发安全
 
 - ws基础 win10 64位系统 内存不释放，32位正常释放 Linux 没测试;goland运行 并发未认证的情况会出现io wait 错误导致程序崩溃
