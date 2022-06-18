@@ -48,9 +48,9 @@ type validateDetail struct {
 	Query string `validate:"" label:"数据库验证查询"`
 }
 type validateMethod struct {
-	Mold      int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
-	Name      string `validate:"required" label:"验证名称"`
-	Query     string `validate:"required" label:"数据库验证查询"`
+	Mold      int    `validate:"" label:"启用什么类型的验证"`
+	Name      string `validate:"" label:"验证名称"`
+	Query     string `validate:"" label:"数据库验证查询"`
 	Http      validateDetail
 	WebSocket validateDetail
 }
@@ -89,6 +89,8 @@ func Config() BaseServer {
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)
 	util.ValidateStruct(bs.ValidateMethod)
+	bs.ValidateMethod.loadValidateMethod()
+	LogDebug(bs)
 	return bs
 }
 func CheckPort(port int) error {
@@ -109,4 +111,24 @@ func LogInfoSuccess(s string) {
 }
 func LogInfoFailed(s string) {
 	LogInfo(util.MessageHeaderFailed + s)
+}
+func (vm *validateMethod) loadValidateMethod() {
+	if vm.WebSocket.Name == "" {
+		vm.WebSocket.Name = vm.Name
+	}
+	if vm.WebSocket.Query == "" {
+		vm.WebSocket.Query = vm.Query
+	}
+	if vm.WebSocket.Mold == 0 {
+		vm.WebSocket.Mold = vm.Mold
+	}
+	if vm.Http.Name == "" {
+		vm.Http.Name = vm.Name
+	}
+	if vm.Http.Query == "" {
+		vm.Http.Query = vm.Query
+	}
+	if vm.Http.Mold == 0 {
+		vm.Http.Mold = vm.Mold
+	}
 }
