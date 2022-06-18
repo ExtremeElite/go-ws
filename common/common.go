@@ -43,18 +43,20 @@ type common struct {
 	WebSocket      websocket
 	Http           http
 }
-type validateHttp struct{}
-type validateWebsocket struct{}
+type validateDetail struct {
+	Mold  int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
+	Name  string `validate:"required,min=0,max=32" label:"验证名称"`
+	Query string `validate:"" label:"数据库验证查询"`
+}
 type validateMethod struct {
-	Mold         int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
-	Name         string `validate:"required,min=0,max=32" label:"验证名称"`
-	ValidateHttp validateHttp
-	ValidateWs   validateWebsocket
+	ValidateHttp validateDetail
+	ValidateWs   validateDetail
 }
 
 type BaseServer struct {
-	Common common
-	DB     db
+	Common         common
+	DB             db
+	ValidateMethod validateMethod
 }
 
 var (
