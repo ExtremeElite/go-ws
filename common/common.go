@@ -32,25 +32,27 @@ type websocket struct {
 	WriteChan int    `validate:"required,min=2,max=10000" label:"写协程"`
 }
 type common struct {
-	SignKey        string      `validate:"" label:"环境变量"`
-	Name           string      `validate:"required,min=0,max=32" label:"名称"`
-	MaxBody        int         `validate:"required,min=5,max=100000" label:"请求体"`
-	PidMod         os.FileMode `validate:"required,numeric,oneof=777 755" label:"pid文件权限"`
-	LogMod         os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
-	MultiplexPort  bool        `validate:"-" label:"端口复用"`
-	Env            string      `validate:"required,oneof=dev prod" label:"环境变量"`
-	ValidateMethod validateMethod
-	WebSocket      websocket
-	Http           http
+	SignKey       string      `validate:"" label:"环境变量"`
+	Name          string      `validate:"required,min=0,max=32" label:"名称"`
+	MaxBody       int         `validate:"required,min=5,max=100000" label:"请求体"`
+	PidMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"pid文件权限"`
+	LogMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
+	MultiplexPort bool        `validate:"-" label:"端口复用"`
+	Env           string      `validate:"required,oneof=dev prod" label:"环境变量"`
+	WebSocket     websocket
+	Http          http
 }
 type validateDetail struct {
-	Mold  int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
-	Name  string `validate:"required,min=0,max=32" label:"验证名称"`
+	Mold  int    `validate:"" label:"启用什么类型的验证"`
+	Name  string `validate:"" label:"验证名称"`
 	Query string `validate:"" label:"数据库验证查询"`
 }
 type validateMethod struct {
-	ValidateHttp validateDetail
-	ValidateWs   validateDetail
+	Mold      int    `validate:"numeric,oneof=0 1 2" label:"启用什么类型的验证"`
+	Name      string `validate:"required" label:"验证名称"`
+	Query     string `validate:"required" label:"数据库验证查询"`
+	Http      validateDetail
+	WebSocket validateDetail
 }
 
 type BaseServer struct {
@@ -86,6 +88,7 @@ func Config() BaseServer {
 	util.ValidateStruct(bs.Common.Http)
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)
+	util.ValidateStruct(bs.ValidateMethod)
 	return bs
 }
 func CheckPort(port int) error {

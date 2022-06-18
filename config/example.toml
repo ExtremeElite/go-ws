@@ -26,10 +26,14 @@ port = 3306 #数据库端口
 serverHost = "127.0.0.1" #数据库host
 user = "root" #用户名
 [validateMethod]
-mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;  
-name = "token" #name验证的的字符串名称
-query = "" #数据库查询语句
+mold = 3 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;
+name = "1" #name验证的的字符串名称
+query = "http" #数据库查询语句
 [validateMethod.http]
-mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;  
+mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;
 name = "token" #name验证的的字符串名称
-query = "" #数据库查询语句
+query = "http" #数据库查询语句
+[validateMethod.websocket]
+mold = 1 #mold= 0 #验证类型：0不验证|1jwt验证|2 mysql查询验证;3 任意认证;
+name = "1" #name验证的的字符串名称
+query = "ws" #数据库查询语句
