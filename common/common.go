@@ -112,6 +112,8 @@ func LogInfoSuccess(s string) {
 func LogInfoFailed(s string) {
 	LogInfo(util.MessageHeaderFailed + s)
 }
+
+//初始化验证数据
 func (vm *validateMethod) loadValidateMethod() {
 	vm.WebSocket.initValidateData(*vm)
 	vm.Http.initValidateData(*vm)
