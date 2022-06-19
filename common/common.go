@@ -113,22 +113,17 @@ func LogInfoFailed(s string) {
 	LogInfo(util.MessageHeaderFailed + s)
 }
 func (vm *validateMethod) loadValidateMethod() {
-	if vm.WebSocket.Name == "" {
-		vm.WebSocket.Name = vm.Name
+	vm.WebSocket.initData(*vm)
+	vm.Http.initData(*vm)
+}
+func (vd *validateDetail) initData(vm validateMethod) {
+	if vd.Name == "" {
+		vd.Name = vm.Name
 	}
-	if vm.WebSocket.Query == "" {
-		vm.WebSocket.Query = vm.Query
+	if vd.Query == "" {
+		vd.Query = vm.Query
 	}
-	if vm.WebSocket.Mold == 0 {
-		vm.WebSocket.Mold = vm.Mold
-	}
-	if vm.Http.Name == "" {
-		vm.Http.Name = vm.Name
-	}
-	if vm.Http.Query == "" {
-		vm.Http.Query = vm.Query
-	}
-	if vm.Http.Mold == 0 {
-		vm.Http.Mold = vm.Mold
+	if vd.Mold == 0 {
+		vd.Mold = vm.Mold
 	}
 }
