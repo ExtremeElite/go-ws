@@ -84,7 +84,6 @@ func Config() BaseServer {
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
-	LogDebug(bs)
 	util.ValidateStruct(bs.Common.Http)
 	util.ValidateStruct(bs.Common.WebSocket)
 	util.ValidateStruct(bs.DB.Mysql)
