@@ -113,10 +113,10 @@ func LogInfoFailed(s string) {
 	LogInfo(util.MessageHeaderFailed + s)
 }
 func (vm *validateMethod) loadValidateMethod() {
-	vm.WebSocket.initData(*vm)
-	vm.Http.initData(*vm)
+	vm.WebSocket.initValidateData(*vm)
+	vm.Http.initValidateData(*vm)
 }
-func (vd *validateDetail) initData(vm validateMethod) {
+func (vd *validateDetail) initValidateData(vm validateMethod) {
 	if vd.Name == "" {
 		vd.Name = vm.Name
 	}
