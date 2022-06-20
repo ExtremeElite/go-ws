@@ -3,7 +3,7 @@
 env = "dev" #开发环境 dev|prod可选
 logMod = 777 #日志文件权限 777|755
 maxBody = 51200 #推送时候可以接受的最大长度单位为字节
-multiplexPort = false #是否监听同一个端口
+multiplexPort = false #是否监听同一个端口，针对和http相关的协议，ws mqtt
 name = "Go-WS" #名称暂不支持中文
 pidMod = 777 #pid文件权限 777|755
 signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥：用于
