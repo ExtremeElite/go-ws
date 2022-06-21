@@ -38,3 +38,6 @@ func HttpPush() {
 		log.Fatal(err)
 	}
 }
+func goHttpRouteHandle() {
+
+}

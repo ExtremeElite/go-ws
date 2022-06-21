@@ -49,7 +49,6 @@ func main() {
 		if children != nil {
 			return
 		}
-		log.Print("- - - - - - - - - - - - - - -")
 		log.Printf("%v started", runName)
 		defer func(cntxt *daemon.Context) {
 			_ = ctxt.Release()

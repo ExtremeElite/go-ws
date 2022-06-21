@@ -26,8 +26,8 @@ func WsHandle(w http.ResponseWriter, r *http.Request) {
 		conn *kernel.Connection
 		name string
 	)
-	//普通 HTTP请求
-	if r.Header.Get("Connection") != "Upgrade" {
+	//websocket专用接口； 单协议禁止http请求；普通 HTTP请求
+	if !(common.Common.MultiplexPort || r.Header.Get("Connection") == "Upgrade") {
 		if _, err := w.Write([]byte(util.HelloWorld)); err != nil && common.Debug {
 			common.LogInfoFailed("http error: " + err.Error())
 		}
