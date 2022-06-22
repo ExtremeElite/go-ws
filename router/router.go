@@ -38,6 +38,7 @@ func HttpPush() {
 		log.Fatal(err)
 	}
 }
+//当http服务和ws服务公用一个端口的时候启用
 func goHttpRouteHandle() {
 
 }

@@ -1,10 +1,6 @@
 # ws
 
-#### 介绍
-
-ws基础
-
-#### 软件架构
+#### 软件架构其性能与设计预期一样：速度之快，覆盖全球
 - `Golang`实现的`Websocket`单体服务
   - 网络节点数据结构可配置:`Hashmap`|`Trie`
   - 数据库可配置：`Mysql`|`PostgreSQL`|`SQLite`|`Redis`
