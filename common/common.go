@@ -84,10 +84,7 @@ func Config() BaseServer {
 	if err != nil {
 		log.Fatal("please check config/config.toml", err.Error())
 	}
-	util.ValidateStruct(bs.Common.Http)
-	util.ValidateStruct(bs.Common.WebSocket)
-	util.ValidateStruct(bs.DB.Mysql)
-	util.ValidateStruct(bs.ValidateMethod)
+	util.ValidateStructs([]interface{}{bs.Common, bs.Common.WebSocket, bs.DB.Mysql, bs.ValidateMethod})
 	bs.ValidateMethod.loadValidateMethod()
 	LogDebug(bs)
 	return bs

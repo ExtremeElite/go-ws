@@ -106,6 +106,11 @@ func ValidateStruct(s interface{}) {
 		log.Fatal(translate(errors))
 	}
 }
+func ValidateStructs(s []interface{}) {
+	for k := range s {
+		ValidateStruct(s[k])
+	}
+}
 func LogUtil(s interface{}, t string, debug bool) {
 	if !debug {
 		log.Println(s)
