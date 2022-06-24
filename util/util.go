@@ -107,8 +107,15 @@ func ValidateStruct(s interface{}) {
 	}
 }
 func ValidateStructs(s []interface{}) {
+	var errs string
 	for k := range s {
-		ValidateStruct(s[k])
+		errors := validate.Struct(s[k])
+		if errors != nil {
+			errs += translate(errors)
+		}
+	}
+	if len(errs) > 0 {
+		log.Fatal(errs)
 	}
 }
 func LogUtil(s interface{}, t string, debug bool) {
