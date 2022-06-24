@@ -100,18 +100,19 @@ func translate(errs error) string {
 	}
 	return strings.Join(errList, ";")
 }
-func ValidateStruct(s interface{}) {
+func validateStruct(s interface{}) string {
 	errors := validate.Struct(s)
 	if errors != nil {
-		log.Fatal(translate(errors))
+		return translate(errors)
 	}
+	return ""
 }
 func ValidateStructs(s []interface{}) {
 	var errs string
 	for k := range s {
-		errors := validate.Struct(s[k])
-		if errors != nil {
-			errs += translate(errors) + ";"
+		errors := validateStruct(s[k])
+		if len(errors) > 0 {
+			errs += errors + ";"
 		}
 	}
 	if len(errs) > 0 {
