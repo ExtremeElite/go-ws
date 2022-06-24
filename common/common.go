@@ -33,7 +33,7 @@ type websocket struct {
 }
 type common struct {
 	SignKey       string      `validate:"" label:"环境变量"`
-	Name          string      `validate:"required,min=0,max=32" label:"名称"`
+	Name          string      `validate:"required,min=0,max=32" label:"应用名称"`
 	MaxBody       int         `validate:"required,min=5,max=100000" label:"请求体"`
 	PidMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"pid文件权限"`
 	LogMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`

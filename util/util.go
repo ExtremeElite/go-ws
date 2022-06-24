@@ -111,11 +111,11 @@ func ValidateStructs(s []interface{}) {
 	for k := range s {
 		errors := validate.Struct(s[k])
 		if errors != nil {
-			errs += translate(errors)
+			errs += translate(errors) + ";"
 		}
 	}
 	if len(errs) > 0 {
-		log.Fatal(errs)
+		log.Fatal(strings.TrimRight(errs, ";"))
 	}
 }
 func LogUtil(s interface{}, t string, debug bool) {
