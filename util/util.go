@@ -107,6 +107,8 @@ func validateStruct(s interface{}) string {
 	}
 	return ""
 }
+
+//批量验证批量批量出结果
 func ValidateStructs(s []interface{}) {
 	var errs string
 	for k := range s {
