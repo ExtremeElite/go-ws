@@ -9,24 +9,8 @@
   - 协议兼容：一统`Tcp`|`Udp`|`Websocket`|`Mqtt`|`Http`协议之间的消息传递
   - 并发安全：多线程+加锁的并发安全
 
-- ws基础 win10 64位系统 内存不释放，32位正常释放 Linux 没测试;goland运行 并发未认证的情况会出现io wait 错误导致程序崩溃
-
-###### port = 10090 web程序监听的端口
-
-###### env = "dev" dev||prod dev打印日志 prod不打印
-###### ws route /all 获取在线连接数
-
-###### [mysqlDB]
-
-###### serverHost = "127.0.0.1"
-
-###### port = 3306
-
-###### user = "root"
-
-###### password = ""
-
-###### db="nav"
+- 并发未认证的情况会出现io wait 错误导致程序崩溃
+### 配置说明参见config/example.toml
 
 ###### maxConnect=5 数据库连接池维持的最大连接数量
 ###### e.g推送格式说明
