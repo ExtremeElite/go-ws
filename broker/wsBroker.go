@@ -53,7 +53,7 @@ func wsMessageForwarding(message []byte, conn *kernel.Connection) (data []byte, 
 	var pushData PushData
 	data = message
 	if err = json.Unmarshal(message, &pushData); err != nil {
-		err = errors.New(`wsMessageForwarding data error`)
+		err = errors.New(`wsMessageForwarding data error:` + err.Error())
 		return
 	}
 	switch pushData.EventType {
