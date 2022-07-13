@@ -57,14 +57,14 @@ func (pushData PushData) ConversionJson() string {
 //转发
 func (pushData PushData) messageForwarding() {
 	for _, publishAccount := range pushData.PublishAccount {
-		node, ok := kernel.GetNode(publishAccount)
-		if ok {
+		if node, ok := kernel.GetNode(publishAccount); ok {
 			go util.Go(func() {
 				if err := node.Ws.WriteMsg([]byte(pushData.ConversionJson())); err != nil {
 					common.LogDebug(fmt.Sprintf("node is %s,remote_ip:%s,%s data from ws failed:%s ", node.Name, node.RemoteAddr, publishAccount, err.Error()))
 				}
 			})
+		} else {
+			common.LogDebug("messageForeard node not found")
 		}
-
 	}
 }
