@@ -15,17 +15,17 @@
 ###### maxConnect=5 数据库连接池维持的最大连接数量
 ###### e.g推送格式说明
 
-```json
+```javascript
 {
     "event_type": 0, 
     "publish_account": [],
     "data": null,
 }
-/// event_type:数字事件1:转发事件;2:登录;3:退出登录;4:获取在线信息
-/// publish_account:字符串数组代表推送的连接代表比如连接代表为[1,2,3]
-/// data:被推送方需要收到的值可以是string、int 、object
-
+// event_type:数字事件1:转发事件;2:登录;3:退出登录;4:获取在线信息
+//publish_account:字符串数组代表推送的连接代表比如连接代表为[1,2,3]
+//data:被推送方需要收到的值可以是string、int 、object
 ```
+
 ## 配置config
 - MultiplexPort 是否统一ws和http端口，如果统一那么，统一用ws端口对外暴露，对外暴露之后，ws端口发送请求必须通过认证,ws认证和http认证同样会被统一一个端口，一般通过数据库查询来验证token的合法性
 - 数据库连接默认同时只支持一种数据库,目前只开发mysql数据库的支持
