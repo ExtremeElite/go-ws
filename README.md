@@ -21,9 +21,9 @@
     "publish_account": [],
     "data": null,
 }
-event_type:数字事件1:转发事件;2:登录;3:退出登录;4:获取在线信息
-publish_account:字符串数组代表推送的连接代表比如连接代表为[1,2,3]
-data:被推送方需要收到的值可以是string、int 、object
+/// event_type:数字事件1:转发事件;2:登录;3:退出登录;4:获取在线信息
+/// publish_account:字符串数组代表推送的连接代表比如连接代表为[1,2,3]
+/// data:被推送方需要收到的值可以是string、int 、object
 
 ```
 ## 配置config
