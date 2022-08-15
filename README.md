@@ -15,7 +15,7 @@
 ###### maxConnect=5 数据库连接池维持的最大连接数量
 ###### e.g推送格式说明
 
-```
+```json
 {
     "event_type": 0, 
     "publish_account": [],

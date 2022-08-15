@@ -59,5 +59,4 @@ func main() {
 	}
 	go broker.HttpMessageForwarding()
 	router.WsPush()
-
 }
