@@ -11,6 +11,14 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+var messageType = websocket.TextMessage
+
+func init() {
+	if common.Common.MessageType != 1 {
+		messageType = websocket.BinaryMessage
+	}
+}
+
 type Connection struct {
 	WsConn    *websocket.Conn `json:"_"`
 	readChan  chan []byte
@@ -55,7 +63,8 @@ func (conn *Connection) WriteMsg(data []byte) (err error) {
 func (conn *Connection) Close() {
 	conn.one.Do(func() {
 		var response = util.Response{}
-		conn.WsConn.WriteMessage(websocket.TextMessage, []byte(response.Json(util.ConnectClosed, 404, "")))
+
+		conn.WsConn.WriteMessage(messageType, []byte(response.Json(util.ConnectClosed, 404, "")))
 		if err := conn.WsConn.Close(); err != nil {
 			log.Println("close failed: ", err.Error())
 			return
@@ -101,7 +110,7 @@ func (conn *Connection) writeLoop() {
 			goto Err
 		}
 
-		if err = conn.WsConn.WriteMessage(websocket.TextMessage, data); err != nil {
+		if err = conn.WsConn.WriteMessage(messageType, data); err != nil {
 			goto Err
 		}
 	}
