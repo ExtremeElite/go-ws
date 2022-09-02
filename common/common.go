@@ -39,7 +39,7 @@ type common struct {
 	LogMod        os.FileMode `validate:"required,numeric,oneof=777 755" label:"log文件权限"`
 	MultiplexPort bool        `validate:"-" label:"端口复用"`
 	Env           string      `validate:"required,oneof=dev prod" label:"环境变量"`
-	MessageType   int         `validate:"required,min=1,max=2" label:"响应消息类型"`
+	MessageType   int         `validate:"required,min=1,max=2" label:"响应的消息类型"`
 	WebSocket     websocket
 	Http          http
 }
