@@ -13,7 +13,7 @@ import (
 	"ws/service"
 )
 
-//http常规请求
+// http常规请求
 func HttpRouter() http.HandlerFunc {
 	return pipeLine.Use(
 		broker.HttpHandle,
@@ -23,9 +23,9 @@ func HttpRouter() http.HandlerFunc {
 	)
 }
 
-//内网获取token
+// 内网获取token
 func HttpGetToken() http.HandlerFunc {
-	return pipeLine.Use(
+	return pipeLine.Next(
 		service.HttpGetTokenHandle,
 		pipeLine.Logging(),
 		pipeLine.Method("get"),

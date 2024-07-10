@@ -48,7 +48,7 @@ func sendMessage(message []byte, conn *kernel.Connection, callback ...wsPipeLine
 	return nil
 }
 
-//ws 消息转发 todo ws消息转发需要对连接权限进行认证
+// ws 消息转发 todo ws消息转发需要对连接权限进行认证
 func wsMessageForwarding(message []byte, conn *kernel.Connection) (data []byte, err error) {
 	var pushData PushData
 	data = message

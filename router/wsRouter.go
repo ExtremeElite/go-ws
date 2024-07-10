@@ -14,11 +14,5 @@ import (
 )
 
 func WsRouter() http.HandlerFunc {
-	var before = pipeLine.Before(
-		broker.WsHandle,
-		pipeLine.Cors(),
-		pipeLine.HasName("token"),
-	//pipeLine.WsAuthMiddle()
-	)
-	return before
+	return pipeLine.Next(broker.WsHandle, pipeLine.Cors(), pipeLine.HasName("token"))
 }
