@@ -62,9 +62,9 @@ func HasName(name string) Middleware {
 	}
 }
 
-// 		   requests
-//            |
-//            v
+// 		   	  requests
+//            	 |
+//            	 v
 // +----------  one ---------+
 // | +--------  two -------+ |
 // | | +------ three -----+| |
@@ -127,24 +127,15 @@ func After(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 // | +------ after_two  ---+ |
 // +-------- after_three --+ |
 //
-//		           |
-//		           v
-//		        responses
-//		 one(){
-//		  self()
-//		  handle()
-//		}
-//		 after_one(){
-//		  handle()
-//	   	  self()
-//		}
+//	   			|
+//	   			v
+//			responses
 //
 // handler := pipeLine.Next(handler,one,two,three,after_one,after_two,after_three)
 // return handler
 func Next(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
-	var middlewareLen = len(middlewares) - 1
 	for key := range middlewares {
-		fn = middlewares[middlewareLen-key](fn)
+		fn = middlewares[key](fn)
 	}
 	return fn
 }
