@@ -14,10 +14,11 @@ import (
 )
 
 func WsRouter() http.HandlerFunc {
-	return pipeLine.Use(
+	var before = pipeLine.Before(
 		broker.WsHandle,
 		pipeLine.Cors(),
 		pipeLine.HasName("token"),
-		//pipeLine.WsAuthMiddle(),
+	//pipeLine.WsAuthMiddle()
 	)
+	return before
 }

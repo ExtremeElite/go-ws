@@ -61,7 +61,87 @@ func HasName(name string) Middleware {
 		}
 	}
 }
+
+// 		   requests
+//            |
+//            v
+// +----------  one ---------+
+// | +--------  two -------+ |
+// | | +------ three -----+| |
+// | | |                 | | |
+// | | |       handler   | | |
+// | | |                 | | |
+// | | +----  after_one -+ | |
+// | +------  after_two ---+ |
+// +-------- after_three --+ |
+//            |
+//            v
+//         responses
+
+// handler:=pipLine.Use(handler)
+// before := pipeLine.Before(handler,one,two,three)
+// after:=pipeLine.After(before,after_one,after_two,after_three)
+// return after
 func Use(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	var middlewareLen = len(middlewares) - 1
+	for key := range middlewares {
+		fn = middlewares[middlewareLen-key](fn)
+	}
+	return fn
+}
+
+// 前置中间件
+func Before(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	var middlewareLen = len(middlewares) - 1
+	for key := range middlewares {
+		fn = middlewares[middlewareLen-key](fn)
+	}
+	return fn
+}
+
+// 后置中间件
+func After(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
+	var before = fn
+	fn = func(w http.ResponseWriter, r *http.Request) {}
+	var middlewareLen = len(middlewares) - 1
+	for key := range middlewares {
+		fn = middlewares[middlewareLen-key](fn)
+	}
+	return func(w http.ResponseWriter, r *http.Request) {
+		before(w, r)
+		fn(w, r)
+	}
+}
+
+//			 requests
+//	          	|
+//	         	v
+//
+// +---------- three---------+
+// | +-------- two -------+ |
+// | | +------ one  -----+| |
+// | | |                 | | |
+// | | |      handler    | | |
+// | | |                 | | |
+// | | +---- after_one  -+ | |
+// | +------ after_two  ---+ |
+// +-------- after_three --+ |
+//
+//		           |
+//		           v
+//		        responses
+//		 one(){
+//		  self()
+//		  handle()
+//		}
+//		 after_one(){
+//		  handle()
+//	   	  self()
+//		}
+//
+// handler := pipeLine.Next(handler,one,two,three,after_one,after_two,after_three)
+// return handler
+func Next(fn http.HandlerFunc, middlewares ...Middleware) http.HandlerFunc {
 	var middlewareLen = len(middlewares) - 1
 	for key := range middlewares {
 		fn = middlewares[middlewareLen-key](fn)
@@ -75,7 +155,7 @@ func CheckMiddleRequest(key string) string {
 	return ""
 }
 
-//是否为指定域名请求
+// 是否为指定域名请求
 func LocalRequest(hosts []string) Middleware {
 	return func(fn http.HandlerFunc) http.HandlerFunc {
 		return func(w http.ResponseWriter, r *http.Request) {
