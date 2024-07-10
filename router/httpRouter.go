@@ -15,7 +15,7 @@ import (
 
 // http常规请求
 func HttpRouter() http.HandlerFunc {
-	return pipeLine.Use(
+	return pipeLine.Next(
 		broker.HttpHandle,
 		pipeLine.Logging(),
 		pipeLine.Method("POST"),
