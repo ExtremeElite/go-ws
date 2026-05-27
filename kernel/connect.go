@@ -14,111 +14,98 @@ import (
 var messageType = websocket.TextMessage
 
 func init() {
-	if common.Common.MessageType != 1 {
+	if common.Conf.MessageType != 1 {
 		messageType = websocket.BinaryMessage
 	}
 }
 
 type Connection struct {
-	WsConn    *websocket.Conn `json:"_"`
+	WsConn    *websocket.Conn
 	readChan  chan []byte
 	writeChan chan []byte
-	closeChan chan byte
-	one       sync.Once
-	IsClose   bool `json:"is_close"`
+	closeChan chan struct{}
+	once      sync.Once
+	IsClose   bool
 }
 
-func BuildConn(wsConn *websocket.Conn) (conn *Connection, err error) {
-	var writeChan = common.Ws.WriteChan
-	var readChan = common.Ws.ReadChan
-	conn = &Connection{
+func BuildConn(wsConn *websocket.Conn) (*Connection, error) {
+	c := &Connection{
 		WsConn:    wsConn,
-		readChan:  make(chan []byte, writeChan),
-		writeChan: make(chan []byte, readChan),
-		closeChan: make(chan byte, 1),
+		readChan:  make(chan []byte, common.Conf.WebSocket.ReadChan),
+		writeChan: make(chan []byte, common.Conf.WebSocket.WriteChan),
+		closeChan: make(chan struct{}),
 	}
-	go util.Go(conn.readLoop)
-	go util.Go(conn.writeLoop)
-	return
+	go safeGo(c.readLoop)
+	go safeGo(c.writeLoop)
+	return c, nil
 }
 
-func (conn *Connection) ReadMsg() (data []byte, err error) {
+func (c *Connection) ReadMsg() ([]byte, error) {
 	select {
-	case data = <-conn.readChan:
-	case <-conn.closeChan:
-		err = errors.New(util.ReadConnectClosed)
+	case data := <-c.readChan:
+		return data, nil
+	case <-c.closeChan:
+		return nil, errors.New(util.ReadConnectClosed)
 	}
-	return
 }
 
-func (conn *Connection) WriteMsg(data []byte) (err error) {
+func (c *Connection) WriteMsg(data []byte) error {
 	select {
-	case <-conn.closeChan:
-		err = errors.New(util.WriteConnectClosed)
-	case conn.writeChan <- data:
+	case <-c.closeChan:
+		return errors.New(util.WriteConnectClosed)
+	case c.writeChan <- data:
+		return nil
 	}
-	return
 }
 
-func (conn *Connection) Close() {
-	conn.one.Do(func() {
-		var response = util.Response{}
-
-		conn.WsConn.WriteMessage(messageType, []byte(response.Json(util.ConnectClosed, 404, "")))
-		if err := conn.WsConn.Close(); err != nil {
-			log.Println("close failed: ", err.Error())
-			return
-		}
-		conn.IsClose = true
-		close(conn.closeChan)
+func (c *Connection) Close() {
+	c.once.Do(func() {
+		c.IsClose = true
+		close(c.closeChan)
+		c.WsConn.Close()
 	})
 }
 
-func (conn *Connection) readLoop() {
-	var (
-		data []byte
-		err  error
-	)
-	for {
-		if _, data, err = conn.WsConn.ReadMessage(); err != nil {
-			goto Err
-		}
-		select {
-		case conn.readChan <- data:
-		case <-conn.closeChan:
-			goto Err
-
-		}
-	}
-Err:
-	conn.Close()
+func (c *Connection) SetReadDeadline(t time.Time) error {
+	return c.WsConn.SetReadDeadline(t)
 }
 
-func (conn *Connection) writeLoop() {
-	var (
-		data    []byte
-		err     error
-		isClose bool
-	)
+func (c *Connection) readLoop() {
+	for {
+		_, data, err := c.WsConn.ReadMessage()
+		if err != nil {
+			c.Close()
+			return
+		}
+		select {
+		case c.readChan <- data:
+		case <-c.closeChan:
+			c.Close()
+			return
+		}
+	}
+}
+
+func (c *Connection) writeLoop() {
 	for {
 		select {
-		case data, isClose = <-conn.writeChan:
-			if !isClose {
-				goto Err
+		case data := <-c.writeChan:
+			if err := c.WsConn.WriteMessage(messageType, data); err != nil {
+				c.Close()
+				return
 			}
-		case <-conn.closeChan:
-			goto Err
-		}
-
-		if err = conn.WsConn.WriteMessage(messageType, data); err != nil {
-			goto Err
+		case <-c.closeChan:
+			c.Close()
+			return
 		}
 	}
-Err:
-	conn.Close()
 }
 
-func (conn *Connection) SetReadDeadline(t time.Time) (err error) {
-	err = conn.WsConn.SetReadDeadline(t)
-	return
+func safeGo(fn func()) {
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("goroutine panic:", r)
+		}
+	}()
+	fn()
 }

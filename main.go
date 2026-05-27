@@ -5,58 +5,54 @@ import (
 	"log"
 	"runtime"
 	"strings"
-	"ws/broker"
 	"ws/common"
-	"ws/router"
+	"ws/server"
 
 	"github.com/mbndr/figlet4go"
 	"github.com/sevlyar/go-daemon"
 )
 
-var runName = common.Common.Name
-
 func init() {
-	broker.HttpChan = make(chan broker.PushData, 1)
-	Logo()
+	server.HttpChan = make(chan server.PushData, 10)
+	logo()
 }
-func Logo() {
+
+func logo() {
 	ascii := figlet4go.NewAsciiRender()
-	// Adding the colors to RenderOptions
 	options := figlet4go.NewRenderOptions()
-	renderStr, _ := ascii.RenderOpts(strings.ToUpper(fmt.Sprintf("%v", runName)), options)
-	fmt.Println(renderStr)
+	s, _ := ascii.RenderOpts(strings.ToUpper(fmt.Sprintf("%v", common.Conf.Name)), options)
+	fmt.Println(s)
 }
+
 func main() {
-	//后台进程守护
 	if runtime.GOOS == "linux" {
 		ctxt := &daemon.Context{
-			PidFileName: fmt.Sprintf("%v.pid", runName),
-			PidFilePerm: common.Common.PidMod,
-			LogFileName: fmt.Sprintf("%v.log", runName),
-			LogFilePerm: common.Common.LogMod,
-			WorkDir:     "./",
+			PidFileName: fmt.Sprintf("%v.pid", common.Conf.Name),
+			PidFilePerm: common.Conf.PidMod,
+			LogFileName: fmt.Sprintf("%v.log", common.Conf.Name),
+			LogFilePerm: common.Conf.LogMod,
+			WorkDir:     ".",
 			Umask:       022,
-			Args:        []string{fmt.Sprintf("[go-daemon %v]", runName)},
+			Args:        []string{fmt.Sprintf("[go-daemon %v]", common.Conf.Name)},
 		}
 		d, err := ctxt.Search()
 		if err == nil && d.Pid > 0 {
-			log.Fatalf("%v is running,pid is %v", runName, d.Pid)
+			log.Fatalf("%v is running, pid %v", common.Conf.Name, d.Pid)
 		}
 		children, err := ctxt.Reborn()
 		if err != nil {
-			log.Fatal("Unable to run: ", err)
+			log.Fatal("unable to run: ", err)
 		}
 		if children != nil {
 			return
 		}
-		log.Printf("%v started", runName)
-		defer func(cntxt *daemon.Context) {
-			_ = ctxt.Release()
-		}(ctxt)
+		log.Printf("%v started", common.Conf.Name)
+		defer ctxt.Release()
 	}
-	if !common.Common.MultiplexPort {
-		go router.HttpPush()
+
+	if !common.Conf.MultiplexPort {
+		go server.HttpPush()
 	}
-	go broker.HttpMessageForwarding()
-	router.WsPush()
+	go server.HttpMessageForwarding()
+	server.WsPush()
 }
