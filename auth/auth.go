@@ -4,19 +4,25 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"sync"
 	"time"
 	"ws/common"
 	"ws/db"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 var signKey []byte
 
+var (
+	blacklist   = make(map[string]int64)
+	blacklistMu sync.RWMutex
+)
+
 type Claims struct {
 	UserID      int
 	ConnectType int
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 func init() {
@@ -28,10 +34,10 @@ func CreateToken(id, connectType int) string {
 	c := &Claims{
 		UserID:      id,
 		ConnectType: connectType,
-		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: time.Now().Add(maxAge * time.Second).Unix(),
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(maxAge * time.Second)),
 			Issuer:    common.Conf.Name,
-			Id:        strconv.Itoa(id),
+			ID:        strconv.Itoa(id),
 		},
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, c)
@@ -65,12 +71,47 @@ func ValidateToken(token string, mold int) bool {
 		return true
 	case 1:
 		_, err := ParseToken(token)
-		return err == nil
+		if err != nil {
+			return false
+		}
+		blacklistMu.RLock()
+		_, revoked := blacklist[token]
+		blacklistMu.RUnlock()
+		return !revoked
 	case 2:
 		return validateDB(token)
 	default:
 		return true
 	}
+}
+
+func RevokeToken(token string) {
+	blacklistMu.Lock()
+	defer blacklistMu.Unlock()
+	blacklist[token] = time.Now().Unix()
+}
+
+func IsRevoked(token string) bool {
+	blacklistMu.RLock()
+	defer blacklistMu.RUnlock()
+	_, exists := blacklist[token]
+	return exists
+}
+
+func init() {
+	go func() {
+		ticker := time.NewTicker(1 * time.Hour)
+		for range ticker.C {
+			blacklistMu.Lock()
+			now := time.Now().Unix()
+			for t, exp := range blacklist {
+				if exp < now {
+					delete(blacklist, t)
+				}
+			}
+			blacklistMu.Unlock()
+		}
+	}()
 }
 
 func validateDB(token string) (ok bool) {

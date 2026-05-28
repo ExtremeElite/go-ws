@@ -12,18 +12,21 @@ func WsPush() {
 	port := common.Conf.WebSocket.WsPort
 	mux := http.NewServeMux()
 
-	// 每个路由独立选择中间件：启用/停用
 	mux.Handle("/", withMiddlewares(
 		http.HandlerFunc(HandleWS),
-		cors(),
+		cors(common.Conf.CorsOrigins),
 		logging(),
-		// authMold(func() int { return common.VM.WebSocket.Mold }),
 	))
 
 	mux.Handle("/all", withMiddlewares(
 		http.HandlerFunc(HandleAllNodes),
-		cors(),
-		// 不加 auth：公开接口
+		cors(common.Conf.CorsOrigins),
+	))
+
+	mux.Handle("/panic", withMiddlewares(
+		http.HandlerFunc(HandlePanicStats),
+		cors(common.Conf.CorsOrigins),
+		method("GET"),
 	))
 
 	log.Printf("[success] ws server on :%d", port)
@@ -44,6 +47,12 @@ func HttpPush() {
 	mux.Handle("/token", withMiddlewares(
 		http.HandlerFunc(HandleToken),
 		method("GET"),
+		localOnly(),
+	))
+
+	mux.Handle("/revoke", withMiddlewares(
+		http.HandlerFunc(HandleRevokeToken),
+		method("POST"),
 		localOnly(),
 	))
 

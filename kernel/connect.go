@@ -3,7 +3,9 @@ package kernel
 import (
 	"errors"
 	"log"
+	"runtime/debug"
 	"sync"
+	"sync/atomic"
 	"time"
 	"ws/common"
 	"ws/util"
@@ -12,6 +14,8 @@ import (
 )
 
 var messageType = websocket.TextMessage
+
+var panicCount int64
 
 func init() {
 	if common.Conf.MessageType != 1 {
@@ -25,7 +29,7 @@ type Connection struct {
 	writeChan chan []byte
 	closeChan chan struct{}
 	once      sync.Once
-	IsClose   bool
+	isClose   atomic.Bool
 }
 
 func BuildConn(wsConn *websocket.Conn) (*Connection, error) {
@@ -35,8 +39,8 @@ func BuildConn(wsConn *websocket.Conn) (*Connection, error) {
 		writeChan: make(chan []byte, common.Conf.WebSocket.WriteChan),
 		closeChan: make(chan struct{}),
 	}
-	go safeGo(c.readLoop)
-	go safeGo(c.writeLoop)
+	go safeGo("readLoop", c.readLoop)
+	go safeGo("writeLoop", c.writeLoop)
 	return c, nil
 }
 
@@ -60,10 +64,14 @@ func (c *Connection) WriteMsg(data []byte) error {
 
 func (c *Connection) Close() {
 	c.once.Do(func() {
-		c.IsClose = true
+		c.isClose.Store(true)
 		close(c.closeChan)
 		c.WsConn.Close()
 	})
+}
+
+func (c *Connection) IsClosed() bool {
+	return c.isClose.Load()
 }
 
 func (c *Connection) SetReadDeadline(t time.Time) error {
@@ -71,41 +79,67 @@ func (c *Connection) SetReadDeadline(t time.Time) error {
 }
 
 func (c *Connection) readLoop() {
+	defer func() {
+		if r := recover(); r != nil {
+			atomic.AddInt64(&panicCount, 1)
+			log.Printf("[PANIC] readLoop: %v", r)
+			if common.Conf.Panic.LogStack {
+				log.Printf("[PANIC] stack: %s", debug.Stack())
+			}
+		}
+		c.Close()
+	}()
+
 	for {
 		_, data, err := c.WsConn.ReadMessage()
 		if err != nil {
-			c.Close()
 			return
 		}
 		select {
 		case c.readChan <- data:
 		case <-c.closeChan:
-			c.Close()
 			return
 		}
 	}
 }
 
 func (c *Connection) writeLoop() {
+	defer func() {
+		if r := recover(); r != nil {
+			atomic.AddInt64(&panicCount, 1)
+			log.Printf("[PANIC] writeLoop: %v", r)
+			if common.Conf.Panic.LogStack {
+				log.Printf("[PANIC] stack: %s", debug.Stack())
+			}
+		}
+		c.Close()
+	}()
+
 	for {
 		select {
 		case data := <-c.writeChan:
 			if err := c.WsConn.WriteMessage(messageType, data); err != nil {
-				c.Close()
 				return
 			}
 		case <-c.closeChan:
-			c.Close()
 			return
 		}
 	}
 }
 
-func safeGo(fn func()) {
+func safeGo(name string, fn func()) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("goroutine panic:", r)
+			atomic.AddInt64(&panicCount, 1)
+			log.Printf("[PANIC] goroutine %s: %v", name, r)
+			if common.Conf.Panic.LogStack {
+				log.Printf("[PANIC] stack: %s", debug.Stack())
+			}
 		}
 	}()
 	fn()
+}
+
+func GetPanicCount() int64 {
+	return atomic.LoadInt64(&panicCount)
 }

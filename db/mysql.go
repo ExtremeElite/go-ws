@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"time"
 	"ws/common"
 
 	"gorm.io/driver/mysql"
@@ -24,24 +25,20 @@ func localMysql() (gormDB *gorm.DB) {
 		Logger: logger.Default.LogMode(loggerDefaultMode),
 	}
 	gormDB, err = gorm.Open(mysql.New(mysql.Config{
-		DriverName:                "",
 		DSN:                       dsn,
-		Conn:                      nil,
+		DefaultStringSize:         256,
 		SkipInitializeWithVersion: false,
-		DefaultStringSize:         255,
-		DisableDatetimePrecision:  false,
-		DontSupportRenameIndex:    false,
-		DontSupportRenameColumn:   false,
 	}), &gormConfig)
 	if err != nil {
-		log.Println("mysql init failed:", err.Error())
+		log.Fatal("mysql init failed: ", err)
 	}
 	if sqlDB, err := gormDB.DB(); err == nil {
 		sqlDB.SetMaxIdleConns(localBase.MaxConnect)
 		sqlDB.SetMaxOpenConns(localBase.MaxConnect * 2)
-		sqlDB.SetConnMaxLifetime(-1)
+		sqlDB.SetConnMaxLifetime(5 * time.Minute)
+		sqlDB.SetConnMaxIdleTime(3 * time.Minute)
 	} else {
-		log.Println("mysql build gorm failed:", err.Error())
+		log.Fatal("mysql build gorm failed: ", err)
 	}
 	return
 }

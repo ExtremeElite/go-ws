@@ -19,7 +19,7 @@ type (
 	}
 
 	dbCfg struct {
-		Defalut string
+		Default string
 		Mysql   mysqlCfg
 	}
 
@@ -36,17 +36,24 @@ type (
 		WriteChan int `toml:"writeChan"`
 	}
 
+	panicCfg struct {
+		ExitOnPanic bool `toml:"exitOnPanic"`
+		LogStack    bool `toml:"logStack"`
+	}
+
 	commonCfg struct {
-		SignKey       string `toml:"signKey"`
+		SignKey       string   `toml:"signKey"`
 		Name          string
 		MaxBody       int `toml:"maxBody"`
 		PidMod        os.FileMode `toml:"pidMod"`
 		LogMod        os.FileMode `toml:"logMod"`
-		MultiplexPort bool `toml:"multiplexPort"`
+		MultiplexPort bool   `toml:"multiplexPort"`
 		Env           string
-		MessageType   int `toml:"messageType"`
+		MessageType   int      `toml:"messageType"`
+		CorsOrigins   []string `toml:"corsOrigins"`
 		Http          httpCfg
 		WebSocket     wsCfg
+		Panic         panicCfg
 	}
 
 	validateDetail struct {
@@ -79,7 +86,7 @@ var (
 
 func init() {
 	var cfg baseConfig
-	path := util.PathToEveryOne("config/config.toml")
+	path := util.ResolvePath("config/config.toml")
 	if _, err := toml.DecodeFile(path, &cfg); err != nil {
 		log.Fatal("config/config.toml: ", err)
 	}
@@ -88,6 +95,7 @@ func init() {
 	VM = cfg.ValidateMethod
 	VM.load()
 	Debug = Conf.Env == "dev"
+	InitLogger(Conf.Env)
 }
 
 func (vm *validateMethod) load() {
@@ -104,23 +112,5 @@ func (vd *validateDetail) merge(vm validateMethod) {
 	}
 	if vd.Mold == 0 {
 		vd.Mold = vm.Mold
-	}
-}
-
-func LogInfo(s string) {
-	log.Println("[info]", s)
-}
-
-func LogInfoSuccess(s string) {
-	log.Println("[success]", s)
-}
-
-func LogInfoFailed(s string) {
-	log.Println("[failed]", s)
-}
-
-func LogDebug(s string) {
-	if Debug {
-		log.Println("[debug]", s)
 	}
 }

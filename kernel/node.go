@@ -1,11 +1,8 @@
 package kernel
 
 import (
-	"errors"
+	"log"
 	"sync"
-	"ws/util"
-
-	"github.com/gorilla/websocket"
 )
 
 type Node struct {
@@ -14,41 +11,65 @@ type Node struct {
 	RemoteAddr string      `json:"remote_addr"`
 }
 
-var Nodes sync.Map
+var (
+	Nodes   sync.Map
+	nodeMu  sync.Mutex
+)
 
 func AddNode(node *Node) {
-	if _, ok := GetNode(node.Name); ok {
-		_ = DelNode(node.Name)
+	nodeMu.Lock()
+	defer nodeMu.Unlock()
+
+	if old, ok := Nodes.Load(node.Name); ok {
+		oldNode := old.(*Node)
+		log.Printf("[info] replacing node %s", node.Name)
+		oldNode.Ws.Close()
+		Nodes.Delete(node.Name)
 	}
 	Nodes.Store(node.Name, node)
 }
+
 func GetNode(name string) (v *Node, ok bool) {
-	var node *Node
 	if v, ok := Nodes.Load(name); ok {
 		return v.(*Node), ok
 	}
-	return node, ok
+	return nil, ok
 }
-func DelNode(name string) (err error) {
-	if node, ok := GetNode(name); ok {
-		if err = node.Ws.WsConn.WriteMessage(websocket.TextMessage, []byte(util.ConnectClosed)); err != nil {
-			Nodes.Delete(name)
-			return
-		}
-		err = errors.New(util.ConnectClosed)
-		node.Ws.Close()
+
+func DelNode(name string) {
+	nodeMu.Lock()
+	defer nodeMu.Unlock()
+
+	if node, ok := Nodes.Load(name); ok {
+		n := node.(*Node)
+		n.Ws.Close()
 		Nodes.Delete(name)
 	}
-	return
 }
-func GetAllNode() ([]Node, int) {
+
+func GetAllNodes() ([]Node, int) {
+	var nodes []Node
 	var count int
-	var _Node []Node
+
 	Nodes.Range(func(name, v interface{}) bool {
 		count++
 		node := v.(*Node)
-		_Node = append(_Node, *node)
+		nodes = append(nodes, Node{
+			Name:       node.Name,
+			RemoteAddr: node.RemoteAddr,
+		})
 		return true
 	})
-	return _Node, count
+	return nodes, count
+}
+
+func SendToNode(name string, data []byte) bool {
+	if node, ok := GetNode(name); ok {
+		if err := node.Ws.WriteMsg(data); err != nil {
+			log.Printf("[failed] send to %s: %v", name, err)
+			return false
+		}
+		return true
+	}
+	return false
 }

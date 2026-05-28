@@ -7,7 +7,8 @@ messageType = 1 #响应的消息类型默认文本1|2二进制
 multiplexPort = false #是否监听同一个端口，针对和http相关的协议，ws mqtt
 name = "Go-WS" #名称暂不支持中文
 pidMod = 777 #pid文件权限 777|755
-signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥：用于
+signKey = "QyAnrxYH7KGBJqMG4t0ymyVVJO5M2zgrP7bBjDL3LOM4PKJ8kOpzziuIrV0bcpXb" #加密密钥：用于JWT签名
+corsOrigins = ["http://localhost:3000", "https://yourdomain.com"] #CORS允许的来源
 [common.http]
 httpPort = 8000 #http端口 一般用于内网对websocket发送消息
 httpTimeOut = 5 #http请求超时用于http推送时候的超时设置
@@ -17,8 +18,11 @@ readChan = 1000 #写协程管道长度
 writeChan = 1000 #读协程管道长度
 wsPort = 20290 #websocket端口
 wsTimeOut = 60 #websocket连接超时最大时间 超时服务器将断开
+[common.panic]
+exitOnPanic = false #是否在goroutine panic时退出程序
+logStack = true #是否记录panic堆栈信息
 [db]
-defalut = "mysql"
+default = "mysql"
 [db.mysql]
 db = "dbname" #数据库名称
 maxConnect = 5 #数据库连接池数量

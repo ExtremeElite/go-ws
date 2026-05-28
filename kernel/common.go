@@ -1,12 +1,12 @@
 package kernel
 
 import (
+	"log"
 	"strings"
 	"time"
 	"ws/common"
 )
 
-//客户端主动ping服务器自动返回
 func (conn *Connection) Ping(message []byte, _ *Connection) (data []byte, err error) {
 	data = message
 	if strings.ToLower(string(message)) == `ping` {
@@ -28,19 +28,28 @@ func (conn *Connection) Ping(message []byte, _ *Connection) (data []byte, err er
 }
 
 func (conn *Connection) Pong() {
-	var wsTimeOut = common.Conf.WebSocket.WsTimeOut
-	if wsTimeOut > 0 {
-		addTime := time.Duration(wsTimeOut-1) * time.Second
-		timer := time.NewTimer(addTime)
-		for range timer.C {
-			if conn.IsClose {
-				timer.Stop()
-				goto Over
+	wsTimeOut := common.Conf.WebSocket.WsTimeOut
+	if wsTimeOut <= 0 {
+		return
+	}
+
+	addTime := time.Duration(wsTimeOut-1) * time.Second
+	ticker := time.NewTicker(addTime)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			if conn.IsClosed() {
+				return
 			}
-			_ = conn.WriteMsg([]byte(`Pong`))
-			common.LogInfoFailed("客户端没有ping服务器,自动发送pong")
-			timer.Reset(addTime)
+			if err := conn.WriteMsg([]byte(`Pong`)); err != nil {
+				log.Printf("[failed] auto pong: %v", err)
+				return
+			}
+			common.LogDebug("客户端没有ping服务器,自动发送pong")
+		case <-conn.closeChan:
+			return
 		}
 	}
-Over:
 }

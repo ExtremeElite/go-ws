@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -17,8 +18,6 @@ func withMiddlewares(h http.Handler, mws ...Middleware) http.Handler {
 	return h
 }
 
-// --- built-in middleware ---
-
 func method(m string) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -31,13 +30,34 @@ func method(m string) Middleware {
 	}
 }
 
-func cors() Middleware {
+func cors(allowedOrigins []string) Middleware {
+	originSet := make(map[string]struct{}, len(allowedOrigins))
+	for _, o := range allowedOrigins {
+		originSet[o] = struct{}{}
+	}
+
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			origin := r.Header.Get("Origin")
+			if origin == "" {
+				next.ServeHTTP(w, r)
+				return
+			}
+
+			if len(originSet) == 0 {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			} else if _, ok := originSet[origin]; ok {
+				w.Header().Set("Access-Control-Allow-Origin", origin)
+			}
+
+			w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
 			w.Header().Set("Access-Control-Allow-Credentials", "true")
-			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-			w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+
+			if r.Method == http.MethodOptions {
+				w.WriteHeader(http.StatusNoContent)
+				return
+			}
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -46,8 +66,13 @@ func cors() Middleware {
 func localOnly() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			host := strings.Split(r.Host, ":")[0]
-			if host != "127.0.0.1" && host != "localhost" {
+			addr := r.RemoteAddr
+			if idx := strings.LastIndex(addr, ":"); idx != -1 {
+				addr = addr[:idx]
+			}
+
+			ip := net.ParseIP(addr)
+			if ip == nil || !ip.IsLoopback() {
 				http.Error(w, `{"code":406,"msg":"host not allowed"}`, http.StatusForbidden)
 				return
 			}
@@ -86,20 +111,16 @@ func logging() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			log.Printf("[%s] %s %s", r.Method, r.URL.Path, r.RemoteAddr)
-			next.ServeHTTP(w, r) // ← handler 在这里执行
+			next.ServeHTTP(w, r)
 		})
 	}
 }
 
-// 前置 + 后置中间件示例：埋点耗时
 func timing() Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			start := time.Now()
-
-			next.ServeHTTP(w, r) // ← handler 执行
-
-			// ── 这里是 handler 之后 ──
+			next.ServeHTTP(w, r)
 			log.Printf("[timing] %s %s took %v", r.Method, r.URL.Path, time.Since(start))
 		})
 	}

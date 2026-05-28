@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	server.HttpChan = make(chan server.PushData, 10)
+	server.InitHttpChan(common.Conf.WebSocket.WriteChan)
 	logo()
 }
 
@@ -53,6 +53,6 @@ func main() {
 	if !common.Conf.MultiplexPort {
 		go server.HttpPush()
 	}
-	go server.HttpMessageForwarding()
+	go server.HttpMessageForwarding(4)
 	server.WsPush()
 }
